@@ -7,7 +7,7 @@ import sys
 import click
 import tilesets
 import requests
-from tilesets.scripts import uploader, utils
+from tilesets.scripts import utils
 import jsonschema
 from jsonseq.decode import JSONSeqDecoder
 from json.decoder import JSONDecodeError
@@ -15,34 +15,13 @@ from json.decoder import JSONDecodeError
 @click.version_option(version=tilesets.__version__, message='%(version)s')
 @click.group()
 def cli():
-    """This is the command line interface for interacting with the Mapbox Tilesets API.
+    """This is the command line interface for the Mapbox Tilesets API.
     Thanks for joining us.
 
     This CLI requires a Mapbox access token. You can either set it in your environment as
     "MAPBOX_ACCESS_TOKEN" or "MapboxAccessToken" or pass it to each command with the --token flag.
     """
-@cli.command('validate-source')
-@click.argument('source_path', required=True, type=click.Path(exists=True))
-def validate_source(source_path):
-    """Validate your source file.
-    $ tilesets validate-source <path/to/your/src/file>
-    """
-    line_count = 1
-    with open(source_path, 'r') as inf:
-        click.echo("[validation] Scanning your file...")
-        feature = None
-        try:
-            for feature in JSONSeqDecoder().decode(inf):
-                utils.validate_geojson(feature)
-                line_count+=1
-        except JSONDecodeError:
-            click.echo("Error: Invalid JSON on line {} \n Invalid Content: {} \n".format(line_count, feature))
-            sys.exit(1)
-        except jsonschema.exceptions.ValidationError:
-            click.echo("Error: Invalid geojson found on line {} \n Invalid Feature: {} \n Note - Geojson must be line delimited.".format(line_count, feature))
-            sys.exit(1)
 
-    click.echo('Source file format and data are valid for file {}'.format(os.path.basename(source_path)))
 
 @cli.command('create')
 @click.argument('tileset', required=True, type=str)
@@ -78,32 +57,6 @@ def create(tileset, recipe, name=None, description=None, privacy=None, token=Non
     r = requests.post(url, json=body)
     utils.print_response(r.text)
 
-@cli.command('upload')
-@click.argument('tileset', required=True, type=str)
-@click.argument('files', required=True, type=click.Path(exists=True, file_okay=True, dir_okay=True), nargs=-1)
-@click.option('--no-validation', is_flag=True, help='Bypass source file validation')
-@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
-@click.pass_context
-def upload(ctx, tileset, files, no_validation, token=None):
-    """Add a file (or directory of files) to the tileset's current batch.
-
-    tilesets upload <tileset_id> /path/to/file.geojson
-    tilesets upload <tileset_id> /path/to/files
-    """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/{1}/credentials?access_token={2}'.format(tilesets.MAPBOX_API, tileset, mapbox_token)
-
-    for f in utils.flatten(files):
-        if not no_validation:
-            ctx.invoke(validate_source, source_path=f)
-        r = requests.post(url)
-        if r.status_code == 200:
-            uploader.upload(f, r.json())
-        else:
-            utils.print_response(r.text)
-
-    click.echo(f'Done staging files. You can publish these to a tileset with `tilesets publish {tileset}`')
-
 
 @cli.command('publish')
 @click.argument('tileset', required=True, type=str)
@@ -136,11 +89,12 @@ def status(tileset, token=None):
     r = requests.get(url)
     utils.print_response(r.text)
 
+
 @cli.command('jobs')
 @click.argument('tileset', required=True, type=str)
 @click.option('--stage', '-s', required=False, type=str, help='job stage')
 def jobs(tileset, stage):
-    """View the current queue/processing/complete status of your tileset.
+    """View all jobs for a particular tileset.
 
     tilesets jobs <tileset_id>
     """
@@ -151,11 +105,12 @@ def jobs(tileset, stage):
     r = requests.get(url)
     utils.print_response(r.text)
 
+
 @cli.command('job')
 @click.argument('tileset', required=True, type=str)
 @click.argument('job_id', required=True, type=str)
 def job(tileset, job_id):
-    """View the current queue/processing/complete status of your tileset.
+    """View a single job for a particular tileset.
 
     tilesets job <tileset_id> <job_id>
     """
@@ -224,3 +179,110 @@ def update_recipe(tileset, recipe, token=None):
             click.echo('Updated recipe.');
         else:
             utils.print_response(r.text)
+
+
+@cli.command('validate-source')
+@click.argument('source_path', required=True, type=click.Path(exists=True))
+def validate_source(source_path):
+    """Validate your source file.
+    $ tilesets validate-source <path/to/your/src/file>
+    """
+    line_count = 1
+    with open(source_path, 'r') as inf:
+        click.echo("Validating {0} ...".format(source_path))
+        feature = None
+        try:
+            for feature in JSONSeqDecoder().decode(inf):
+                utils.validate_geojson(feature)
+                line_count+=1
+        except JSONDecodeError:
+            click.echo("Error: Invalid JSON on line {} \n Invalid Content: {} \n".format(line_count, feature))
+            sys.exit(1)
+        except jsonschema.exceptions.ValidationError:
+            click.echo("Error: Invalid geojson found on line {} \n Invalid Feature: {} \n Note - Geojson must be line delimited.".format(line_count, feature))
+            sys.exit(1)
+
+    click.echo('✔ valid')
+
+
+@cli.command('add-source')
+@click.argument('username', required=True, type=str)
+@click.argument('id', required=True, type=str)
+@click.argument('files', required=True, type=click.Path(exists=True, file_okay=True, dir_okay=True), nargs=-1)
+@click.option('--no-validation', is_flag=True, help='Bypass source file validation')
+@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
+@click.pass_context
+def add_source(ctx, username, id, files, no_validation, token=None):
+    """Create/add a tileset source
+
+    tilesets add-recipe <username> <id> <path/to/source/data>
+    """
+    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
+    for f in utils.flatten(files):
+        url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(tilesets.MAPBOX_API, username, id, mapbox_token)
+        if not no_validation:
+            ctx.invoke(validate_source, source_path=f)
+
+        click.echo('Adding {0} to mapbox://tileset-source/{1}/{2}'.format(f, username, id))
+
+        r = requests.post(url, files={
+          'file': ('tileset-source', open(f, 'rb'))
+        })
+
+        if r.status_code == 200:
+            utils.print_response(r.text)
+        else:
+            click.echo(r.text)
+
+
+@cli.command('view-source')
+@click.argument('username', required=True, type=str)
+@click.argument('id', required=True, type=str)
+@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
+def view_source(username, id, token=None):
+    """View a Tileset Source's information
+
+    tilesets view-source <username> <id>
+    """
+    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
+    url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(tilesets.MAPBOX_API, username, id, mapbox_token)
+    r = requests.get(url)
+    if r.status_code == 200:
+        utils.print_response(r.text)
+    else:
+        click.echo(r.text)
+
+
+@cli.command('delete-source')
+@click.argument('username', required=True, type=str)
+@click.argument('id', required=True, type=str)
+@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
+def delete_source(username, id, token=None):
+    """Delete a Tileset Source + all of its files.
+
+    tilesets delete-source <username> <id>
+    """
+    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
+    url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(tilesets.MAPBOX_API, username, id, mapbox_token)
+    r = requests.delete(url)
+    if r.status_code == 201:
+        click.echo('Source deleted.')
+    else:
+        utils.print_response(r.text)
+
+
+@cli.command('list-sources')
+@click.argument('username', required=True, type=str)
+@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
+def list_sources(username, token=None):
+    """List all Tileset Sources for an account. Response is an un-ordered array of sources.
+
+    tilesets list-sources <username>
+    """
+    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
+    url = '{0}/tilesets/v1/sources/{1}?access_token={2}'.format(tilesets.MAPBOX_API, username, mapbox_token)
+    r = requests.get(url)
+    if r.status_code == 200:
+        utils.print_response(r.text)
+    else:
+        click.echo(r.text)

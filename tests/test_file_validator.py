@@ -1,7 +1,7 @@
 from click.testing import CliRunner
 
 from tilesets.cli import cli
-import os 
+import os
 
 filepath = os.path.join(os.path.dirname(__file__))
 
@@ -9,7 +9,7 @@ def test_validate_ldgeojson():
     runner = CliRunner()
     result = runner.invoke(cli, ['validate-source', filepath + '/fixtures/valid.ldgeojson'])
     assert result.exit_code == 0
-    assert 'Source file format and data are valid' in result.output
+    assert '✔ valid' in result.output
 
 def test_validate_invalid_ldgeojson():
     runner = CliRunner()
