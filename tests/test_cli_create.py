@@ -6,89 +6,24 @@ import json
 # since they are used in __init__
 mock_env=mock.patch.dict('os.environ', {'MAPBOX_ACCESS_TOKEN': 'fake-token', 'MapboxAccessToken': 'test-token'})
 mock_env.start()
-from tilesets.cli import create
+from tilesets.cli import add_source
 
 
 class MockResponse():
-    def __init__(self, mock_text):
+    def __init__(self, mock_text, status_code):
         self.text = mock_text
+        self.status_code = status_code
     def MockResponse(self):
         return self
-
-
-def test_cli_create_missing_recipe():
-    runner = CliRunner()
-    # missing --recipe option
-    result = runner.invoke(create, ['test.id'])
-    assert result.exit_code == 2
-    assert 'Missing option "--recipe"' in result.output
-
-
-def test_cli_create_missing_name():
-    runner = CliRunner()
-    # missing --name option
-    result = runner.invoke(create, ['test.id', '--recipe', 'tests/fixtures/recipe.json'])
-    assert result.exit_code == 2
-    assert 'Missing option "--name"' in result.output
-
+    def json(self):
+        return json.loads(self.text)
 
 @mock.patch('requests.post')
-def test_cli_create_success(mock_request_post):
+def test_cli_create_source(mock_request_post):
+    mock_request_post.return_value = MockResponse('{"id":"mapbox://tileset-source/test-user/hello-world"}', 200)
     runner = CliRunner()
-    # sends request to proper endpoints
-    mock_request_post.return_value = MockResponse('{"message":"mock message"}')
-    result = runner.invoke(create, ['test.id', '--recipe', 'tests/fixtures/recipe.json', '--name', 'test name'])
+    result = runner.invoke(add_source, ['test-user', 'hello-world', 'tests/fixtures/valid.ldgeojson'])
     assert result.exit_code == 0
-    mock_request_post.assert_called_with('https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token', json={'name': 'test name', 'description': '', 'recipe': {'minzoom': 0, 'maxzoom': 10, 'layer_name': 'test_layer'}})
-    assert '{\n  "message": "mock message"\n}\n' in result.output
-
-
-@mock.patch('requests.post')
-def test_cli_create_success_description(mock_request_post):
-    runner = CliRunner()
-    # sends request with "description" included
-    mock_request_post.return_value = MockResponse('{"message":"mock message with description"}')
-    result = runner.invoke(create, [
-        'test.id',
-        '--recipe',
-        'tests/fixtures/recipe.json',
-        '--name',
-        'test name',
-        '--description',
-        'test description']
-    )
-    assert result.exit_code == 0
-    mock_request_post.assert_called_with('https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token', json={'name': 'test name', 'description': 'test description', 'recipe': {'minzoom': 0, 'maxzoom': 10, 'layer_name': 'test_layer'}})
-    assert '{\n  "message": "mock message with description"\n}\n' in result.output
-
-
-@mock.patch('requests.post')
-def test_cli_create_private_invalid(mock_request_post):
-    runner = CliRunner()
-    # sends request with "description" included
-    mock_request_post.return_value = MockResponse('{"message":"mock message with description"}')
-    result = runner.invoke(create, [
-        'test.id',
-        '--recipe',
-        'tests/fixtures/recipe.json',
-        '--name',
-        'test name',
-        '--privacy',
-        'invalid-privacy-value']
-    )
-    assert result.exit_code == 2
-    assert 'Invalid value for "--privacy" / "-p": invalid choice: invalid-privacy-value. (choose from public, private)' in result.output
-
-
-@mock.patch('requests.post')
-def test_cli_use_token_flag(mock_request_post):
-    runner = CliRunner()
-    mock_request_post.return_value = MockResponse('{"message":"mock message"}')
-    # Provides the flag --token
-    result = runner.invoke(create, ['test.id', '--recipe', 'tests/fixtures/recipe.json', '--name', 'test name', '--token', 'flag-token'])
-    assert result.exit_code == 0
-    mock_request_post.assert_called_with('https://api.mapbox.com/tilesets/v1/test.id?access_token=flag-token', json={'name': 'test name', 'description': '', 'recipe': {'minzoom': 0, 'maxzoom': 10, 'layer_name': 'test_layer'}})
-    assert '{\n  "message": "mock message"\n}\n' in result.output
-
-
-mock_env.stop()
+    assert 'Validating tests/fixtures/valid.ldgeojson ...\n✔ valid' in result.output
+    assert 'Adding tests/fixtures/valid.ldgeojson to mapbox://tileset-source/test-user/hello-world' in result.output
+    assert '{\n  "id": "mapbox://tileset-source/test-user/hello-world"\n}\n' in result.output
