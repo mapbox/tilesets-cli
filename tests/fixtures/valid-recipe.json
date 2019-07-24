@@ -1,0 +1,31 @@
+{
+	"minzoom": 0,
+	"maxzoom": 14,
+	"layer_name": "test_layer_name",
+	"features": {
+		"attributes": {
+			"rank": {
+				"streetrank": [
+					[ "in", "highway", "motorway", "trunk", "primary" ],
+					[ "in", "highway", "secondary", "tertiary" ],
+					[ "in", "highway", "residential", "unclassified" ],
+					[ "in", "highway", "service" ]
+				],
+				"labelrank": [
+					[ "in", "place", "country" ],
+					[ "in", "place", "state" ],
+					[ "in", "place", "region", "province" ],
+					[ "in", "place", "district", "county" ],
+					[ "in", "place", "municipality", "city" ]
+				]
+			},
+			"zoom_element": [ "priority" ]
+		}
+	},
+	"tiles": {
+		"limit": [
+			[ "lowest_where", [ "has", "highway" ], 20, "streetrank" ],
+			[ "lowest_where_in_distance", [ "has", "name" ], 200, "labelrank" ]
+		]
+	}
+}

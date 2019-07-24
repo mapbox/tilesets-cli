@@ -1,0 +1,14 @@
+language: python
+python:
+  - '3.6'
+install:
+  - pip install -r requirements.txt -e .[test]
+script:
+  - python --version
+  - pytest --version
+  - pytest --cov --cov-config=.coveragerc
+after_script:
+  - echo "uploading to codecov"
+  - curl -S -f https://codecov.io/bash -o codecov
+  - chmod +x codecov
+  - ./codecov -Z

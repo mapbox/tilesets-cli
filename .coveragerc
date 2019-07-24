@@ -1,0 +1,4 @@
+[run]
+parallel = True
+branch = True
+source = .
