@@ -24,11 +24,11 @@ def flatten(files):
 
 
 def print_response(text):
-    try: 
+    try:
       j = json.loads(text)
       msg = json.dumps(j, indent=2, sort_keys=True)
       click.echo(msg)
-    except: 
+    except:
       click.echo('Failure \n' + text)
 
 
