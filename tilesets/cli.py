@@ -215,7 +215,7 @@ def validate_source(source_path):
 def add_source(ctx, username, id, files, no_validation, token=None):
     """Create/add a tileset source
 
-    tilesets add-recipe <username> <id> <path/to/source/data>
+    tilesets add-source <username> <id> <path/to/source/data>
     """
     mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
     for f in utils.flatten(files):
