@@ -98,7 +98,11 @@ def upload(ctx, tileset, files, no_validation, token=None):
             ctx.invoke(validate_source, source_path=f)
         r = requests.post(url)
         if r.status_code == 200:
-            uploader.upload(f, r.json())
+            if r.json().message == 'Not Found':
+                click.echo('Account not found.')
+            else:
+                uploader.upload(f, r.json())
+                click.echo(f'Done staging files. You can publish these to a tileset with `tilesets publish {tileset}`')
         else:
             utils.print_response(r.text)
 
