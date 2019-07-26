@@ -106,7 +106,6 @@ def upload(ctx, tileset, files, no_validation, token=None):
         else:
             utils.print_response(r.text)
 
-    click.echo(f'Done staging files. You can publish these to a tileset with `tilesets publish {tileset}`')
 
 
 @cli.command('publish')
