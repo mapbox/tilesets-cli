@@ -57,7 +57,6 @@ def create(tileset, recipe, name=None, description=None, privacy=None, token=Non
     r = requests.post(url, json=body)
     utils.print_response(r.text)
 
-
 @cli.command('publish')
 @click.argument('tileset', required=True, type=str)
 @click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
