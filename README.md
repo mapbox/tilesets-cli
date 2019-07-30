@@ -1,8 +1,8 @@
-# mtscli
+# tilesets-cli
 
-[![Build Status](https://travis-ci.com/mapbox/mtscli.svg?token=wqR3RcWUEprcQ1ttsgiP&branch=master)](https://travis-ci.com/mapbox/mtscli) [![codecov](https://codecov.io/gh/mapbox/mtscli/branch/master/graph/badge.svg?token=YBTKyc2o3j)](https://codecov.io/gh/mapbox/mtscli)
+[![Build Status](https://travis-ci.com/mapbox/tilesets-cli.svg?token=wqR3RcWUEprcQ1ttsgiP&branch=master)](https://travis-ci.com/mapbox/tilesets-cli) [![codecov](https://codecov.io/gh/mapbox/tilesets-cli/branch/master/graph/badge.svg?token=YBTKyc2o3j)](https://codecov.io/gh/mapbox/tilesets-cli)
 
-CLI for interacting with and preparing data for the Mapbox Tiling Service (MTS).
+CLI for interacting with and preparing data for Mapbox Tilesets API.
 
 # Contributing
 
@@ -12,18 +12,18 @@ CLI for interacting with and preparing data for the Mapbox Tiling Service (MTS).
 
 ```shell
 # clone
-git clone git@github.com:mapbox/mtscli.git
-cd mtscli
+git clone git@github.com:mapbox/tilesets-cli.git
+cd tilesets-cli
 
 # virtual env (optional)
-mkvirtualenv mtscli
+mkvirtualenv tilesets-cli
 
 # install deps
 pip install .
 
 # confirm installation was successful
-mts --help
-mts --version
+tilesets --help
+tilesets --version
 ```
 
 #### Requirements
@@ -33,7 +33,7 @@ mts --version
 
 #### Mapbox Access Tokens
 
-In order to use the MTS endpoints, you need a Mapbox Access Token with `tilesets:write` and `tilesets:read` scopes. This is a secret token, so do not share it publicly!
+In order to use the tilesets endpoints, you need a Mapbox Access Token with `tilesets:write` and `tilesets:read` scopes. This is a secret token, so do not share it publicly!
 
 You can either pass the Mapbox access token to each command with the `--token` flag or export it as an environment variable. Acceptable values are:
 
@@ -69,7 +69,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 Creates a brand new, empty tileset with a recipe passed in from your local filesystem.
 
 ```shell
-mts create <tileset_id> --recipe /path/to/recipe.json --name "My neat tileset"
+tilesets create <tileset_id> --recipe /path/to/recipe.json --name "My neat tileset"
 ```
 
 Flags:
@@ -84,7 +84,7 @@ Flags:
 Queues a tiling _job_ using the recipe provided. Returns a job ID for progress tracking.
 
 ```
-mts publish <tileset_id>
+tilesets publish <tileset_id>
 ```
 
 ### status
@@ -92,7 +92,7 @@ mts publish <tileset_id>
 View the status of a tileset. This includes how many jobs are queued, processing, and complete.
 
 ```
-mts status <tileset_id>
+tilesets status <tileset_id>
 ```
 
 ### job
@@ -100,7 +100,7 @@ mts status <tileset_id>
 Retrieve a single job for a tileset.
 
 ```shell
-mts job <tileset_id> <job_id>
+tilesets job <tileset_id> <job_id>
 ```
 
 **What is a job?** Each time you generate or regenerate your output tileset via the `publish` command (whether that's a new recipe or new source data), a single job is created that processes your data. A tileset can have many jobs, each with a unique identifier. When you publish a tileset, the HTTP response includes the unique job identifier that corresponds to the most recent job. To read more about HTTP design, see this (documentation)[https://docs.google.com/document/d/1Ys4-PmKRN3Bjdh2qux9eLUtT9PJ2MUQKadt_4188Xzc/edit#].
@@ -111,7 +111,7 @@ Check all jobs associated with a tileset. You can filter jobs by a particular `s
 
 
 ```shell
-mts jobs <tileset_id> --stage=processing
+tilesets jobs <tileset_id> --stage=processing
 ```
 
 - --stage: Filter by the stage of jobs. (Optional.)
@@ -119,7 +119,7 @@ mts jobs <tileset_id> --stage=processing
 ### add-source
 
 ```shell
-mts add-source <username> <id> <file>
+tilesets add-source <username> <id> <file>
 ```
 
 Flags:
@@ -130,13 +130,13 @@ Usage
 
 ```shell
 # single file
-mts add-source <username> <id> ./file.geojson
+tilesets add-source <username> <id> ./file.geojson
 
 # multiple files
-mts add-source <username> <id> file-1.geojson file-4.geojson
+tilesets add-source <username> <id> file-1.geojson file-4.geojson
 
 # directory of files
-mts add-source <username> <id> ./path/to/multiple/files/
+tilesets add-source <username> <id> ./path/to/multiple/files/
 ```
 
 Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
@@ -144,7 +144,7 @@ Reading from a directory will not distinguish between GeoJSON files and non GeoJ
 ### validate-source
 
 ```shell
-mts validate-source <path>
+tilesets validate-source <path>
 ```
 
 Validates a line delimited GeoJSON source file locally. Example error output:
@@ -156,7 +156,7 @@ Invalid line delimited geojson.
 ### view-source
 
 ```
-mts view-source <username> <id>
+tilesets view-source <username> <id>
 ```
 
 Get information for a tileset source, such as number of files, the size in bytes, and the ID in mapbox:// protocol format.
@@ -164,7 +164,7 @@ Get information for a tileset source, such as number of files, the size in bytes
 ### list-sources
 
 ```
-mts list-sources <username>
+tilesets list-sources <username>
 ```
 
 List all tileset sources from a particular account. Response is an array of sources.
@@ -172,7 +172,7 @@ List all tileset sources from a particular account. Response is an array of sour
 ### delete-source
 
 ```
-mts delete-source
+tilesets delete-source
 ```
 
 Permanently delete a tileset source and all of its files. This is not a recoverable action!
@@ -182,7 +182,7 @@ Permanently delete a tileset source and all of its files. This is not a recovera
 Prints the Recipe JSON to stdout.
 
 ```shell
-mts view-recipe <tileset_id>
+tilesets view-recipe <tileset_id>
 ```
 
 ### validate-recipe
@@ -190,7 +190,7 @@ mts view-recipe <tileset_id>
 Validates a Recipe JSON document.
 
 ```shell
-mts validate-recipe /path/to/recipe.json
+tilesets validate-recipe /path/to/recipe.json
 ```
 
 Example `recipe.json`:
@@ -220,5 +220,5 @@ Example error output:
 Update the Recipe JSON for a tileset. Performs a server-side validation of the new document.
 
 ```shell
-mts update-recipe <tileset_id> /path/to/recipe.json
+tilesets update-recipe <tileset_id> /path/to/recipe.json
 ```
