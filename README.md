@@ -126,13 +126,13 @@ Usage
 
 ```shell
 # single file
-mts upload <tileset_id> ./file.geojson
+mts add-source <tileset_id> ./file.geojson
 
 # multiple files
-mts upload <tileset_id> file-1.geojson file-4.geojson
+mts add-source <tileset_id> file-1.geojson file-4.geojson
 
 # directory of files
-mts upload <tileset_id> ./my-data
+mts add-source <tileset_id> ./my-data
 ```
 
 Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
