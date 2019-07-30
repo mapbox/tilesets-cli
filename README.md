@@ -118,21 +118,25 @@ mts jobs <tileset_id> --stage=processing
 
 ### add-source
 
-```
+```shell
 mts add-source <username> <id> <file>
 ```
+
+Flags:
+
+* `--no-validation` [optional]: do not validate source data locally before uploading
 
 Usage
 
 ```shell
 # single file
-mts add-source <tileset_id> ./file.geojson
+mts add-source <username> <id> ./file.geojson
 
 # multiple files
-mts add-source <tileset_id> file-1.geojson file-4.geojson
+mts add-source <username> <id> file-1.geojson file-4.geojson
 
 # directory of files
-mts add-source <tileset_id> ./my-data
+mts add-source <username> <id> ./path/to/multiple/files/
 ```
 
 Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
