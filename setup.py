@@ -11,7 +11,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='tilesets-cli',
-      version='0.6.1',
+      version='0.6.2',
       description=u"CLI for interacting with and preparing data for the Tilesets API",
       long_description=long_description,
       classifiers=[],
@@ -21,11 +21,11 @@ setup(name='tilesets-cli',
       url='https://github.com/mapbox/tilesets-cli',
       license='BSD-2',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-      install_requires=read('requirements.txt').splitlines(),
+      install_requires=["boto3", "click~=7.0", "requests", "jsonschema~=3.0", "jsonseq~=1.0"],
       include_package_data=True,
       zip_safe=False,
       extras_require={
-          'test': ['pytest==4.3.0', 'pytest-cov'],
+          'test': ['pytest', 'pytest-cov'],
       },
       entry_points="""
       [console_scripts]
