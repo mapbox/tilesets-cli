@@ -25,7 +25,7 @@ setup(name='tilesets-cli',
       include_package_data=True,
       zip_safe=False,
       extras_require={
-          'test': ['pytest', 'pytest-cov'],
+          'test': ['pytest>=3.6.0', 'pytest-cov'],
       },
       entry_points="""
       [console_scripts]
