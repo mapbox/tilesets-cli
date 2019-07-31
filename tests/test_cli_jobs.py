@@ -1,10 +1,8 @@
-from click.testing import CliRunner
 from unittest import mock
 
-# have to set environment variables before importing library
-# since they are used in __init__
-mock_env=mock.patch.dict('os.environ', {'MAPBOX_ACCESS_TOKEN': 'fake-token', 'MapboxAccessToken': 'test-token'})
-mock_env.start()
+from click.testing import CliRunner
+import pytest
+
 from tilesets.cli import jobs, job
 
 
@@ -15,6 +13,7 @@ class MockResponse():
     def MockResponse(self):
         return self
 
+
 class MockResponseError():
     def __init__(self, mock_text):
         self.text = mock_text
@@ -22,6 +21,8 @@ class MockResponseError():
     def MockResponse(self):
         return self
 
+
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_job(mock_request_get):
     runner = CliRunner()
@@ -33,6 +34,8 @@ def test_cli_job(mock_request_get):
     assert result.exit_code == 0
     assert '{\n  "message": "mock message"\n}\n' in result.output
 
+
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_job_error(mock_request_get):
     runner = CliRunner()
@@ -44,9 +47,11 @@ def test_cli_job_error(mock_request_get):
     assert result.exit_code == 0
     assert '{\n  "message": "mock error message"\n}\n' in result.output
 
-# test jobs + stage endpoint
+
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_jobs_and_stage(mock_request_get):
+    """test jobs + stage endpoint"""
     runner = CliRunner()
 
     # sends expected request
@@ -56,9 +61,11 @@ def test_cli_jobs_and_stage(mock_request_get):
     assert result.exit_code == 0
     assert '{\n  "message": "mock message"\n}\n' in result.output
 
-# test job endpoint
+
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_single_job(mock_request_get):
+    """test job endpoint"""
     runner = CliRunner()
 
     # sends expected request
@@ -67,6 +74,3 @@ def test_cli_single_job(mock_request_get):
     mock_request_get.assert_called_with('https://api.mapbox.com/tilesets/v1/test.id/jobs/job_id?access_token=fake-token')
     assert result.exit_code == 0
     assert '{\n  "message": "mock message"\n}\n' in result.output
-
-
-mock_env.stop()

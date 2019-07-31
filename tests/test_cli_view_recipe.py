@@ -1,10 +1,7 @@
 from click.testing import CliRunner
 from unittest import mock
+import pytest
 
-# have to set environment variables before importing library
-# since they are used in __init__
-mock_env=mock.patch.dict('os.environ', {'MAPBOX_ACCESS_TOKEN': 'fake-token', 'MapboxAccessToken': 'test-token'})
-mock_env.start()
 from tilesets.cli import view_recipe
 
 
@@ -16,6 +13,7 @@ class MockResponse():
         return self
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_view_recipe(mock_request_get):
     runner = CliRunner()
@@ -30,6 +28,7 @@ def test_cli_view_recipe(mock_request_get):
     assert '{\n  "fake": "recipe_data"\n}\n' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_view_recipe_use_token_flag(mock_request_get):
     runner = CliRunner()
@@ -41,6 +40,3 @@ def test_cli_view_recipe_use_token_flag(mock_request_get):
     )
     assert result.exit_code == 0
     assert '{\n  "fake": "recipe_data"\n}\n' in result.output
-
-
-mock_env.stop()

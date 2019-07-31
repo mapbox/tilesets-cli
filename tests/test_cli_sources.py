@@ -2,10 +2,8 @@ from click.testing import CliRunner
 from unittest import mock
 import json
 
-# have to set environment variables before importing library
-# since they are used in __init__
-mock_env=mock.patch.dict('os.environ', {'MAPBOX_ACCESS_TOKEN': 'fake-token', 'MapboxAccessToken': 'test-token'})
-mock_env.start()
+import pytest
+
 from tilesets.cli import (
     add_source,
     view_source,
@@ -24,6 +22,8 @@ class MockResponse():
     def json(self):
         return json.loads(self.text)
 
+
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.post')
 def test_cli_add_source(mock_request_post):
     mock_request_post.return_value = MockResponse('{"id":"mapbox://tileset-source/test-user/hello-world"}', 200)
@@ -35,6 +35,7 @@ def test_cli_add_source(mock_request_post):
     assert '{\n  "id": "mapbox://tileset-source/test-user/hello-world"\n}\n' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_view_source(mock_request_get):
     mock_request_get.return_value = MockResponse('{"id":"mapbox://tileset-source/test-user/hello-world"}', 200)
@@ -44,6 +45,7 @@ def test_cli_view_source(mock_request_get):
     assert result.output == '{\n  "id": "mapbox://tileset-source/test-user/hello-world"\n}\n'
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.delete')
 def test_cli_delete_source(mock_request_delete):
     mock_request_delete.return_value = MockResponse('', 201)
@@ -53,6 +55,7 @@ def test_cli_delete_source(mock_request_delete):
     assert result.output == 'Source deleted.\n'
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.get')
 def test_cli_view_source(mock_request_get):
     mock_request_get.return_value = MockResponse(
@@ -67,6 +70,7 @@ def test_cli_view_source(mock_request_get):
     assert "mapbox://tileset-source/test-user/hola-mundo" in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 def test_cli_validate_source():
     runner = CliRunner()
     result = runner.invoke(validate_source, ['tests/fixtures/valid.ldgeojson'])

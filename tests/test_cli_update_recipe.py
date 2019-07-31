@@ -1,10 +1,7 @@
 from click.testing import CliRunner
 from unittest import mock
+import pytest
 
-# have to set environment variables before importing library
-# since they are used in __init__
-mock_env=mock.patch.dict('os.environ', {'MAPBOX_ACCESS_TOKEN': 'fake-token', 'MapboxAccessToken': 'test-token'})
-mock_env.start()
 from tilesets.cli import update_recipe
 
 
@@ -15,6 +12,7 @@ class MockResponse():
         return self
 
 
+@pytest.mark.usefixtures("token_environ")
 def test_cli_update_recipe_no_recipe():
     runner = CliRunner()
     result = runner.invoke(update_recipe, ['test.id', 'does/not/exist/recipe.json'])
@@ -22,6 +20,7 @@ def test_cli_update_recipe_no_recipe():
     assert 'Path "does/not/exist/recipe.json" does not exist' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.patch')
 def test_cli_update_recipe(mock_request_patch):
     runner = CliRunner()
@@ -37,6 +36,7 @@ def test_cli_update_recipe(mock_request_patch):
     assert 'Updated recipe.' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.patch')
 def test_cli_update_recipe(mock_request_patch):
     runner = CliRunner()
@@ -49,6 +49,3 @@ def test_cli_update_recipe(mock_request_patch):
     )
     assert result.exit_code == 0
     assert 'Updated recipe.' in result.output
-
-
-mock_env.stop()
