@@ -11,7 +11,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='tilesets-cli',
-      version='0.6.2',
+      version='0.1.0',
       description=u"CLI for interacting with and preparing data for the Tilesets API",
       long_description=long_description,
       classifiers=[],
