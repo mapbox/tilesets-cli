@@ -1,11 +1,9 @@
-from click.testing import CliRunner
 from unittest import mock
 import json
 
-# have to set environment variables before importing library
-# since they are used in __init__
-mock_env=mock.patch.dict('os.environ', {'MAPBOX_ACCESS_TOKEN': 'fake-token', 'MapboxAccessToken': 'test-token'})
-mock_env.start()
+from click.testing import CliRunner
+import pytest
+
 from tilesets.cli import create
 
 
@@ -16,6 +14,7 @@ class MockResponse():
         return self
 
 
+@pytest.mark.usefixtures("token_environ")
 def test_cli_create_missing_recipe():
     runner = CliRunner()
     # missing --recipe option
@@ -24,6 +23,7 @@ def test_cli_create_missing_recipe():
     assert 'Missing option "--recipe"' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 def test_cli_create_missing_name():
     runner = CliRunner()
     # missing --name option
@@ -32,6 +32,7 @@ def test_cli_create_missing_name():
     assert 'Missing option "--name"' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.post')
 def test_cli_create_success(mock_request_post):
     runner = CliRunner()
@@ -43,6 +44,7 @@ def test_cli_create_success(mock_request_post):
     assert '{\n  "message": "mock message"\n}\n' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.post')
 def test_cli_create_success_description(mock_request_post):
     runner = CliRunner()
@@ -62,6 +64,7 @@ def test_cli_create_success_description(mock_request_post):
     assert '{\n  "message": "mock message with description"\n}\n' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.post')
 def test_cli_create_private_invalid(mock_request_post):
     runner = CliRunner()
@@ -80,6 +83,7 @@ def test_cli_create_private_invalid(mock_request_post):
     assert 'Invalid value for "--privacy" / "-p": invalid choice: invalid-privacy-value. (choose from public, private)' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.post')
 def test_cli_use_token_flag(mock_request_post):
     runner = CliRunner()
@@ -89,6 +93,3 @@ def test_cli_use_token_flag(mock_request_post):
     assert result.exit_code == 0
     mock_request_post.assert_called_with('https://api.mapbox.com/tilesets/v1/test.id?access_token=flag-token', json={'name': 'test name', 'description': '', 'recipe': {'minzoom': 0, 'maxzoom': 10, 'layer_name': 'test_layer'}})
     assert '{\n  "message": "mock message"\n}\n' in result.output
-
-
-mock_env.stop()

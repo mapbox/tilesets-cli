@@ -1,10 +1,8 @@
 from click.testing import CliRunner
 from unittest import mock
 
-# have to set environment variables before importing library
-# since they are used in __init__
-mock_env=mock.patch.dict('os.environ', {'MAPBOX_ACCESS_TOKEN': 'fake-token', 'MapboxAccessToken': 'test-token'})
-mock_env.start()
+import pytest
+
 from tilesets.cli import publish
 
 
@@ -16,6 +14,7 @@ class MockResponse():
         return self
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.post')
 def test_cli_publish(mock_request_post):
     runner = CliRunner()
@@ -28,6 +27,7 @@ def test_cli_publish(mock_request_post):
     assert 'You can view the status of your tileset with the `tilesets status test.id` command.' in result.output
 
 
+@pytest.mark.usefixtures("token_environ")
 @mock.patch('requests.post')
 def test_cli_publish_use_token_flag(mock_request_post):
     runner = CliRunner()
@@ -37,6 +37,3 @@ def test_cli_publish_use_token_flag(mock_request_post):
     mock_request_post.assert_called_with('https://api.mapbox.com/tilesets/v1/test.id/publish?access_token=flag-token')
     assert result.exit_code == 0
     assert 'You can view the status of your tileset with the `tilesets status test.id` command.' in result.output
-
-
-mock_env.stop()

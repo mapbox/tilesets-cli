@@ -1,4 +1,4 @@
-# Skeleton of a CLI
+"""Tilesets command line interface"""
 
 import os
 import json
@@ -11,6 +11,20 @@ from tilesets.scripts import utils
 import jsonschema
 from jsonseq.decode import JSONSeqDecoder
 from json.decoder import JSONDecodeError
+
+
+def _get_token(token=None):
+    """Get Mapbox access token from arg or environment"""
+    if token is not None:
+        return token
+    else:
+        return os.environ.get('MAPBOX_ACCESS_TOKEN') or os.environ.get('MapboxAccessToken')
+
+
+def _get_api():
+    """Get Mapbox tileset API base URL from environment"""
+    return os.environ.get('MAPBOX_API', "https://api.mapbox.com")
+
 
 @click.version_option(version=tilesets.__version__, message='%(version)s')
 @click.group()
@@ -38,8 +52,9 @@ def create(tileset, recipe, name=None, description=None, privacy=None, token=Non
     <tileset_id> is in the form of username.handle - for example "mapbox.neat-tileset".
     The handle may only include "-" or "_" special characters.
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/{1}?access_token={2}'.format(tilesets.MAPBOX_API, tileset, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}?access_token={2}'.format(mapbox_api, tileset, mapbox_token)
     body = {}
     body['name'] = name or ''
     body['description'] = description or ''
@@ -65,8 +80,9 @@ def publish(tileset, token=None):
 
     tilesets publish <tileset_id>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/{1}/publish?access_token={2}'.format(tilesets.MAPBOX_API, tileset, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}/publish?access_token={2}'.format(mapbox_api, tileset, mapbox_token)
     r = requests.post(url)
     if r.status_code == 200:
         utils.print_response(r.text)
@@ -83,8 +99,9 @@ def status(tileset, token=None):
 
     tilesets status <tileset_id>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/{1}/status?access_token={2}'.format(tilesets.MAPBOX_API, tileset, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}/status?access_token={2}'.format(mapbox_api, tileset, mapbox_token)
     r = requests.get(url)
     utils.print_response(r.text)
 
@@ -92,15 +109,17 @@ def status(tileset, token=None):
 @cli.command('jobs')
 @click.argument('tileset', required=True, type=str)
 @click.option('--stage', '-s', required=False, type=str, help='job stage')
-def jobs(tileset, stage):
+@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
+def jobs(tileset, stage, token=None):
     """View all jobs for a particular tileset.
 
     tilesets jobs <tileset_id>
     """
-
-    url = '{0}/tilesets/v1/{1}/jobs?access_token={2}'.format(tilesets.MAPBOX_API, tileset, tilesets.MAPBOX_TOKEN)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}/jobs?access_token={2}'.format(mapbox_api, tileset, mapbox_token)
     if stage:
-        url = '{0}/tilesets/v1/{1}/jobs?stage={2}&access_token={3}'.format(tilesets.MAPBOX_API, tileset, stage, tilesets.MAPBOX_TOKEN)
+        url = '{0}/tilesets/v1/{1}/jobs?stage={2}&access_token={3}'.format(mapbox_api, tileset, stage, mapbox_token)
     r = requests.get(url)
     utils.print_response(r.text)
 
@@ -108,12 +127,15 @@ def jobs(tileset, stage):
 @cli.command('job')
 @click.argument('tileset', required=True, type=str)
 @click.argument('job_id', required=True, type=str)
-def job(tileset, job_id):
+@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
+def job(tileset, job_id, token=None):
     """View a single job for a particular tileset.
 
     tilesets job <tileset_id> <job_id>
     """
-    url = '{0}/tilesets/v1/{1}/jobs/{2}?access_token={3}'.format(tilesets.MAPBOX_API, tileset, job_id, tilesets.MAPBOX_TOKEN)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}/jobs/{2}?access_token={3}'.format(mapbox_api, tileset, job_id, mapbox_token)
     r = requests.get(url)
     utils.print_response(r.text)
 
@@ -126,8 +148,9 @@ def validate_recipe(recipe, token=None):
 
     tilesets validate-recipe <path_to_recipe>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/validateRecipe?access_token={1}'.format(tilesets.MAPBOX_API, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/validateRecipe?access_token={1}'.format(mapbox_api, mapbox_token)
     with open(recipe) as json_recipe:
         try:
             recipe_json = json.load(json_recipe)
@@ -146,8 +169,9 @@ def view_recipe(tileset, token=None):
 
     tilesets view-recipe <tileset_id>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/{1}/recipe?access_token={2}'.format(tilesets.MAPBOX_API, tileset, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}/recipe?access_token={2}'.format(mapbox_api, tileset, mapbox_token)
     r = requests.get(url)
     if r.status_code == 200:
         utils.print_response(r.text)
@@ -164,8 +188,9 @@ def update_recipe(tileset, recipe, token=None):
 
     tilesets update-recipe <tileset_id> <path_to_recipe>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/{1}/recipe?access_token={2}'.format(tilesets.MAPBOX_API, tileset, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}/recipe?access_token={2}'.format(mapbox_api, tileset, mapbox_token)
     with open(recipe) as json_recipe:
         try:
             recipe_json = json.load(json_recipe)
@@ -216,9 +241,10 @@ def add_source(ctx, username, id, files, no_validation, token=None):
 
     tilesets add-source <username> <id> <path/to/source/data>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
     for f in utils.flatten(files):
-        url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(tilesets.MAPBOX_API, username, id, mapbox_token)
+        url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(mapbox_api, username, id, mapbox_token)
         if not no_validation:
             ctx.invoke(validate_source, source_path=f)
 
@@ -243,8 +269,9 @@ def view_source(username, id, token=None):
 
     tilesets view-source <username> <id>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(tilesets.MAPBOX_API, username, id, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(mapbox_api, username, id, mapbox_token)
     r = requests.get(url)
     if r.status_code == 200:
         utils.print_response(r.text)
@@ -261,8 +288,9 @@ def delete_source(username, id, token=None):
 
     tilesets delete-source <username> <id>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(tilesets.MAPBOX_API, username, id, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/sources/{1}/{2}?access_token={3}'.format(mapbox_api, username, id, mapbox_token)
     r = requests.delete(url)
     if r.status_code == 201:
         click.echo('Source deleted.')
@@ -278,8 +306,9 @@ def list_sources(username, token=None):
 
     tilesets list-sources <username>
     """
-    mapbox_token = token if token is not None else tilesets.MAPBOX_TOKEN
-    url = '{0}/tilesets/v1/sources/{1}?access_token={2}'.format(tilesets.MAPBOX_API, username, mapbox_token)
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/sources/{1}?access_token={2}'.format(mapbox_api, username, mapbox_token)
     r = requests.get(url)
     if r.status_code == 200:
         utils.print_response(r.text)
