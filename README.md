@@ -103,7 +103,7 @@ Retrieve a single job for a tileset.
 tilesets job <tileset_id> <job_id>
 ```
 
-**What is a job?** Each time you generate or regenerate your output tileset via the `publish` command (whether that's a new recipe or new source data), a single job is created that processes your data. A tileset can have many jobs, each with a unique identifier. When you publish a tileset, the HTTP response includes the unique job identifier that corresponds to the most recent job. To read more about HTTP design, see this (documentation)[https://docs.google.com/document/d/1Ys4-PmKRN3Bjdh2qux9eLUtT9PJ2MUQKadt_4188Xzc/edit#].
+**What is a job?** Each time you generate or regenerate your output tileset via the `publish` command (whether that's a new recipe or new source data), a single job is created that processes your data. A tileset can have many jobs, each with a unique identifier. When you publish a tileset, the HTTP response includes the unique job identifier that corresponds to the most recent job. To read more about HTTP design, see this [documentation](https://docs.mapbox.com/api/maps/#tilesets).
 
 ### jobs
 
@@ -206,8 +206,8 @@ Example `recipe.json`:
   }
 }
 ```
-See more details about the recipe spec [here](https://docs.google.com/document/d/1GA2QLmxX6b6rMoOKVHbg1EOd6miLOhD28DyOWf361d0/edit#heading=h.2zs0vdp63wzk).
-See recipe examples [here](https://docs.google.com/document/d/1Vs1F5rGRu-VwTULrL0Ie6EKNq9r_eIf0LFOujYKRbEY/edit).
+See more details about the recipe spec [here](https://docs.mapbox.com/help/troubleshooting/tileset-recipe-reference).
+See recipe examples [here](https://docs.mapbox.com/help/troubleshooting/tileset-recipe-examples).
 
 Example error output:
 
