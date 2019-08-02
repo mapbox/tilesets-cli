@@ -196,9 +196,14 @@ tilesets validate-recipe /path/to/recipe.json
 Example `recipe.json`:
 ```
 {
-  "minzoom": 9,
-  "maxzoom": 16,
-  "layer_name": "states"
+  "version": 1,
+  "layers": {
+    "trees": {
+      "source": "mapbox://tileset-source/{username}/trees-data",
+      "minzoom": 4,
+      "maxzoom": 8
+    }
+  }
 }
 ```
 See more details about the recipe spec [here](https://docs.google.com/document/d/1GA2QLmxX6b6rMoOKVHbg1EOd6miLOhD28DyOWf361d0/edit#heading=h.2zs0vdp63wzk).
