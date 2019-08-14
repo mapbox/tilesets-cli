@@ -81,7 +81,7 @@ Flags:
 
 ### publish
 
-Queues a tiling _job_ using the recipe provided. Use to publish a new tileset or updating an existing one. Returns a job ID for progress tracking.
+Queues a tiling _job_ using the recipe provided. Use to publish a new tileset or update an existing one. Returns a job ID for progress tracking.
 
 ```
 tilesets publish <tileset_id>
