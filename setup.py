@@ -33,7 +33,7 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
-    extras_require={"test": ["pytest>=3.6.0", "pytest-cov"]},
+    extras_require={"test": ["pytest>=3.6.0", "pytest-cov", "pre-commit"]},
     entry_points="""
       [console_scripts]
       tilesets=tilesets.cli:cli
