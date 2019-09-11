@@ -140,6 +140,33 @@ def job(tileset, job_id, token=None):
     utils.print_response(r.text)
 
 
+@cli.command('list')
+@click.argument('username', required=True, type=str)
+@click.option('--verbose', '-v', required=False, is_flag=True, help='Will print all tileset information')
+@click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
+def list(username, verbose, token=None):
+    """List all tilesets for an account.
+    By default the response is a simple list of tileset IDs.
+    If you would like an array of all tileset's information,
+    use the --versbose flag.
+
+    tilests list <username>
+    """
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = '{0}/tilesets/v1/{1}?access_token={2}'.format(mapbox_api, username, mapbox_token)
+    r = requests.get(url)
+    if r.status_code == 200:
+        if verbose:
+            utils.print_response(r.text)
+        else:
+            j = json.loads(r.text)
+            for tileset in j:
+                click.echo(tileset['id'])
+    else:
+        click.echo(r.text)
+
+
 @cli.command('validate-recipe')
 @click.argument('recipe', required=True, type=click.Path(exists=True))
 @click.option('--token', '-t', required=False, type=str, help='Mapbox access token')
