@@ -47,12 +47,6 @@ export MAPBOX_ACCESS_TOKEN=my.token
 
 # Commands
 
-* Tilesets
-  * [`create`](#create)
-  * [`publish`](#publish)
-  * [`status`](#status)
-  * [`job`](#job)
-  * [`jobs`](#jobs)
 * Tileset Sources
   * [`add-source`](#add-source)
   * [`validate-source`](#validate-source)
@@ -63,58 +57,12 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * [`view-recipe`](#view-recipe)
   * [`validate-recipe`](#validate-recipe)
   * [`update-recipe`](#update-recipe)
-
-### create
-
-Creates a brand new, empty tileset with a recipe passed in from your local filesystem.
-
-```shell
-tilesets create <tileset_id> --recipe /path/to/recipe.json --name "My neat tileset"
-```
-
-Flags:
-
-* `--recipe` or `-r` [required]: path to your Recipe JSON document
-* `--name` or `-n` [required]: human-readable name of your tileset. (If your tileset_id is user.my_amazing_tileset, you might want your `name` field to be "My Amazing Tileset".)
-* `--description` or `-d`: description of your tileset
-* `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. If not provided, will default to your plan level on Mapbox.com. Pay-As-You-Go plans only support public maps.
-
-### publish
-
-Queues a tiling _job_ using the recipe provided. Use to publish a new tileset or update an existing one. Returns a job ID for progress tracking.
-
-```
-tilesets publish <tileset_id>
-```
-
-### status
-
-View the status of a tileset. This includes how many jobs are queued, processing, and complete.
-
-```
-tilesets status <tileset_id>
-```
-
-### job
-
-Retrieve a single job for a tileset.
-
-```shell
-tilesets job <tileset_id> <job_id>
-```
-
-**What is a job?** Each time you generate or regenerate your output tileset via the `publish` command (whether that's a new recipe or new source data), a single job is created that processes your data. A tileset can have many jobs, each with a unique identifier. When you publish a tileset, the HTTP response includes the unique job identifier that corresponds to the most recent job. To read more about HTTP design, see this [documentation](https://docs.mapbox.com/api/maps/#tilesets).
-
-### jobs
-
-Check all jobs associated with a tileset. You can filter jobs by a particular `stage` - processing, queued, success, or failed.
-
-
-```shell
-tilesets jobs <tileset_id> --stage=processing
-```
-
-- --stage: Filter by the stage of jobs. (Optional.)
+* Tilesets
+  * [`create`](#create)
+  * [`publish`](#publish)
+  * [`status`](#status)
+  * [`job`](#job)
+  * [`jobs`](#jobs)
 
 ### add-source
 
@@ -227,3 +175,55 @@ Update the Recipe JSON for a tileset. Performs a server-side validation of the n
 ```shell
 tilesets update-recipe <tileset_id> /path/to/recipe.json
 ```
+
+### create
+
+Creates a brand new, empty tileset with a recipe passed in from your local filesystem.
+
+```shell
+tilesets create <tileset_id> --recipe /path/to/recipe.json --name "My neat tileset"
+```
+
+Flags:
+
+* `--recipe` or `-r` [required]: path to your Recipe JSON document
+* `--name` or `-n` [required]: human-readable name of your tileset. (If your tileset_id is user.my_amazing_tileset, you might want your `name` field to be "My Amazing Tileset".)
+* `--description` or `-d`: description of your tileset
+* `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. If not provided, will default to your plan level on Mapbox.com. Pay-As-You-Go plans only support public maps.
+
+### publish
+
+Queues a tiling _job_ using the recipe provided. Use to publish a new tileset or update an existing one. Returns a job ID for progress tracking.
+
+```
+tilesets publish <tileset_id>
+```
+
+### status
+
+View the status of a tileset. This includes how many jobs are queued, processing, and complete.
+
+```
+tilesets status <tileset_id>
+```
+
+### job
+
+Retrieve a single job for a tileset.
+
+```shell
+tilesets job <tileset_id> <job_id>
+```
+
+**What is a job?** Each time you generate or regenerate your output tileset via the `publish` command (whether that's a new recipe or new source data), a single job is created that processes your data. A tileset can have many jobs, each with a unique identifier. When you publish a tileset, the HTTP response includes the unique job identifier that corresponds to the most recent job. To read more about HTTP design, see this [documentation](https://docs.mapbox.com/api/maps/#tilesets).
+
+### jobs
+
+Check all jobs associated with a tileset. You can filter jobs by a particular `stage` - processing, queued, success, or failed.
+
+
+```shell
+tilesets jobs <tileset_id> --stage=processing
+```
+
+- --stage: Filter by the stage of jobs. (Optional.)
