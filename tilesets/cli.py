@@ -79,7 +79,7 @@ def create(tileset, recipe, name=None, description=None, privacy=None, token=Non
     if privacy:
         body["private"] = True if privacy == "private" else False
 
-    if not "." in tileset:
+    if utils.validate_tileset_id(tileset):
         click.echo("Invalid tileset_id, format must match username.tileset")
         sys.exit()
 

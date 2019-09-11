@@ -1,8 +1,8 @@
 import os
 import click
 import json
-from json import JSONDecoder
-from functools import partial
+import re
+
 from jsonschema import validate
 
 tileset_arg = click.argument("tileset", required=True, type=str)
@@ -14,9 +14,10 @@ def absoluteFilePaths(directory):
             yield os.path.abspath(os.path.join(dirpath, f))
 
 
-# takes a list of files or directories and converts
-# all directories into absolute file paths
 def flatten(files):
+    """takes a list of files or directories and converts
+    all directories into absolute file paths
+    """
     for f in files:
         if os.path.isdir(f):
             for dir_file in absoluteFilePaths(f):
@@ -30,8 +31,27 @@ def print_response(text):
         j = json.loads(text)
         msg = json.dumps(j, indent=2, sort_keys=True)
         click.echo(msg)
-    except:
+    except:  # tofix: bare except
         click.echo("Failure \n" + text)
+
+
+def validate_tileset_id(tileset_id):
+    """Assess if a Mapbox tileset_id is valid
+
+    Parameters
+    ----------
+    tileset_id: str
+        tileset_id of the form {account}.{tileset}
+        - account and tileset should each be under 32 characters
+
+    Returns
+    -------
+    is_valid: bool
+        boolean indicating if the tileset_id is valid
+    """
+    pattern = r"^[a-z0-9-_]{1,32}\.[a-z0-9-_]{1,32}$"
+
+    return re.match(pattern, tileset_id, flags=re.IGNORECASE)
 
 
 def validate_geojson(feature):

@@ -17,5 +17,5 @@ repos:
                   # E501 let black handle all line length decisions
                   # W503 black conflicts with "line break before operator" rule
                   # E203 black conflicts with "whitespace before ':'" rule
-                  # W605 false positive on our regex strings
-                  '--ignore=E501,W503,E203,W605']
+                  # E722 bare excepts need to be addressed
+                  '--ignore=E501,W503,E203,E722']

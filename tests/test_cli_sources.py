@@ -74,7 +74,7 @@ def test_cli_delete_source(mock_request_delete):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.get")
-def test_cli_view_source(mock_request_get):
+def test_cli_view_source_2(mock_request_get):
     mock_request_get.return_value = MockResponse(
         '[{"id":"mapbox://tileset-source/test-user/hello-world"},\
         {"id":"mapbox://tileset-source/test-user/hola-mundo"}]',

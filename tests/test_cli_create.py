@@ -1,5 +1,4 @@
 from unittest import mock
-import json
 
 from click.testing import CliRunner
 import pytest
