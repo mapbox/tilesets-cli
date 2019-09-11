@@ -1,0 +1,21 @@
+repos:
+    -
+        repo: 'https://github.com/ambv/black'
+        # 18.6b1
+        rev: ed50737290662f6ef4016a7ea44da78ee1eff1e2
+        hooks:
+            - id: black
+              args: ['--safe']
+              language_version: python3.6
+    -
+        repo: 'https://github.com/pre-commit/pre-commit-hooks'
+        rev: v2.0.0
+        hooks:
+            - id: flake8
+              language_version: python3.6
+              args: [
+                  # E501 let black handle all line length decisions
+                  # W503 black conflicts with "line break before operator" rule
+                  # E203 black conflicts with "whitespace before ':'" rule
+                  # W605 false positive on our regex strings
+                  '--ignore=E501,W503,E203,W605']
