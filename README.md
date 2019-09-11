@@ -63,6 +63,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * [`status`](#status)
   * [`job`](#job)
   * [`jobs`](#jobs)
+  * [`list`](#list)
 
 ### add-source
 
@@ -227,3 +228,13 @@ tilesets jobs <tileset_id> --stage=processing
 ```
 
 - --stage: Filter by the stage of jobs. (Optional.)
+
+### list
+
+List all tilesets for an account. Just lists tileset IDs by default. Use the `--verbose` option for more information.
+
+```shell
+tilesets list <username>
+```
+
+- --verbose: will list out the entire response object from the API
