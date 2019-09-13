@@ -29,7 +29,7 @@ tilesets --version
 #### Requirements
 
 - Python >= 3.6 (can be installed via virtualenv)
-- [virtualenv](https://virtualenv.pypa.io/) (optional)
+- [virtualenv](https://virtualenv.pypa.io/) / [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) (optional)
 
 #### Mapbox Access Tokens
 
