@@ -36,15 +36,13 @@ def test_cli_add_source(mock_request_post):
         add_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson"]
     )
     assert result.exit_code == 0
-    assert "Validating tests/fixtures/valid.ldgeojson ...\n✔ valid" in result.output
+
     assert (
-        "Adding tests/fixtures/valid.ldgeojson to mapbox://tileset-source/test-user/hello-world"
-        in result.output
+        result.output
+        == """Adding Point feature to mapbox://tileset-source/test-user/hello-world\n{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
-    assert (
-        '{\n  "id": "mapbox://tileset-source/test-user/hello-world"\n}\n'
-        in result.output
-    )
+    # assert result.output == """Adding Point feature to mapbox://tileset-source/test-user/hello-world\n\"{\\"id\\":\\"mapbox://tileset-source/test-user/hello-world\\"}\"\n
+    # """
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -92,4 +90,4 @@ def test_cli_validate_source():
     runner = CliRunner()
     result = runner.invoke(validate_source, ["tests/fixtures/valid.ldgeojson"])
     assert result.exit_code == 0
-    assert result.output == "Validating tests/fixtures/valid.ldgeojson ...\n✔ valid\n"
+    assert result.output == "Validating features\n✔ valid\n"

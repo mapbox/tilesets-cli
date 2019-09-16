@@ -2,15 +2,16 @@
 
 import os
 import json
+import requests
 import sys
 
+from io import BytesIO
+
 import click
+import cligj
+
 import tilesets
-import requests
-from tilesets import utils
-import jsonschema
-from jsonseq.decode import JSONSeqDecoder
-from json.decoder import JSONDecodeError
+from tilesets import utils, errors
 
 
 def _get_token(token=None):
@@ -278,33 +279,15 @@ def update_recipe(tileset, recipe, token=None):
 
 
 @cli.command("validate-source")
-@click.argument("source_path", required=True, type=click.Path(exists=True))
-def validate_source(source_path):
+@cligj.features_in_arg
+def validate_source(features):
     """Validate your source file.
     $ tilesets validate-source <path/to/your/src/file>
     """
-    line_count = 1
-    with open(source_path, "r") as inf:
-        click.echo("Validating {0} ...".format(source_path))
-        feature = None
-        try:
-            for feature in JSONSeqDecoder().decode(inf):
-                utils.validate_geojson(feature)
-                line_count += 1
-        except JSONDecodeError:
-            click.echo(
-                "Error: Invalid JSON on line {} \n Invalid Content: {} \n".format(
-                    line_count, feature
-                )
-            )
-            sys.exit(1)
-        except jsonschema.exceptions.ValidationError:
-            click.echo(
-                "Error: Invalid geojson found on line {} \n Invalid Feature: {} \n Note - Geojson must be line delimited.".format(
-                    line_count, feature
-                )
-            )
-            sys.exit(1)
+    click.echo(f"Validating features", err=True)
+
+    for feature in features:
+        utils.validate_geojson(feature)
 
     click.echo("✔ valid")
 
@@ -312,39 +295,36 @@ def validate_source(source_path):
 @cli.command("add-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
-@click.argument(
-    "files",
-    required=True,
-    type=click.Path(exists=True, file_okay=True, dir_okay=True),
-    nargs=-1,
-)
+@cligj.features_in_arg
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def add_source(ctx, username, id, files, no_validation, token=None):
+def add_source(ctx, username, id, features, no_validation, token=None, indent=None):
     """Create/add a tileset source
 
     tilesets add-source <username> <id> <path/to/source/data>
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
-    for f in utils.flatten(files):
-        url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
-            mapbox_api, username, id, mapbox_token
-        )
+
+    for feature in features:
+        url = f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
         if not no_validation:
-            ctx.invoke(validate_source, source_path=f)
+            utils.validate_geojson(feature)
 
         click.echo(
-            "Adding {0} to mapbox://tileset-source/{1}/{2}".format(f, username, id)
+            f"Adding {feature['geometry']['type']} feature to mapbox://tileset-source/{username}/{id}",
+            err=True,
         )
 
-        r = requests.post(url, files={"file": ("tileset-source", open(f, "rb"))})
+        with BytesIO(json.dumps(feature).encode("utf-8")) as io:
+            r = requests.post(url, files={"file": ("tileset-source", io)})
 
         if r.status_code == 200:
-            utils.print_response(r.text)
+            click.echo(utils.format_response(r.text, indent=indent))
         else:
-            click.echo(r.text)
+            raise errors.TilesetsError(r.text)
 
 
 @cli.command("view-source")

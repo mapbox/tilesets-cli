@@ -4,6 +4,7 @@ import json
 import re
 
 from jsonschema import validate
+from json.decoder import JSONDecodeError
 
 tileset_arg = click.argument("tileset", required=True, type=str)
 
@@ -24,6 +25,29 @@ def flatten(files):
                 yield dir_file
         else:
             yield f
+
+
+def format_response(text, indent=None):
+    """Cleanly parse and serialize
+    different response types
+
+    Parameters
+    ----------
+    text: str
+        text to format
+    indent: int or None
+        Amount to indent formatted json
+        [default=None]
+
+    Returns
+    -------
+    text: str
+        formatted text
+    """
+    try:
+        return json.dumps(json.loads(text), indent=indent, sort_keys=True)
+    except JSONDecodeError:
+        return text
 
 
 def print_response(text):
