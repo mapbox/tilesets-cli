@@ -1,13 +1,6 @@
 ## Welcome
 
-Hi there! Welcome to the tilesets-cli contributing document. Issues, comments, and pull requests are welcome. Please tag @mapsam, @dianeschulze, and @millzpaugh for any questions or reviews.
-
-## Release process
-
-Releases are simply tags on GitHub. Once changes have been merged to master:
-
-1. Update the changelog
-1. Tag on github with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
+Hi there! Welcome to the tilesets-cli contributing document. Issues, comments, and pull requests are welcome. Please tag @mapsam, @dianeschulze, and @dnomadb for any questions or reviews.
 
 ## Installation
 First, clone the repo and `cd` into the folder:
@@ -24,15 +17,15 @@ We use [pre-commit hooks](https://pre-commit.com/) to auto-format and validate c
 ```
 $ pre-commit install
 ```
-within the repo to have the actions specified in `.pre-commit-config.yaml`.
+within the repo to have the actions specified in `.pre-commit-config.yaml` registered.
 
-After this, when commit, you'll see:
+After this, when committing, you'll see:
 ```
 git commit -m 'update version'
 black....................................................................Passed
 Flake8...................................................................Passed
 ```
-If your pre-commit hooks ran successfully. Note that `black` modifies your code, which means that if there is a syntax error you'll first see:
+If your pre-commit hooks ran successfully. Note that `black` modifies your code, which means that if there is a syntax error you'll first see something like:
 ```
 git commit -m '{message}'
 black....................................................................Failed
@@ -47,8 +40,16 @@ All done! ✨ 🍰 ✨
 Flake8...................................................................Failed
 hookid: flake8
 
-this/file/was/reformatted.py:{line}:{character}: {what is incorrect}
+this/file/was/reformatted.py:{line}:{character}: {what was incorrect}
 ```
+After which you can add these changes and commit again. Note that failing pre-commit commands mean that the commit has not taken place: you must commit again!
+
+## Release process
+
+Releases are simply tags on GitHub. Once changes have been merged to master:
+
+1. Update the changelog
+1. Tag on github with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
 
 ## Tests
 
