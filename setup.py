@@ -36,6 +36,6 @@ setup(
     extras_require={"test": ["pytest>=3.6.0", "pytest-cov", "pre-commit"]},
     entry_points="""
       [console_scripts]
-      tilesets=tilesets.cli:cli
+      tilesets=tilesets.scripts.cli:cli
       """,
 )

@@ -2,7 +2,7 @@ from click.testing import CliRunner
 from unittest import mock
 import pytest
 
-from tilesets.cli import update_recipe
+from tilesets.scripts.cli import update_recipe
 
 
 class MockResponse:

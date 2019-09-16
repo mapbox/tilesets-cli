@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from tilesets.cli import status
+from tilesets.scripts.cli import status
 
 
 class MockResponse:

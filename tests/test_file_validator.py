@@ -1,6 +1,6 @@
 from click.testing import CliRunner
 
-from tilesets.cli import cli
+from tilesets.scripts.cli import cli
 import os
 
 filepath = os.path.join(os.path.dirname(__file__))

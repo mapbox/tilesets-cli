@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from tilesets.cli import publish
+from tilesets.scripts.cli import publish
 
 
 class MockResponse:

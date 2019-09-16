@@ -3,7 +3,7 @@ from unittest import mock
 from click.testing import CliRunner
 import pytest
 
-from tilesets.cli import jobs, job
+from tilesets.scripts.cli import jobs, job
 
 
 class MockResponse:

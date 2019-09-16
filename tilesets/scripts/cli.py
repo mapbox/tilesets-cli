@@ -7,7 +7,7 @@ import sys
 import click
 import tilesets
 import requests
-from tilesets.scripts import utils
+from tilesets import utils
 import jsonschema
 from jsonseq.decode import JSONSeqDecoder
 from json.decoder import JSONDecodeError

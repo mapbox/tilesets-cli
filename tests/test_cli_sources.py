@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from tilesets.cli import (
+from tilesets.scripts.cli import (
     add_source,
     view_source,
     delete_source,
