@@ -6,6 +6,7 @@ install:
 script:
   - python --version
   - pytest --version
+  - pre-commit run --all-files
   - pytest --cov --cov-config=.coveragerc
 after_script:
   - echo "uploading to codecov"
