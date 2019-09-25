@@ -81,15 +81,15 @@ def create(tileset, recipe, name=None, description=None, privacy=None, token=Non
         body["private"] = True if privacy == "private" else False
 
     if not utils.validate_tileset_id(tileset):
-        click.echo("Invalid tileset_id, format must match username.tileset")
-        sys.exit()
+        raise errors.TilesetNameError
 
     if recipe:
         with open(recipe) as json_recipe:
             body["recipe"] = json.load(json_recipe)
 
     r = requests.post(url, json=body)
-    utils.print_response(r.text)
+
+    click.echo(json.dumps(r.json()))
 
 
 @cli.command("publish")

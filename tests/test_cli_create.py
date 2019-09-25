@@ -1,3 +1,5 @@
+import json
+
 from unittest import mock
 
 from click.testing import CliRunner
@@ -7,11 +9,15 @@ from tilesets.scripts.cli import create
 
 
 class MockResponse:
-    def __init__(self, mock_text):
-        self.text = mock_text
+    def __init__(self, mock_json):
+        self.text = json.dumps(mock_json)
+        self._json = mock_json
 
     def MockResponse(self):
         return self
+
+    def json(self):
+        return self._json
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -39,7 +45,8 @@ def test_cli_create_missing_name():
 def test_cli_create_success(mock_request_post):
     runner = CliRunner()
     # sends request to proper endpoints
-    mock_request_post.return_value = MockResponse('{"message":"mock message"}')
+    message = {"message": "mock message"}
+    mock_request_post.return_value = MockResponse(message)
     result = runner.invoke(
         create,
         ["test.id", "--recipe", "tests/fixtures/recipe.json", "--name", "test name"],
@@ -53,7 +60,7 @@ def test_cli_create_success(mock_request_post):
             "recipe": {"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
         },
     )
-    assert '{\n  "message": "mock message"\n}\n' in result.output
+    assert json.loads(result.output) == message
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -61,9 +68,9 @@ def test_cli_create_success(mock_request_post):
 def test_cli_create_success_description(mock_request_post):
     runner = CliRunner()
     # sends request with "description" included
-    mock_request_post.return_value = MockResponse(
-        '{"message":"mock message with description"}'
-    )
+
+    message = {"message": "mock message with description"}
+    mock_request_post.return_value = MockResponse(message)
     result = runner.invoke(
         create,
         [
@@ -77,6 +84,7 @@ def test_cli_create_success_description(mock_request_post):
         ],
     )
     assert result.exit_code == 0
+
     mock_request_post.assert_called_with(
         "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token",
         json={
@@ -85,7 +93,7 @@ def test_cli_create_success_description(mock_request_post):
             "recipe": {"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
         },
     )
-    assert '{\n  "message": "mock message with description"\n}\n' in result.output
+    assert json.loads(result.output) == {"message": "mock message with description"}
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -119,7 +127,8 @@ def test_cli_create_private_invalid(mock_request_post):
 @mock.patch("requests.post")
 def test_cli_use_token_flag(mock_request_post):
     runner = CliRunner()
-    mock_request_post.return_value = MockResponse('{"message":"mock message"}')
+    message = {"message": "mock message"}
+    mock_request_post.return_value = MockResponse(message)
     # Provides the flag --token
     result = runner.invoke(
         create,
@@ -142,4 +151,4 @@ def test_cli_use_token_flag(mock_request_post):
             "recipe": {"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
         },
     )
-    assert '{\n  "message": "mock message"\n}\n' in result.output
+    assert json.loads(result.output) == message

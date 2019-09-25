@@ -17,3 +17,8 @@ class TilesetsError(Exception):
             Error description
         """
         self.message = message
+
+
+class TilesetNameError(TilesetsError):
+    """Not a valid tileset id
+    """
