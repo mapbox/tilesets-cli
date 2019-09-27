@@ -13,24 +13,11 @@ from tilesets.scripts.cli import (
 )
 
 
-class MockResponse:
-    def __init__(self, mock_text, status_code):
-        self.text = mock_text
-        self.status_code = status_code
-
-    def MockResponse(self):
-        return self
-
-    def json(self):
-        return json.loads(self.text)
-
-
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.post")
-def test_cli_add_source(mock_request_post):
-    mock_request_post.return_value = MockResponse(
-        '{"id":"mapbox://tileset-source/test-user/hello-world"}', 200
-    )
+def test_cli_add_source(mock_request_post, MockResponse):
+    message = {"id": "mapbox://tileset-source/test-user/hello-world"}
+    mock_request_post.return_value = MockResponse(message, status_code=200)
     runner = CliRunner()
     result = runner.invoke(
         add_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson"]
@@ -41,29 +28,24 @@ def test_cli_add_source(mock_request_post):
         result.output
         == """Adding Point feature to mapbox://tileset-source/test-user/hello-world\n{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
-    # assert result.output == """Adding Point feature to mapbox://tileset-source/test-user/hello-world\n\"{\\"id\\":\\"mapbox://tileset-source/test-user/hello-world\\"}\"\n
-    # """
 
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.get")
-def test_cli_view_source(mock_request_get):
-    mock_request_get.return_value = MockResponse(
-        '{"id":"mapbox://tileset-source/test-user/hello-world"}', 200
-    )
+def test_cli_view_source(mock_request_get, MockResponse):
+    message = {"id": "mapbox://tileset-source/test-user/hello-world"}
+    mock_request_get.return_value = MockResponse(message, status_code=200)
     runner = CliRunner()
     result = runner.invoke(view_source, ["test-user", "hello-world"])
+
     assert result.exit_code == 0
-    assert (
-        result.output
-        == '{\n  "id": "mapbox://tileset-source/test-user/hello-world"\n}\n'
-    )
+    assert json.loads(result.output) == message
 
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.delete")
-def test_cli_delete_source(mock_request_delete):
-    mock_request_delete.return_value = MockResponse("", 201)
+def test_cli_delete_source(mock_request_delete, MockResponse):
+    mock_request_delete.return_value = MockResponse("", status_code=201)
     runner = CliRunner()
     result = runner.invoke(delete_source, ["test-user", "hello-world"])
     assert result.exit_code == 0
@@ -72,17 +54,20 @@ def test_cli_delete_source(mock_request_delete):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.get")
-def test_cli_view_source_2(mock_request_get):
-    mock_request_get.return_value = MockResponse(
-        '[{"id":"mapbox://tileset-source/test-user/hello-world"},\
-        {"id":"mapbox://tileset-source/test-user/hola-mundo"}]',
-        200,
-    )
+def test_cli_view_source_2(mock_request_get, MockResponse):
+    message = [
+        {"id": "mapbox://tileset-source/test-user/hello-world"},
+        {"id": "mapbox://tileset-source/test-user/hola-mundo"},
+    ]
+    mock_request_get.return_value = MockResponse(message, status_code=200)
     runner = CliRunner()
     result = runner.invoke(list_sources, ["test-user"])
+
     assert result.exit_code == 0
-    assert "mapbox://tileset-source/test-user/hello-world" in result.output
-    assert "mapbox://tileset-source/test-user/hola-mundo" in result.output
+    assert (
+        result.output
+        == "mapbox://tileset-source/test-user/hello-world\nmapbox://tileset-source/test-user/hola-mundo\n"
+    )
 
 
 @pytest.mark.usefixtures("token_environ")

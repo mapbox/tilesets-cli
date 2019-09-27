@@ -8,18 +8,6 @@ import pytest
 from tilesets.scripts.cli import create
 
 
-class MockResponse:
-    def __init__(self, mock_json):
-        self.text = json.dumps(mock_json)
-        self._json = mock_json
-
-    def MockResponse(self):
-        return self
-
-    def json(self):
-        return self._json
-
-
 @pytest.mark.usefixtures("token_environ")
 def test_cli_create_missing_recipe():
     runner = CliRunner()
@@ -42,10 +30,11 @@ def test_cli_create_missing_name():
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.post")
-def test_cli_create_success(mock_request_post):
+def test_cli_create_success(mock_request_post, MockResponse):
     runner = CliRunner()
     # sends request to proper endpoints
     message = {"message": "mock message"}
+    # print(helpers(message))
     mock_request_post.return_value = MockResponse(message)
     result = runner.invoke(
         create,
@@ -65,7 +54,7 @@ def test_cli_create_success(mock_request_post):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.post")
-def test_cli_create_success_description(mock_request_post):
+def test_cli_create_success_description(mock_request_post, MockResponse):
     runner = CliRunner()
     # sends request with "description" included
 
@@ -98,7 +87,7 @@ def test_cli_create_success_description(mock_request_post):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.post")
-def test_cli_create_private_invalid(mock_request_post):
+def test_cli_create_private_invalid(mock_request_post, MockResponse):
     runner = CliRunner()
     # sends request with "description" included
     mock_request_post.return_value = MockResponse(
@@ -125,7 +114,7 @@ def test_cli_create_private_invalid(mock_request_post):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.post")
-def test_cli_use_token_flag(mock_request_post):
+def test_cli_use_token_flag(mock_request_post, MockResponse):
     runner = CliRunner()
     message = {"message": "mock message"}
     mock_request_post.return_value = MockResponse(message)

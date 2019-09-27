@@ -1,6 +1,8 @@
+import json
+import pytest
+
 from click.testing import CliRunner
 from unittest import mock
-import pytest
 
 from tilesets.scripts.cli import validate_recipe
 
@@ -24,25 +26,27 @@ def test_cli_validate_recipe_no_recipe():
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.put")
-def test_cli_validate_recipe(mock_request_put):
+def test_cli_validate_recipe(mock_request_put, MockResponse):
     runner = CliRunner()
 
     # sends expected request
-    mock_request_put.return_value = MockResponse('{"message":"mock message"}')
+    message = {"message": "mock message"}
+    mock_request_put.return_value = MockResponse(message)
     result = runner.invoke(validate_recipe, ["tests/fixtures/recipe.json"])
     mock_request_put.assert_called_with(
         "https://api.mapbox.com/tilesets/v1/validateRecipe?access_token=fake-token",
         json={"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
     )
     assert result.exit_code == 0
-    assert '{\n  "message": "mock message"\n}\n' in result.output
+    assert json.loads(result.output) == message
 
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.put")
-def test_cli_validate_recipe_use_token_flag(mock_request_put):
+def test_cli_validate_recipe_use_token_flag(mock_request_put, MockResponse):
     runner = CliRunner()
-    mock_request_put.return_value = MockResponse('{"message":"mock message"}')
+    message = {"message": "mock message"}
+    mock_request_put.return_value = MockResponse(message)
     # Provides the flag --token
     result = runner.invoke(
         validate_recipe, ["tests/fixtures/recipe.json", "--token", "flag-token"]
@@ -52,4 +56,4 @@ def test_cli_validate_recipe_use_token_flag(mock_request_put):
         json={"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
     )
     assert result.exit_code == 0
-    assert '{\n  "message": "mock message"\n}\n' in result.output
+    assert json.loads(result.output) == message
