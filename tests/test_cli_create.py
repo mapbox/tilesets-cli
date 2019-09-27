@@ -34,7 +34,7 @@ def test_cli_create_success(mock_request_post, MockResponse):
     runner = CliRunner()
     # sends request to proper endpoints
     message = {"message": "mock message"}
-    # print(helpers(message))
+
     mock_request_post.return_value = MockResponse(message)
     result = runner.invoke(
         create,

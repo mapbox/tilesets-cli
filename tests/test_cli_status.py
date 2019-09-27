@@ -11,7 +11,7 @@ from tilesets.scripts.cli import status
 @mock.patch("requests.get")
 def test_cli_status(mock_request_get, MockResponse):
     runner = CliRunner()
-    # helpers.help_me()
+
     # sends expected request
     message = {"message": "mock message"}
     mock_request_get.return_value = MockResponse(message)
