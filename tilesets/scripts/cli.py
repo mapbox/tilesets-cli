@@ -316,23 +316,27 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
 
-    for feature in features:
-        url = f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
-        if not no_validation:
-            utils.validate_geojson(feature)
+    with BytesIO() as io:
+        for feature in features:
+            url = f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
+            if not no_validation:
+                utils.validate_geojson(feature)
 
-        click.echo(
-            f"Adding {feature['geometry']['type']} feature to mapbox://tileset-source/{username}/{id}",
-            err=True,
-        )
+            click.echo(
+                f"Adding {feature['geometry']['type']} feature to mapbox://tileset-source/{username}/{id}",
+                err=True,
+            )
 
-        with BytesIO(json.dumps(feature).encode("utf-8")) as io:
-            r = requests.post(url, files={"file": ("tileset-source", io)})
+            io.write((json.dumps(feature) + "\n").encode("utf-8"))
 
-        if r.status_code == 200:
-            click.echo(json.dumps(r.json(), indent=indent))
-        else:
-            raise errors.TilesetsError(r.text)
+        io.seek(0)
+
+        r = requests.post(url, files={"file": ("tileset-source", io)})
+
+    if r.status_code == 200:
+        click.echo(json.dumps(r.json(), indent=indent))
+    else:
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("view-source")
