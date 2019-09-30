@@ -25,8 +25,7 @@ def test_cli_add_source(mock_request_post, MockResponse):
     assert result.exit_code == 0
 
     assert (
-        result.output
-        == """Adding Point feature to mapbox://tileset-source/test-user/hello-world\n{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
+        result.output == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
 
 

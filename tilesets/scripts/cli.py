@@ -322,11 +322,6 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
             if not no_validation:
                 utils.validate_geojson(feature)
 
-            click.echo(
-                f"Adding {feature['geometry']['type']} feature to mapbox://tileset-source/{username}/{id}",
-                err=True,
-            )
-
             io.write((json.dumps(feature) + "\n").encode("utf-8"))
 
         io.seek(0)
