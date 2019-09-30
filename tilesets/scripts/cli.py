@@ -215,7 +215,7 @@ def list(username, verbose, token=None, indent=None):
             for tileset in r.json():
                 click.echo(tileset["id"])
     else:
-        raise errors.TilesetsError(r.txt)
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("validate-recipe")
