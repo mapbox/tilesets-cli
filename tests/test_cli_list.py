@@ -60,4 +60,4 @@ def test_cli_list_bad_token(mock_request_get, MockResponse):
         "https://api.mapbox.com/tilesets/v1/test?access_token=fake-token"
     )
     assert result.exit_code == 1
-    assert json.loads(result.exception) == message
+    assert result.exception
