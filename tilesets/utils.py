@@ -1,38 +1,6 @@
-import os
-import click
-import json
 import re
 
 from jsonschema import validate
-
-tileset_arg = click.argument("tileset", required=True, type=str)
-
-
-def absoluteFilePaths(directory):
-    for dirpath, _, filenames in os.walk(directory):
-        for f in filenames:
-            yield os.path.abspath(os.path.join(dirpath, f))
-
-
-def flatten(files):
-    """takes a list of files or directories and converts
-    all directories into absolute file paths
-    """
-    for f in files:
-        if os.path.isdir(f):
-            for dir_file in absoluteFilePaths(f):
-                yield dir_file
-        else:
-            yield f
-
-
-def print_response(text):
-    try:
-        j = json.loads(text)
-        msg = json.dumps(j, indent=2, sort_keys=True)
-        click.echo(msg)
-    except:  # tofix: bare except
-        click.echo("Failure \n" + text)
 
 
 def validate_tileset_id(tileset_id):

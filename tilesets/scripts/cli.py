@@ -1,16 +1,15 @@
 """Tilesets command line interface"""
-
 import os
 import json
-import sys
+import requests
+
+from io import BytesIO
 
 import click
+import cligj
+
 import tilesets
-import requests
-from tilesets.scripts import utils
-import jsonschema
-from jsonseq.decode import JSONSeqDecoder
-from json.decoder import JSONDecodeError
+from tilesets import utils, errors
 
 
 def _get_token(token=None):
@@ -60,7 +59,10 @@ def cli():
     help="set the tileset privacy options",
 )
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def create(tileset, recipe, name=None, description=None, privacy=None, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def create(
+    tileset, recipe, name=None, description=None, privacy=None, token=None, indent=None
+):
     """Create a new tileset with a recipe.
 
     $ tilesets create <tileset_id>
@@ -80,21 +82,22 @@ def create(tileset, recipe, name=None, description=None, privacy=None, token=Non
         body["private"] = True if privacy == "private" else False
 
     if not utils.validate_tileset_id(tileset):
-        click.echo("Invalid tileset_id, format must match username.tileset")
-        sys.exit()
+        raise errors.TilesetNameError
 
     if recipe:
         with open(recipe) as json_recipe:
             body["recipe"] = json.load(json_recipe)
 
     r = requests.post(url, json=body)
-    utils.print_response(r.text)
+
+    click.echo(json.dumps(r.json(), indent=indent))
 
 
 @cli.command("publish")
 @click.argument("tileset", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def publish(tileset, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def publish(tileset, token=None, indent=None):
     """Publish your tileset.
 
     tilesets publish <tileset_id>
@@ -106,18 +109,20 @@ def publish(tileset, token=None):
     )
     r = requests.post(url)
     if r.status_code == 200:
-        utils.print_response(r.text)
+        click.echo(json.dumps(r.json(), indent=indent))
         click.echo(
-            f"You can view the status of your tileset with the `tilesets status {tileset}` command."
+            f"You can view the status of your tileset with the `tilesets status {tileset}` command.",
+            err=True,
         )
     else:
-        utils.print_response(r.text)
+        raise errors.TilesetsError(f"{r.text}")
 
 
 @cli.command("status")
 @click.argument("tileset", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def status(tileset, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def status(tileset, token=None, indent=None):
     """View the current queue/processing/complete status of your tileset.
 
     tilesets status <tileset_id>
@@ -128,14 +133,16 @@ def status(tileset, token=None):
         mapbox_api, tileset, mapbox_token
     )
     r = requests.get(url)
-    utils.print_response(r.text)
+
+    click.echo(json.dumps(r.json(), indent=indent))
 
 
 @cli.command("jobs")
 @click.argument("tileset", required=True, type=str)
 @click.option("--stage", "-s", required=False, type=str, help="job stage")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def jobs(tileset, stage, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def jobs(tileset, stage, token=None, indent=None):
     """View all jobs for a particular tileset.
 
     tilesets jobs <tileset_id>
@@ -149,15 +156,18 @@ def jobs(tileset, stage, token=None):
         url = "{0}/tilesets/v1/{1}/jobs?stage={2}&access_token={3}".format(
             mapbox_api, tileset, stage, mapbox_token
         )
+
     r = requests.get(url)
-    utils.print_response(r.text)
+
+    click.echo(json.dumps(r.json(), indent=indent))
 
 
 @cli.command("job")
 @click.argument("tileset", required=True, type=str)
 @click.argument("job_id", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def job(tileset, job_id, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def job(tileset, job_id, token=None, indent=None):
     """View a single job for a particular tileset.
 
     tilesets job <tileset_id> <job_id>
@@ -168,7 +178,8 @@ def job(tileset, job_id, token=None):
         mapbox_api, tileset, job_id, mapbox_token
     )
     r = requests.get(url)
-    utils.print_response(r.text)
+
+    click.echo(json.dumps(r.json(), indent=indent))
 
 
 @cli.command("list")
@@ -181,7 +192,8 @@ def job(tileset, job_id, token=None):
     help="Will print all tileset information",
 )
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def list(username, verbose, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def list(username, verbose, token=None, indent=None):
     """List all tilesets for an account.
     By default the response is a simple list of tileset IDs.
     If you would like an array of all tileset's information,
@@ -197,19 +209,20 @@ def list(username, verbose, token=None):
     r = requests.get(url)
     if r.status_code == 200:
         if verbose:
-            utils.print_response(r.text)
+            for tileset in r.json():
+                click.echo(json.dumps(tileset, indent=indent))
         else:
-            j = json.loads(r.text)
-            for tileset in j:
+            for tileset in r.json():
                 click.echo(tileset["id"])
     else:
-        click.echo(r.text)
+        raise errors.TilesetsError(r.txt)
 
 
 @cli.command("validate-recipe")
 @click.argument("recipe", required=True, type=click.Path(exists=True))
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def validate_recipe(recipe, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def validate_recipe(recipe, token=None, indent=None):
     """Validate a Recipe JSON document
 
     tilesets validate-recipe <path_to_recipe>
@@ -220,19 +233,17 @@ def validate_recipe(recipe, token=None):
         mapbox_api, mapbox_token
     )
     with open(recipe) as json_recipe:
-        try:
-            recipe_json = json.load(json_recipe)
-        except:
-            click.echo("Error: recipe is not valid json")
-            sys.exit()
+        recipe_json = json.load(json_recipe)
+
         r = requests.put(url, json=recipe_json)
-        utils.print_response(r.text)
+        click.echo(json.dumps(r.json(), indent=indent))
 
 
 @cli.command("view-recipe")
 @click.argument("tileset", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def view_recipe(tileset, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def view_recipe(tileset, token=None, indent=None):
     """View a tileset's recipe JSON
 
     tilesets view-recipe <tileset_id>
@@ -244,16 +255,17 @@ def view_recipe(tileset, token=None):
     )
     r = requests.get(url)
     if r.status_code == 200:
-        utils.print_response(r.text)
+        click.echo(json.dumps(r.json(), indent=indent))
     else:
-        click.echo(r.text)
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("update-recipe")
 @click.argument("tileset", required=True, type=str)
 @click.argument("recipe", required=True, type=click.Path(exists=True))
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def update_recipe(tileset, recipe, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def update_recipe(tileset, recipe, token=None, indent=None):
     """Update a Recipe JSON document for a particular tileset
 
     tilesets update-recipe <tileset_id> <path_to_recipe>
@@ -264,47 +276,26 @@ def update_recipe(tileset, recipe, token=None):
         mapbox_api, tileset, mapbox_token
     )
     with open(recipe) as json_recipe:
-        try:
-            recipe_json = json.load(json_recipe)
-        except:
-            click.echo("Error: recipe is not valid json")
-            sys.exit()
+        recipe_json = json.load(json_recipe)
 
         r = requests.patch(url, json=recipe_json)
         if r.status_code == 201:
-            click.echo("Updated recipe.")
+            click.echo("Updated recipe.", err=True)
+            click.echo(json.dumps(r.json(), indent=indent))
         else:
-            utils.print_response(r.text)
+            raise errors.TilesetsError(r.text)
 
 
 @cli.command("validate-source")
-@click.argument("source_path", required=True, type=click.Path(exists=True))
-def validate_source(source_path):
+@cligj.features_in_arg
+def validate_source(features):
     """Validate your source file.
     $ tilesets validate-source <path/to/your/src/file>
     """
-    line_count = 1
-    with open(source_path, "r") as inf:
-        click.echo("Validating {0} ...".format(source_path))
-        feature = None
-        try:
-            for feature in JSONSeqDecoder().decode(inf):
-                utils.validate_geojson(feature)
-                line_count += 1
-        except JSONDecodeError:
-            click.echo(
-                "Error: Invalid JSON on line {} \n Invalid Content: {} \n".format(
-                    line_count, feature
-                )
-            )
-            sys.exit(1)
-        except jsonschema.exceptions.ValidationError:
-            click.echo(
-                "Error: Invalid geojson found on line {} \n Invalid Feature: {} \n Note - Geojson must be line delimited.".format(
-                    line_count, feature
-                )
-            )
-            sys.exit(1)
+    click.echo(f"Validating features", err=True)
+
+    for feature in features:
+        utils.validate_geojson(feature)
 
     click.echo("✔ valid")
 
@@ -312,46 +303,43 @@ def validate_source(source_path):
 @cli.command("add-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
-@click.argument(
-    "files",
-    required=True,
-    type=click.Path(exists=True, file_okay=True, dir_okay=True),
-    nargs=-1,
-)
+@cligj.features_in_arg
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def add_source(ctx, username, id, files, no_validation, token=None):
+def add_source(ctx, username, id, features, no_validation, token=None, indent=None):
     """Create/add a tileset source
 
     tilesets add-source <username> <id> <path/to/source/data>
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
-    for f in utils.flatten(files):
-        url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
-            mapbox_api, username, id, mapbox_token
-        )
-        if not no_validation:
-            ctx.invoke(validate_source, source_path=f)
 
-        click.echo(
-            "Adding {0} to mapbox://tileset-source/{1}/{2}".format(f, username, id)
-        )
+    with BytesIO() as io:
+        for feature in features:
+            url = f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
+            if not no_validation:
+                utils.validate_geojson(feature)
 
-        r = requests.post(url, files={"file": ("tileset-source", open(f, "rb"))})
+            io.write((json.dumps(feature) + "\n").encode("utf-8"))
 
-        if r.status_code == 200:
-            utils.print_response(r.text)
-        else:
-            click.echo(r.text)
+        io.seek(0)
+
+        r = requests.post(url, files={"file": ("tileset-source", io)})
+
+    if r.status_code == 200:
+        click.echo(json.dumps(r.json(), indent=indent))
+    else:
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("view-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def view_source(username, id, token=None):
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def view_source(username, id, token=None, indent=None):
     """View a Tileset Source's information
 
     tilesets view-source <username> <id>
@@ -363,9 +351,9 @@ def view_source(username, id, token=None):
     )
     r = requests.get(url)
     if r.status_code == 200:
-        utils.print_response(r.text)
+        click.echo(json.dumps(r.json(), indent=indent))
     else:
-        click.echo(r.text)
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("delete-source")
@@ -386,7 +374,7 @@ def delete_source(username, id, token=None):
     if r.status_code == 201:
         click.echo("Source deleted.")
     else:
-        utils.print_response(r.text)
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("list-sources")
@@ -404,6 +392,7 @@ def list_sources(username, token=None):
     )
     r = requests.get(url)
     if r.status_code == 200:
-        utils.print_response(r.text)
+        for source in r.json():
+            click.echo(source["id"])
     else:
-        click.echo(r.text)
+        raise errors.TilesetsError(r.text)
