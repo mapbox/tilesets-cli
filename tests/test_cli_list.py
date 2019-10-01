@@ -45,3 +45,19 @@ def test_cli_list_verbose(mock_request_get, MockResponse):
     assert result.exit_code == 0
 
     assert [json.loads(l.strip()) for l in result.output.split("\n") if l] == message
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.get")
+def test_cli_list_bad_token(mock_request_get, MockResponse):
+    runner = CliRunner()
+
+    message = {"message": "Not Found"}
+    # sends expected request
+    mock_request_get.return_value = MockResponse(message, status_code=404)
+    result = runner.invoke(list, ["test"])
+    mock_request_get.assert_called_with(
+        "https://api.mapbox.com/tilesets/v1/test?access_token=fake-token"
+    )
+    assert result.exit_code == 1
+    assert result.exception
