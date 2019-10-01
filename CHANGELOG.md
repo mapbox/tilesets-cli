@@ -1,3 +1,6 @@
+# 0.3.1 (2019-10-01)
+- Fixed bug for list tilesets
+
 # 0.3.0 (2019-09-30)
 - Feature input abstraction using `cligj`
 - Logging refactor: default output is no compact JSON
