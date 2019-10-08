@@ -27,6 +27,7 @@ setup(
     install_requires=[
         "boto3",
         "click~=7.0",
+        "cligj",
         "requests",
         "jsonschema~=3.0",
         "jsonseq~=1.0",
