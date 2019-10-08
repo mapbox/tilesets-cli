@@ -18,6 +18,10 @@ class _MockResponse:
         return self
 
     def json(self):
+        # 201 currently do not have a json response
+        if self.status_code == 201:
+            raise
+
         return self._json
 
 

@@ -32,6 +32,7 @@ def test_cli_update_recipe(mock_request_patch, MockResponse):
 @mock.patch("requests.patch")
 def test_cli_update_recipe2(mock_request_patch, MockResponse):
     runner = CliRunner()
+
     mock_request_patch.return_value = MockResponse({}, status_code=201)
     # Provides the flag --token
     result = runner.invoke(
