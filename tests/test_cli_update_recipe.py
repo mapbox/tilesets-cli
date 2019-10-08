@@ -2,6 +2,8 @@ from click.testing import CliRunner
 from unittest import mock
 import pytest
 
+from json.decoder import JSONDecodeError
+
 from tilesets.scripts.cli import update_recipe
 
 
@@ -19,7 +21,7 @@ def test_cli_update_recipe(mock_request_patch, MockResponse):
     runner = CliRunner()
 
     # sends expected request
-    mock_request_patch.return_value = MockResponse("", status_code=201)
+    mock_request_patch.return_value = MockResponse({}, status_code=201)
     result = runner.invoke(update_recipe, ["test.id", "tests/fixtures/recipe.json"])
     mock_request_patch.assert_called_with(
         "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=fake-token",
@@ -32,7 +34,8 @@ def test_cli_update_recipe(mock_request_patch, MockResponse):
 @mock.patch("requests.patch")
 def test_cli_update_recipe2(mock_request_patch, MockResponse):
     runner = CliRunner()
-    mock_request_patch.return_value = MockResponse("", status_code=201)
+
+    mock_request_patch.return_value = MockResponse({}, status_code=201)
     # Provides the flag --token
     result = runner.invoke(
         update_recipe,
@@ -43,3 +46,9 @@ def test_cli_update_recipe2(mock_request_patch, MockResponse):
         json={"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
     )
     assert result.exit_code == 0
+
+
+def test_201_mocking(MockResponse):
+    mocker = MockResponse({}, status_code=201)
+    with pytest.raises(JSONDecodeError):
+        mocker.json()

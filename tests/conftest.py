@@ -1,6 +1,8 @@
 import pytest
 import json
 
+from json.decoder import JSONDecodeError
+
 
 @pytest.fixture(scope="function")
 def token_environ(monkeypatch):
@@ -18,6 +20,10 @@ class _MockResponse:
         return self
 
     def json(self):
+        # 201 currently do not have a json response
+        if self.status_code == 201:
+            raise JSONDecodeError("Expecting value", "", 0)
+
         return self._json
 
 

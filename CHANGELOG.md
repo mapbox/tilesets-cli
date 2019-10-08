@@ -1,3 +1,7 @@
+# 0.3.2 (2019-10-08)
+- Handling for non-json response from recipe validation
+- Adding cligj to setup for install w/o requirements
+
 # 0.3.1 (2019-10-01)
 - Fixed bug for list tilesets
 
