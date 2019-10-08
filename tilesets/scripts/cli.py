@@ -236,7 +236,7 @@ def validate_recipe(recipe, token=None, indent=None):
         recipe_json = json.load(json_recipe)
 
         r = requests.put(url, json=recipe_json)
-        click.echo(json.dumps(r.json()), indent=indent)
+        click.echo(json.dumps(r.json(), indent=indent))
 
 
 @cli.command("view-recipe")
@@ -281,7 +281,7 @@ def update_recipe(tileset, recipe, token=None, indent=None):
         r = requests.patch(url, json=recipe_json)
         if r.status_code == 201:
             click.echo("Updated recipe.", err=True)
-            click.echo(r.text, indent=indent)
+            click.echo(r.text)
         else:
             raise errors.TilesetsError(r.text)
 
