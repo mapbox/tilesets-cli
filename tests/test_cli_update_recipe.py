@@ -2,6 +2,8 @@ from click.testing import CliRunner
 from unittest import mock
 import pytest
 
+from json.decoder import JSONDecodeError
+
 from tilesets.scripts.cli import update_recipe
 
 
@@ -44,3 +46,9 @@ def test_cli_update_recipe2(mock_request_patch, MockResponse):
         json={"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
     )
     assert result.exit_code == 0
+
+
+def test_201_mocking(MockResponse):
+    mocker = MockResponse({}, status_code=201)
+    with pytest.raises(JSONDecodeError):
+        mocker.json()
