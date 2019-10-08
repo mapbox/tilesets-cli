@@ -14,7 +14,7 @@ def read(fname):
 
 setup(
     name="tilesets-cli",
-    version="0.3.1",
+    version="0.3.2",
     description=u"CLI for interacting with and preparing data for the Tilesets API",
     long_description=long_description,
     classifiers=[],
