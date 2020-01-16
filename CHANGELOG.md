@@ -1,3 +1,6 @@
+# 0.3.3 (2020-01-16)
+- Add confirmation prompt to delete-sources
+
 # 0.3.2 (2019-10-08)
 - Handling for non-json response from recipe validation
 - Adding cligj to setup for install w/o requirements

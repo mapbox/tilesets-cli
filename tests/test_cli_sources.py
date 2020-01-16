@@ -46,9 +46,25 @@ def test_cli_view_source(mock_request_get, MockResponse):
 def test_cli_delete_source(mock_request_delete, MockResponse):
     mock_request_delete.return_value = MockResponse("", status_code=201)
     runner = CliRunner()
-    result = runner.invoke(delete_source, ["test-user", "hello-world"])
+    result = runner.invoke(delete_source, ["test-user", "hello-world"], input="y")
     assert result.exit_code == 0
-    assert result.output == "Source deleted.\n"
+    assert (
+        result.output
+        == "Are you sure you want to delete test-user hello-world? [y/N]: y\nSource deleted.\n"
+    )
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.delete")
+def test_cli_delete_source_aborted(mock_request_delete, MockResponse):
+    mock_request_delete.return_value = MockResponse("", status_code=201)
+    runner = CliRunner()
+    result = runner.invoke(delete_source, ["test-user", "hello-world"], input="n")
+    assert result.exit_code == 1
+    assert (
+        result.output
+        == "Are you sure you want to delete test-user hello-world? [y/N]: n\nAborted!\n"
+    )
 
 
 @pytest.mark.usefixtures("token_environ")
