@@ -365,6 +365,9 @@ def delete_source(username, id, token=None):
 
     tilesets delete-source <username> <id>
     """
+    click.confirm(
+        "Are you sure you want to delete {0} {1}?".format(username, id), abort=True
+    )
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
