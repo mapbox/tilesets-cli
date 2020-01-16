@@ -30,6 +30,26 @@ def test_cli_add_source(mock_request_post, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.post")
+def test_cli_add_source_dryrun(mock_request_post, MockResponse):
+    message = {"id": "mapbox://tileset-source/test-user/hello-world"}
+    mock_request_post.return_value = MockResponse(message, status_code=200)
+    runner = CliRunner()
+    result = runner.invoke(
+        add_source,
+        ["--dryrun", "test-user", "hello-world", "tests/fixtures/valid.ldgeojson"],
+    )
+    assert not mock_request_post.called
+
+    assert result.exit_code == 0
+
+    assert (
+        result.output
+        == """[DRYRUN] Adding 1 features to https://api.mapbox.com/tilesets/v1/sources/test-user/hello-world\n"""
+    )
+
+
+@pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.get")
 def test_cli_view_source(mock_request_get, MockResponse):
     message = {"id": "mapbox://tileset-source/test-user/hello-world"}
