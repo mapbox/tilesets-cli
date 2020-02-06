@@ -2,6 +2,7 @@
 import os
 import json
 import requests
+import tempfile
 
 import click
 import cligj
@@ -302,12 +303,12 @@ def validate_source(features):
 @cli.command("add-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
-@click.argument("filename", required=True, type=str)
+@cligj.features_in_arg
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def add_source(ctx, username, id, filename, no_validation, token=None, indent=None):
+def add_source(ctx, username, id, features, no_validation, token=None, indent=None):
     """Create/add a tileset source
 
     tilesets add-source <username> <id> <path/to/source/data>
@@ -318,20 +319,22 @@ def add_source(ctx, username, id, filename, no_validation, token=None, indent=No
         f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
     )
 
-    if not no_validation:
-        with open(filename) as ld_geojson_file:
-            for line in ld_geojson_file:
-                utils.validate_geojson(json.loads(line))
+    with tempfile.TemporaryFile() as file:
+        for feature in features:
+            if not no_validation:
+                utils.validate_geojson(feature)
+            file.write((json.dumps(feature) + "\n").encode("utf-8"))
 
-    m = MultipartEncoder(fields={"file": ("file", open(filename, "rb"))})
-    resp = requests.post(
-        url,
-        data=m,
-        headers={
-            "Content-Disposition": "multipart/form-data",
-            "Content-type": m.content_type,
-        },
-    )
+        file.seek(0)
+        m = MultipartEncoder(fields={"file": ("file", file)})
+        resp = requests.post(
+            url,
+            data=m,
+            headers={
+                "Content-Disposition": "multipart/form-data",
+                "Content-type": m.content_type,
+            },
+        )
 
     if resp.status_code == 200:
         click.echo(json.dumps(resp.json(), indent=indent))

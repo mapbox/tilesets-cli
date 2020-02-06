@@ -30,6 +30,7 @@ setup(
         "click~=7.0",
         "cligj",
         "requests",
+        "requests-toolbelt",
         "jsonschema~=3.0",
         "jsonseq~=1.0",
     ],
