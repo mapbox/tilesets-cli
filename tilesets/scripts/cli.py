@@ -3,10 +3,9 @@ import os
 import json
 import requests
 
-from io import BytesIO
-
 import click
 import cligj
+from requests_toolbelt import MultipartEncoder
 
 import tilesets
 from tilesets import utils, errors
@@ -303,35 +302,41 @@ def validate_source(features):
 @cli.command("add-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
-@cligj.features_in_arg
+@click.argument("filename", required=True, type=str)
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def add_source(ctx, username, id, features, no_validation, token=None, indent=None):
+def add_source(ctx, username, id, filename, no_validation, token=None, indent=None):
     """Create/add a tileset source
 
     tilesets add-source <username> <id> <path/to/source/data>
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    url = (
+        f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
+    )
 
-    with BytesIO() as io:
-        for feature in features:
-            url = f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
-            if not no_validation:
-                utils.validate_geojson(feature)
+    if not no_validation:
+        with open(filename) as ld_geojson_file:
+            for line in ld_geojson_file:
+                utils.validate_geojson(json.loads(line))
 
-            io.write((json.dumps(feature) + "\n").encode("utf-8"))
+    m = MultipartEncoder(fields={"file": ("file", open(filename, "rb"))})
+    resp = requests.post(
+        url,
+        data=m,
+        headers={
+            "Content-Disposition": "multipart/form-data",
+            "Content-type": m.content_type,
+        },
+    )
 
-        io.seek(0)
-
-        r = requests.post(url, files={"file": ("tileset-source", io)})
-
-    if r.status_code == 200:
-        click.echo(json.dumps(r.json(), indent=indent))
+    if resp.status_code == 200:
+        click.echo(json.dumps(resp.json(), indent=indent))
     else:
-        raise errors.TilesetsError(r.text)
+        raise errors.TilesetsError(resp.text)
 
 
 @cli.command("view-source")

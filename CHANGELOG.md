@@ -1,3 +1,6 @@
+# 0.3.4 (2020-02-06)
+- Stream add-source file upload with requests-toolbelt
+
 # 0.3.3 (2020-01-16)
 - Add confirmation prompt to delete-sources
 
