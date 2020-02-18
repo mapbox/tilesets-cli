@@ -1,3 +1,6 @@
+# 0.3.5 (2020-02-26)
+- Add --force option to delete-sources
+
 # 0.3.4 (2020-02-06)
 - Stream add-source file upload with requests-toolbelt
 
