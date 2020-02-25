@@ -2,11 +2,11 @@
 import os
 import json
 import requests
-
-from io import BytesIO
+import tempfile
 
 import click
 import cligj
+from requests_toolbelt import MultipartEncoder
 
 import tilesets
 from tilesets import utils, errors
@@ -315,23 +315,31 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    url = (
+        f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
+    )
 
-    with BytesIO() as io:
+    with tempfile.TemporaryFile() as file:
         for feature in features:
-            url = f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
             if not no_validation:
                 utils.validate_geojson(feature)
+            file.write((json.dumps(feature) + "\n").encode("utf-8"))
 
-            io.write((json.dumps(feature) + "\n").encode("utf-8"))
+        file.seek(0)
+        m = MultipartEncoder(fields={"file": ("file", file)})
+        resp = requests.post(
+            url,
+            data=m,
+            headers={
+                "Content-Disposition": "multipart/form-data",
+                "Content-type": m.content_type,
+            },
+        )
 
-        io.seek(0)
-
-        r = requests.post(url, files={"file": ("tileset-source", io)})
-
-    if r.status_code == 200:
-        click.echo(json.dumps(r.json(), indent=indent))
+    if resp.status_code == 200:
+        click.echo(json.dumps(resp.json(), indent=indent))
     else:
-        raise errors.TilesetsError(r.text)
+        raise errors.TilesetsError(resp.text)
 
 
 @cli.command("view-source")
