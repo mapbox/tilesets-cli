@@ -367,15 +367,17 @@ def view_source(username, id, token=None, indent=None):
 @cli.command("delete-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
+@click.option("--force", "-f", is_flag=True, help="Circumvents confirmation prompt")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def delete_source(username, id, token=None):
+def delete_source(username, id, force, token=None):
     """Delete a Tileset Source + all of its files.
 
     tilesets delete-source <username> <id>
     """
-    click.confirm(
-        "Are you sure you want to delete {0} {1}?".format(username, id), abort=True
-    )
+    if not force:
+        click.confirm(
+            "Are you sure you want to delete {0} {1}?".format(username, id), abort=True
+        )
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(

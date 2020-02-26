@@ -78,6 +78,9 @@ def test_cli_delete_source(mock_request_delete, MockResponse):
         result.output
         == "Are you sure you want to delete test-user hello-world? [y/N]: y\nSource deleted.\n"
     )
+    force_result = runner.invoke(delete_source, ["test-user", "hello-world", "--force"])
+    assert force_result.exit_code == 0
+    assert force_result.output == "Source deleted.\n"
 
 
 @pytest.mark.usefixtures("token_environ")

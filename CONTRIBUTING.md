@@ -48,8 +48,9 @@ After which you can add these changes and commit again. Note that failing pre-co
 
 Releases are simply tags on GitHub. Once changes have been merged to master:
 
-1. Update the changelog
-1. Tag on github with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
+1. Update the version in tilesets/__init__.py
+2. Update the changelog
+3. Tag on github with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
 
 ## Tests
 
