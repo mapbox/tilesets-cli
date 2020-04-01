@@ -4,7 +4,7 @@ import pytest
 
 from json.decoder import JSONDecodeError
 
-from tilesets.scripts.cli import update_recipe
+from mapbox_tilesets.scripts.cli import update_recipe
 
 
 @pytest.mark.usefixtures("token_environ")

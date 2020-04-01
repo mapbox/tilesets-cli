@@ -1,4 +1,4 @@
-from tilesets import __version__
+from mapbox_tilesets import __version__
 
 
 def test_versions():

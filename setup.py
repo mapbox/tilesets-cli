@@ -2,7 +2,7 @@ import os
 from codecs import open as codecs_open
 from setuptools import setup, find_packages
 
-from tilesets import __version__
+from mapbox_tilesets import __version__
 
 # Get the long description from the relevant file
 with codecs_open("README.md", encoding="utf-8") as f:
@@ -14,7 +14,7 @@ def read(fname):
 
 
 setup(
-    name="tilesets-cli",
+    name="mapbox-tilesets",
     version=__version__,
     description=u"CLI for interacting with and preparing data for the Tilesets API",
     long_description=long_description,
@@ -41,6 +41,6 @@ setup(
     },
     entry_points="""
       [console_scripts]
-      tilesets=tilesets.scripts.cli:cli
+      tilesets=mapbox_tilesets.scripts.cli:cli
       """,
 )

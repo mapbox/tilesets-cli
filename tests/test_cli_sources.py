@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from tilesets.scripts.cli import (
+from mapbox_tilesets.scripts.cli import (
     add_source,
     view_source,
     delete_source,

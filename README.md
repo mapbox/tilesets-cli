@@ -9,27 +9,12 @@ CLI for interacting with and preparing data for [Mapbox Tilesets API](https://do
 [CONTRIBUTING.md](/CONTRIBUTING.md) includes information about release processes & running tests. :raised_hands:
 
 # Installation
-
-```shell
-# clone
-git clone git@github.com:mapbox/tilesets-cli.git
-cd tilesets-cli
-
-# virtual env (optional)
-mkvirtualenv tilesets-cli
-
-# install deps
-pip install .
-
-# confirm installation was successful
-tilesets --help
-tilesets --version
-```
+`pip install mapbox-tilesets`
 
 #### Requirements
 
 - Python >= 3.6 (can be installed via virtualenv)
-- [virtualenv](https://virtualenv.pypa.io/) / [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) (optional)
+- Recommended: [virtualenv](https://virtualenv.pypa.io/) / [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/)
 
 #### Mapbox Access Tokens
 
