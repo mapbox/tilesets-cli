@@ -8,8 +8,8 @@ import click
 import cligj
 from requests_toolbelt import MultipartEncoder
 
-import tilesets
-from tilesets import utils, errors
+import mapbox_tilesets
+from mapbox_tilesets import utils, errors
 
 
 def _get_token(token=None):
@@ -27,7 +27,7 @@ def _get_api():
     return os.environ.get("MAPBOX_API", "https://api.mapbox.com")
 
 
-@click.version_option(version=tilesets.__version__, message="%(version)s")
+@click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
 @click.group()
 def cli():
     """This is the command line interface for the Mapbox Tilesets API.

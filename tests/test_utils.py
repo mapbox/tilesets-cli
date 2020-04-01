@@ -1,4 +1,4 @@
-from tilesets.utils import validate_tileset_id
+from mapbox_tilesets.utils import validate_tileset_id
 
 
 def test_validate_tileset_id():

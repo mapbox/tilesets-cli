@@ -4,7 +4,7 @@ import pytest
 from click.testing import CliRunner
 from unittest import mock
 
-from tilesets.scripts.cli import publish
+from mapbox_tilesets.scripts.cli import publish
 
 
 class MockResponse:

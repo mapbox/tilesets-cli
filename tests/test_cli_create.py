@@ -5,7 +5,7 @@ from unittest import mock
 from click.testing import CliRunner
 import pytest
 
-from tilesets.scripts.cli import create
+from mapbox_tilesets.scripts.cli import create
 
 
 @pytest.mark.usefixtures("token_environ")

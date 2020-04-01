@@ -3,7 +3,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from tilesets.scripts.cli import cli
+from mapbox_tilesets.scripts.cli import cli
 
 filepath = os.path.join(os.path.dirname(__file__))
 
