@@ -18,6 +18,7 @@ setup(
     version=__version__,
     description=u"CLI for interacting with and preparing data for the Tilesets API",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     classifiers=[],
     keywords="",
     author=u"Mapbox",
