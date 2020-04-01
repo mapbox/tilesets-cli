@@ -1,3 +1,6 @@
+# 1.0.0.dev0 (2020-04-01)
+- Rename package to mapbox-tilesets for pypi release
+
 # 0.3.5 (2020-02-26)
 - Add --force option to delete-sources
 

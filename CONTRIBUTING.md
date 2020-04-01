@@ -4,14 +4,22 @@ Hi there! Welcome to the tilesets-cli contributing document. Issues, comments, a
 
 ## Installation
 First, clone the repo and `cd` into the folder:
-```
-$ git clone git@github.com:mapbox/tilesets-cli.git
-$ cd tilesets-cli
-```
-Then, in a virtual environment, install the module with `[test]` extras:
-```
+```shell
+# clone
+git clone git@github.com:mapbox/tilesets-cli.git
+cd tilesets-cli
+
+# virtual env (optional)
+mkvirtualenv tilesets-cli
+
+# install deps
 pip install -e '.[test]'
+
+# confirm installation was successful
+tilesets --help
+tilesets --version
 ```
+
 ## Pre-commit hooks
 We use [pre-commit hooks](https://pre-commit.com/) to auto-format and validate code before committing. `pre-commit` is included with the `[test]` extras, but you must run:
 ```
@@ -51,6 +59,7 @@ Releases are simply tags on GitHub. Once changes have been merged to master:
 1. Update the version in tilesets/__init__.py
 2. Update the changelog
 3. Tag on github with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
+4. [Push new release to pypi](https://packaging.python.org/tutorials/packaging-projects/#generating-distribution-archives)
 
 ## Tests
 
