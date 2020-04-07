@@ -70,7 +70,7 @@ def test_cli_view_source(mock_request_get, MockResponse):
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.delete")
 def test_cli_delete_source(mock_request_delete, MockResponse):
-    mock_request_delete.return_value = MockResponse("", status_code=201)
+    mock_request_delete.return_value = MockResponse("", status_code=204)
     runner = CliRunner()
     result = runner.invoke(delete_source, ["test-user", "hello-world"], input="y")
     assert result.exit_code == 0
