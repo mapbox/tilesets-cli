@@ -384,7 +384,7 @@ def delete_source(username, id, force, token=None):
         mapbox_api, username, id, mapbox_token
     )
     r = requests.delete(url)
-    if r.status_code == 201:
+    if r.status_code == 204:
         click.echo("Source deleted.")
     else:
         raise errors.TilesetsError(r.text)
