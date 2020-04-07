@@ -1,4 +1,4 @@
-# 1.0.1
+# 1.0.1.dev0 (2020-04-07)
 - Fixed http status code for tilesets sources delete so it will no longer error
 
 # 1.0.0.dev0 (2020-04-01)
