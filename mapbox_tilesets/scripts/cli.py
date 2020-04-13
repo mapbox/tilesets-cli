@@ -199,7 +199,7 @@ def list(username, verbose, token=None, indent=None):
     If you would like an array of all tileset's information,
     use the --versbose flag.
 
-    tilests list <username>
+    tilesets list <username>
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
