@@ -56,6 +56,8 @@ export MAPBOX_ACCESS_TOKEN=my.token
 tilesets add-source <username> <id> <file>
 ```
 
+Adds geojson files to a source for tiling. Accepts standard or line-delimited GeoJSON. Data will be converted to line-delimited GeoJSON prior to adding. 
+
 Flags:
 
 * `--no-validation` [optional]: do not validate source data locally before uploading
@@ -70,10 +72,9 @@ tilesets add-source <username> <id> ./file.geojson
 tilesets add-source <username> <id> file-1.geojson file-4.geojson
 
 # directory of files
+# Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
 tilesets add-source <username> <id> ./path/to/multiple/files/
 ```
-
-Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
 
 ### validate-source
 
