@@ -56,7 +56,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 tilesets add-source <username> <id> <file>
 ```
 
-Adds geojson files to a source for tiling. Accepts standard or line-delimited GeoJSON. Data will be converted to line-delimited GeoJSON prior to adding. 
+Adds GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading. 
 
 Flags:
 
