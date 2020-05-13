@@ -159,8 +159,8 @@ def update(
 
     tilesets update <tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
     s = utils._get_session()
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
@@ -196,8 +196,8 @@ def delete(tileset, token=None, indent=None, force=None):
     tilesets delete <tileset_id>
     """
 
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
     s = utils._get_session()
 
     if not force:
@@ -253,8 +253,8 @@ def tilejson(tileset, token=None, indent=None, secure=False):
 
     tilesets tilejson <tileset_id>,<tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
     s = utils._get_session()
 
     # validate tilesets by splitting comma-delimted string

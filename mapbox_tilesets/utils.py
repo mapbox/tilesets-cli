@@ -9,12 +9,18 @@ import mapbox_tilesets
 
 def _get_token(token=None):
     """Get Mapbox access token from arg or environment"""
-    token = token or os.environ.get("MAPBOX_ACCESS_TOKEN") or os.environ.get("MapboxAccessToken")
+    token = (
+        token
+        or os.environ.get("MAPBOX_ACCESS_TOKEN")
+        or os.environ.get("MapboxAccessToken")
+    )
 
     if token is not None:
         return token
 
-    raise Exception('No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag.')
+    raise Exception(
+        "No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag."
+    )
 
 
 def _get_api():

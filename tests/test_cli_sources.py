@@ -30,6 +30,19 @@ def test_cli_add_source(mock_request_post, MockResponse):
     )
 
 
+def test_cli_add_source_no_token():
+    runner = CliRunner()
+    unauthenticated_result = runner.invoke(
+        add_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson"]
+    )
+    assert unauthenticated_result.exit_code == 1
+
+    assert (
+        str(unauthenticated_result.exception)
+        == """No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag."""
+    )
+
+
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.Session.post")
 def test_cli_add_source_no_validation(mock_request_post, MockResponse):

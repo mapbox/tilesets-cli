@@ -9,13 +9,13 @@ def test_get_session():
 
 
 def test_get_token_parameter():
-    token = 'token-parameter'
+    token = "token-parameter"
     assert token == _get_token(token)
 
 
 def test_get_token_environment_variables():
-    token1 = 'token-environ1'
-    token2 = 'token-environ2'
+    token1 = "token-environ1"
+    token2 = "token-environ2"
     os.environ["MAPBOX_ACCESS_TOKEN"] = token1
     assert token1 == _get_token(None)
     del os.environ["MAPBOX_ACCESS_TOKEN"]
@@ -26,10 +26,13 @@ def test_get_token_environment_variables():
 
 def test_get_token_errors_without_token():
     try:
-        _get_token(None)
+        _get_token()
         assert False
     except Exception as e:
-        assert str(e) == 'No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag.'
+        assert (
+            str(e)
+            == "No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag."
+        )
 
 
 def test_validate_tileset_id():
