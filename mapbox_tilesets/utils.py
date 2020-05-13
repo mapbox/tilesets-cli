@@ -1,6 +1,34 @@
+import os
 import re
 
 from jsonschema import validate
+from requests import Session
+
+import mapbox_tilesets
+
+
+def _get_token(token=None):
+    """Get Mapbox access token from arg or environment"""
+    token = token or os.environ.get("MAPBOX_ACCESS_TOKEN") or os.environ.get("MapboxAccessToken")
+
+    if token is not None:
+        return token
+
+    raise Exception('No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag.')
+
+
+def _get_api():
+    """Get Mapbox tileset API base URL from environment"""
+    return os.environ.get("MAPBOX_API", "https://api.mapbox.com")
+
+
+def _get_session(
+    application=mapbox_tilesets.__name__, version=mapbox_tilesets.__version__
+):
+    """Get a configured session"""
+    s = Session()
+    s.headers.update({"user-agent": "{}/{}".format(application, version)})
+    return s
 
 
 def validate_tileset_id(tileset_id):
