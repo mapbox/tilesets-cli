@@ -1,3 +1,6 @@
+# Unreleased
+- `update-recipe` command handles 204 status code in addition to 201 and no longer prints response text
+
 # 1.0.1.dev0 (2020-04-07)
 - Fixed http status code for tilesets sources delete so it will no longer error
 

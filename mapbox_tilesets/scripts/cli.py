@@ -279,9 +279,8 @@ def update_recipe(tileset, recipe, token=None, indent=None):
         recipe_json = json.load(json_recipe)
 
         r = requests.patch(url, json=recipe_json)
-        if r.status_code == 201:
+        if r.status_code == 201 or r.status_code == 204:
             click.echo("Updated recipe.", err=True)
-            click.echo(r.text)
         else:
             raise errors.TilesetsError(r.text)
 
@@ -292,7 +291,7 @@ def validate_source(features):
     """Validate your source file.
     $ tilesets validate-source <path/to/your/src/file>
     """
-    click.echo(f"Validating features", err=True)
+    click.echo("Validating features", err=True)
 
     for feature in features:
         utils.validate_geojson(feature)
