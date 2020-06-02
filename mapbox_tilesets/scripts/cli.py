@@ -292,7 +292,7 @@ def validate_source(features):
     """Validate your source file.
     $ tilesets validate-source <path/to/your/src/file>
     """
-    click.echo(f"Validating features", err=True)
+    click.echo("Validating features", err=True)
 
     for feature in features:
         utils.validate_geojson(feature)
