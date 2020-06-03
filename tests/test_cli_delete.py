@@ -23,7 +23,7 @@ def test_cli_delete(mock_request_delete):
     runner = CliRunner()
 
     # sends expected request
-    mock_request_delete.return_value = MockResponse("", status_code=204)
+    mock_request_delete.return_value = MockResponse("", status_code=200)
     result = runner.invoke(delete, ["test.id"], input="y")
     mock_request_delete.assert_called_with(
         "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token"

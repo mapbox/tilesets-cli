@@ -220,7 +220,7 @@ def delete(tileset, token=None, indent=None, force=None):
         mapbox_api, tileset, mapbox_token
     )
     r = requests.delete(url)
-    if r.status_code != 204:
+    if r.status_code != 200 and r.status_code != 204:
         raise errors.TilesetsError(r.text)
 
 
