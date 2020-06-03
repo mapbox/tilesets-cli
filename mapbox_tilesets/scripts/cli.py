@@ -142,7 +142,6 @@ def delete(tileset, token=None, indent=None, force=None):
     )
     r = requests.delete(url)
     if r.status_code != 204:
-        print("hello about to raise")
         raise errors.TilesetsError(r.text)
 
 
