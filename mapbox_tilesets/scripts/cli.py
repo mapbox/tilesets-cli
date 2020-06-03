@@ -58,10 +58,23 @@ def cli():
     type=click.Choice(["public", "private"]),
     help="set the tileset privacy options",
 )
+@click.option(
+    "--attribution",
+    required=False,
+    type=str,
+    help="attribution for the tileset in the form of a JSON string - Array<Object<text,link>>",
+)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 def create(
-    tileset, recipe, name=None, description=None, privacy=None, token=None, indent=None
+    tileset,
+    recipe,
+    name=None,
+    description=None,
+    privacy=None,
+    attribution=None,
+    token=None,
+    indent=None,
 ):
     """Create a new tileset with a recipe.
 
@@ -87,6 +100,13 @@ def create(
     if recipe:
         with open(recipe) as json_recipe:
             body["recipe"] = json.load(json_recipe)
+
+    if attribution:
+        try:
+            body["attribution"] = json.loads(attribution)
+        except:
+            click.echo("Unable to parse attribution JSON")
+            click.exit(1)
 
     r = requests.post(url, json=body)
 
