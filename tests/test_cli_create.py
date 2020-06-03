@@ -38,7 +38,15 @@ def test_cli_create_success(mock_request_post, MockResponse):
     mock_request_post.return_value = MockResponse(message)
     result = runner.invoke(
         create,
-        ["test.id", "--recipe", "tests/fixtures/recipe.json", "--name", "test name"],
+        [
+            "test.id",
+            "--recipe",
+            "tests/fixtures/recipe.json",
+            "--name",
+            "test name",
+            '--attribution=[{"text":"natural earth data","link":"https://naturalearthdata.com"}]',
+            "--privacy=private",
+        ],
     )
     assert result.exit_code == 0
     mock_request_post.assert_called_with(
@@ -47,9 +55,34 @@ def test_cli_create_success(mock_request_post, MockResponse):
             "name": "test name",
             "description": "",
             "recipe": {"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
+            "attribution": [
+                {"text": "natural earth data", "link": "https://naturalearthdata.com"}
+            ],
+            "private": True,
         },
     )
     assert json.loads(result.output) == message
+
+
+@pytest.mark.usefixtures("token_environ")
+def test_cli_create_attribution_json_parse_error():
+    runner = CliRunner()
+    # sends request to proper endpoints
+    result = runner.invoke(
+        create,
+        [
+            "test.id",
+            "--recipe",
+            "tests/fixtures/recipe.json",
+            "--name",
+            "test name",
+            "--attribution",
+            "not valid json",
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "Unable to parse attribution JSON" in result.output
 
 
 @pytest.mark.usefixtures("token_environ")

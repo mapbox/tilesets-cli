@@ -45,6 +45,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 * Tilesets
   * [`create`](#create)
   * [`publish`](#publish)
+  * [`update`](#update)
   * [`status`](#status)
   * [`job`](#job)
   * [`jobs`](#jobs)
@@ -56,7 +57,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 tilesets add-source <username> <id> <file>
 ```
 
-Adds GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading. 
+Adds GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading.
 
 Flags:
 
@@ -177,6 +178,7 @@ Flags:
 * `--name` or `-n` [required]: human-readable name of your tileset. (If your tileset_id is user.my_amazing_tileset, you might want your `name` field to be "My Amazing Tileset".)
 * `--description` or `-d`: description of your tileset
 * `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. If not provided, will default to your plan level on Mapbox.com. Pay-As-You-Go plans only support public maps.
+* `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
 
 ### publish
 
@@ -185,6 +187,25 @@ Queues a tiling _job_ using the recipe provided. Use to publish a new tileset or
 ```
 tilesets publish <tileset_id>
 ```
+
+### update
+
+Update a tileset's information.
+
+```
+tilesets update <tileset_id>
+  --name "Hello World"
+  --description "Say hi to the world"
+  --privacy=private
+  --attribution='[{"text":"© Hola Mundo","link":"http://example.com"}]'
+```
+
+Flags:
+
+* `--name` or `-n` [optional]: update tileset name
+* `--description` or `-d` [optional]: update tileset description
+* `--privacy` or `-p` [optional]: set your tileset to `public` or `private`
+* `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
 
 ### status
 
