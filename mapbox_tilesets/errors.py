@@ -22,3 +22,6 @@ class TilesetsError(Exception):
 class TilesetNameError(TilesetsError):
     """Not a valid tileset id
     """
+
+    def __init__(self, tileset_id):
+        self.message = f"{tileset_id} is not a valid Tileset ID"

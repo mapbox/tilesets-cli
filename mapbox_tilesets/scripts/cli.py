@@ -95,7 +95,7 @@ def create(
         body["private"] = True if privacy == "private" else False
 
     if not utils.validate_tileset_id(tileset):
-        raise errors.TilesetNameError
+        raise errors.TilesetNameError(tileset)
 
     if recipe:
         with open(recipe) as json_recipe:
@@ -214,6 +214,38 @@ def status(tileset, token=None, indent=None):
     r = requests.get(url)
 
     click.echo(json.dumps(r.json(), indent=indent))
+
+
+@cli.command("tilejson")
+@click.argument("tileset", required=True, type=str)
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def tilejson(tileset, token=None, indent=None):
+    """View the TileJSON of a particular tileset.
+    Can take a comma-separated list of tilesets for a composited TileJSON.
+
+    tilesets publish <tileset_id>,<tileset_id>
+    """
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+
+    # validate tilesets by splitting comma-delimted string
+    # and rejoining it
+    print(tileset)
+    tilesets = []
+    for t in tileset.split(","):
+        if not utils.validate_tileset_id(t):
+            raise errors.TilesetNameError(t)
+        tilesets.append(t)
+
+    url = "{0}/v4/{1}.json?access_token={2}".format(
+        mapbox_api, ",".join(tilesets), mapbox_token
+    )
+    r = requests.get(url)
+    if r.status_code == 200:
+        click.echo(json.dumps(r.json(), indent=indent))
+    else:
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("jobs")
