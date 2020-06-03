@@ -1,5 +1,7 @@
 # Unreleased
 - `update-recipe` command handles 204 status code in addition to 201 and no longer prints response text
+- Add `update` command for updating `--name`, `--description`, `--privacy`, and `--attribution` of a tileset
+- Add `--attribution` option to the `create` command
 
 # 1.0.1.dev0 (2020-04-07)
 - Fixed http status code for tilesets sources delete so it will no longer error
