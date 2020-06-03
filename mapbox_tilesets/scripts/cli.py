@@ -118,6 +118,34 @@ def publish(tileset, token=None, indent=None):
         raise errors.TilesetsError(f"{r.text}")
 
 
+@cli.command("delete")
+@click.argument("tileset", required=True, type=str)
+@click.option("--force", "-f", is_flag=True, help="Circumvents confirmation prompt")
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def delete(tileset, token=None, indent=None, force=None):
+    """Delete your tileset.
+
+    tilesets delete <tileset_id>
+    """
+
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+
+    if not force:
+        click.confirm(
+            "Are you sure you want to delete {0}?".format(tileset), abort=True
+        )
+
+    url = "{0}/tilesets/v1/{1}?access_token={2}".format(
+        mapbox_api, tileset, mapbox_token
+    )
+    r = requests.delete(url)
+    if r.status_code != 204:
+        print("hello about to raise")
+        raise errors.TilesetsError(r.text)
+
+
 @cli.command("status")
 @click.argument("tileset", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
