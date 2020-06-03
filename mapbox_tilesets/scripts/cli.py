@@ -118,6 +118,65 @@ def publish(tileset, token=None, indent=None):
         raise errors.TilesetsError(f"{r.text}")
 
 
+@cli.command("update")
+@click.argument("tileset", required=True, type=str)
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+@click.option("--name", "-n", required=False, type=str, help="name of the tileset")
+@click.option(
+    "--description", "-d", required=False, type=str, help="description of the tileset"
+)
+@click.option(
+    "--privacy",
+    "-p",
+    required=False,
+    type=click.Choice(["public", "private"]),
+    help="set the tileset privacy options",
+)
+@click.option(
+    "--attribution",
+    required=False,
+    type=str,
+    help="attribution for the tileset in the form of a JSON string - Array<Object<text,link>>",
+)
+def update(
+    tileset,
+    token=None,
+    indent=None,
+    name=None,
+    description=None,
+    privacy=None,
+    attribution=None,
+):
+    """Update a tileset's information.
+
+    tilesets update <tileset_id>
+    """
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+    url = "{0}/tilesets/v1/{1}?access_token={2}".format(
+        mapbox_api, tileset, mapbox_token
+    )
+    body = {}
+    if name:
+        body["name"] = name
+    if description:
+        body["description"] = description
+    if privacy:
+        body["private"] = True if privacy == "private" else False
+    if attribution:
+        try:
+            body["attribution"] = json.loads(attribution)
+        except:
+            click.echo("Unable to parse attribution JSON")
+            click.exit(1)
+
+    r = requests.patch(url, json=body)
+
+    if r.status_code != 204:
+        raise errors.TilesetsError(f"{r.text}")
+
+
 @cli.command("status")
 @click.argument("tileset", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
@@ -292,7 +351,7 @@ def validate_source(features):
     """Validate your source file.
     $ tilesets validate-source <path/to/your/src/file>
     """
-    click.echo(f"Validating features", err=True)
+    click.echo("Validating features", err=True)
 
     for feature in features:
         utils.validate_geojson(feature)
