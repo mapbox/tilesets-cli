@@ -135,7 +135,7 @@ def publish(tileset, token=None, indent=None):
             err=True,
         )
     else:
-        raise errors.TilesetsError(f"{r.text}")
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("update")
@@ -194,7 +194,7 @@ def update(
     r = requests.patch(url, json=body)
 
     if r.status_code != 204:
-        raise errors.TilesetsError(f"{r.text}")
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("status")
