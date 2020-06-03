@@ -44,7 +44,9 @@ def test_cli_list_verbose(mock_request_get, MockResponse):
     )
     assert result.exit_code == 0
 
-    assert [json.loads(l.strip()) for l in result.output.split("\n") if l] == message
+    assert [
+        json.loads(tileset.strip()) for tileset in result.output.split("\n") if tileset
+    ] == message
 
 
 @pytest.mark.usefixtures("token_environ")

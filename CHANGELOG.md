@@ -1,4 +1,5 @@
-# unreleased
+# Unreleased
+- `update-recipe` command handles 204 status code in addition to 201 and no longer prints response text
 - Add `update` command for updating `--name`, `--description`, `--privacy`, and `--attribution` of a tileset
 - Add `--attribution` option to the `create` command
 

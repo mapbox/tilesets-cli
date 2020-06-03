@@ -358,9 +358,8 @@ def update_recipe(tileset, recipe, token=None, indent=None):
         recipe_json = json.load(json_recipe)
 
         r = requests.patch(url, json=recipe_json)
-        if r.status_code == 201:
+        if r.status_code == 201 or r.status_code == 204:
             click.echo("Updated recipe.", err=True)
-            click.echo(r.text)
         else:
             raise errors.TilesetsError(r.text)
 
