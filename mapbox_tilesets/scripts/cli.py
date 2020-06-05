@@ -197,6 +197,40 @@ def update(
         raise errors.TilesetsError(r.text)
 
 
+@cli.command("delete")
+@click.argument("tileset", required=True, type=str)
+@click.option("--force", "-f", is_flag=True, help="Circumvents confirmation prompt")
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def delete(tileset, token=None, indent=None, force=None):
+    """Delete your tileset.
+
+    tilesets delete <tileset_id>
+    """
+
+    mapbox_api = _get_api()
+    mapbox_token = _get_token(token)
+
+    if not force:
+        val = click.prompt(
+            'To confirm tileset deletion please enter the full tileset id "{0}"'.format(
+                tileset
+            ),
+            type=str,
+        )
+        if val != tileset:
+            raise click.ClickException(f"{val} does not match {tileset}. Aborted!")
+
+    url = "{0}/tilesets/v1/{1}?access_token={2}".format(
+        mapbox_api, tileset, mapbox_token
+    )
+    r = requests.delete(url)
+    if r.status_code == 200 or r.status_code == 204:
+        click.echo("Tileset deleted.")
+    else:
+        raise errors.TilesetsError(r.text)
+
+
 @cli.command("status")
 @click.argument("tileset", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
@@ -486,9 +520,17 @@ def delete_source(username, id, force, token=None):
     tilesets delete-source <username> <id>
     """
     if not force:
-        click.confirm(
-            "Are you sure you want to delete {0} {1}?".format(username, id), abort=True
+        val = click.prompt(
+            'To confirm source deletion please enter the full source id "{0}/{1}"'.format(
+                username, id
+            ),
+            type=str,
         )
+        if val != f"{username}/{id}":
+            raise click.ClickException(
+                f"{val} does not match {username}/{id}. Aborted!"
+            )
+
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(

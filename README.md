@@ -46,6 +46,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * [`create`](#create)
   * [`publish`](#publish)
   * [`update`](#update)
+  * [`delete`](#delete)
   * [`status`](#status)
   * [`job`](#job)
   * [`jobs`](#jobs)
@@ -207,6 +208,18 @@ Flags:
 * `--description` or `-d` [optional]: update tileset description
 * `--privacy` or `-p` [optional]: set your tileset to `public` or `private`
 * `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
+
+### delete
+
+Delete a tileset. By default will prompt you for confirmation before deleting.
+
+```
+tilesets delete <tileset_id>
+```
+
+Flags:
+
+* `--force` or `-f` to bypass confirmation prompt.
 
 ### status
 
