@@ -213,7 +213,7 @@ def delete(tileset, token=None, indent=None, force=None):
 
     if not force:
         val = click.prompt(
-            "To confirm tileset deletion please enter the name of the tileset {0}?".format(
+            'To confirm tileset deletion please enter the full tileset id "{0}"'.format(
                 tileset
             ),
             type=str,
@@ -521,7 +521,7 @@ def delete_source(username, id, force, token=None):
     """
     if not force:
         val = click.prompt(
-            "To confirm source deletion please enter the name of the tileset {0}/{1}?".format(
+            'To confirm source deletion please enter the full source id "{0}/{1}"'.format(
                 username, id
             ),
             type=str,

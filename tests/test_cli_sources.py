@@ -78,7 +78,7 @@ def test_cli_delete_source(mock_request_delete, MockResponse):
     assert result.exit_code == 0
     assert (
         result.output
-        == "To confirm source deletion please enter the name of the tileset test-user/hello-world?: test-user/hello-world\nSource deleted.\n"
+        == 'To confirm source deletion please enter the full source id "test-user/hello-world": test-user/hello-world\nSource deleted.\n'
     )
     force_result = runner.invoke(delete_source, ["test-user", "hello-world", "--force"])
     assert force_result.exit_code == 0
@@ -96,7 +96,7 @@ def test_cli_delete_source_aborted(mock_request_delete, MockResponse):
     assert result.exit_code == 1
     assert (
         result.output
-        == "To confirm source deletion please enter the name of the tileset test-user/hello-world?: wrong/id\nError: wrong/id does not match test-user/hello-world. Aborted!\n"
+        == 'To confirm source deletion please enter the full source id "test-user/hello-world": wrong/id\nError: wrong/id does not match test-user/hello-world. Aborted!\n'
     )
 
 

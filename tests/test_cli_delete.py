@@ -33,7 +33,7 @@ def test_cli_delete(mock_request_delete):
     assert result.exit_code == 0
     assert (
         result.output
-        == "To confirm tileset deletion please enter the name of the tileset test.id?: test.id\nTileset deleted.\n"
+        == 'To confirm tileset deletion please enter the full tileset id "test.id": test.id\nTileset deleted.\n'
     )
 
 
@@ -49,7 +49,7 @@ def test_cli_delete_prompt_no(mock_request_delete):
     assert result.exit_code == 1
     assert (
         result.output
-        == "To confirm tileset deletion please enter the name of the tileset test.id?: wrong.id\nError: wrong.id does not match test.id. Aborted!\n"
+        == 'To confirm tileset deletion please enter the full tileset id "test.id": wrong.id\nError: wrong.id does not match test.id. Aborted!\n'
     )
 
 
