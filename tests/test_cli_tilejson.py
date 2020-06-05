@@ -70,6 +70,20 @@ def test_cli_tilejson_composite(mock_request_get, MockResponse):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.get")
+def test_cli_tilejson_secure(mock_request_get, MockResponse):
+    runner = CliRunner()
+
+    # sends expected request
+    mock_request_get.return_value = MockResponse("")
+    result = runner.invoke(tilejson, ["test.id", "--secure"])
+    mock_request_get.assert_called_with(
+        "https://api.mapbox.com/v4/test.id.json?access_token=fake-token&secure"
+    )
+    assert result.exit_code == 0
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.get")
 def test_cli_tilejson_error(mock_request_get, MockResponse):
     runner = CliRunner()
 

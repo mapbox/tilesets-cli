@@ -220,7 +220,10 @@ def status(tileset, token=None, indent=None):
 @click.argument("tileset", required=True, type=str)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def tilejson(tileset, token=None, indent=None):
+@click.option(
+    "--secure", "-s", required=False, is_flag=True, help="receive HTTPS resource URLs"
+)
+def tilejson(tileset, token=None, indent=None, secure=False):
     """View the TileJSON of a particular tileset.
     Can take a comma-separated list of tilesets for a composited TileJSON.
 
@@ -241,6 +244,9 @@ def tilejson(tileset, token=None, indent=None):
     url = "{0}/v4/{1}.json?access_token={2}".format(
         mapbox_api, ",".join(tilesets), mapbox_token
     )
+    if secure:
+        url = url + "&secure"
+
     r = requests.get(url)
     if r.status_code == 200:
         click.echo(json.dumps(r.json(), indent=indent))
