@@ -51,6 +51,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * [`job`](#job)
   * [`jobs`](#jobs)
   * [`list`](#list)
+  * [`tilejson`](#tilejson)
 
 ### add-source
 
@@ -258,3 +259,17 @@ tilesets list <username>
 ```
 
 - --verbose: will list out the entire response object from the API
+
+### tilejson
+
+View the TileJSON for a tileset. `tileset_id` can be a comma-separated list of up to 15 tilesets for composited requests.
+
+A TileJSON document, according to the [specification](https://github.com/mapbox/tilejson-spec), attempts to create a standard for representing metadata about multiple types of web-based layers, to aid clients in configuration and browsing.
+
+```
+tilesets tilejson <tileset_id>
+```
+
+Flags
+
+* `--secure`: By default, resource URLs in the retrieved TileJSON (such as in the "tiles" array) will use the HTTP scheme. Include this query parameter in your request to receive HTTPS resource URLs instead.
