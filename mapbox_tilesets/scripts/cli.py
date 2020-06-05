@@ -221,7 +221,7 @@ def status(tileset, token=None, indent=None):
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.option(
-    "--secure", "-s", required=False, is_flag=True, help="receive HTTPS resource URLs"
+    "--secure", required=False, is_flag=True, help="receive HTTPS resource URLs"
 )
 def tilejson(tileset, token=None, indent=None, secure=False):
     """View the TileJSON of a particular tileset.
