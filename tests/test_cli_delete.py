@@ -26,14 +26,14 @@ def test_cli_delete(mock_request_delete):
 
     # sends expected request
     mock_request_delete.return_value = MockResponse("", status_code=200)
-    result = runner.invoke(delete, ["test.id"], input="y")
+    result = runner.invoke(delete, ["test.id"], input="test.id")
     mock_request_delete.assert_called_with(
         "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token"
     )
     assert result.exit_code == 0
     assert (
         result.output
-        == "Are you sure you want to delete test.id? [y/N]: y\nTileset deleted.\n"
+        == "To confirm tileset deletion please enter the name of the tileset test.id?: test.id\nTileset deleted.\n"
     )
 
 
@@ -44,11 +44,12 @@ def test_cli_delete_prompt_no(mock_request_delete):
 
     # sends expected request
     mock_request_delete.return_value = MockResponse("", status_code=200)
-    result = runner.invoke(delete, ["test.id"], input="n")
+    result = runner.invoke(delete, ["test.id"], input="wrong.id")
     mock_request_delete.assert_not_called()
     assert result.exit_code == 1
     assert (
-        result.output == "Are you sure you want to delete test.id? [y/N]: n\nAborted!\n"
+        result.output
+        == "To confirm tileset deletion please enter the name of the tileset test.id?: wrong.id\nError: wrong.id does not match test.id. Aborted!\n"
     )
 
 

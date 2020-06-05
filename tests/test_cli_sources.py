@@ -72,11 +72,13 @@ def test_cli_view_source(mock_request_get, MockResponse):
 def test_cli_delete_source(mock_request_delete, MockResponse):
     mock_request_delete.return_value = MockResponse("", status_code=204)
     runner = CliRunner()
-    result = runner.invoke(delete_source, ["test-user", "hello-world"], input="y")
+    result = runner.invoke(
+        delete_source, ["test-user", "hello-world"], input="test-user/hello-world"
+    )
     assert result.exit_code == 0
     assert (
         result.output
-        == "Are you sure you want to delete test-user hello-world? [y/N]: y\nSource deleted.\n"
+        == "To confirm source deletion please enter the name of the tileset test-user/hello-world?: test-user/hello-world\nSource deleted.\n"
     )
     force_result = runner.invoke(delete_source, ["test-user", "hello-world", "--force"])
     assert force_result.exit_code == 0
@@ -88,11 +90,13 @@ def test_cli_delete_source(mock_request_delete, MockResponse):
 def test_cli_delete_source_aborted(mock_request_delete, MockResponse):
     mock_request_delete.return_value = MockResponse("", status_code=201)
     runner = CliRunner()
-    result = runner.invoke(delete_source, ["test-user", "hello-world"], input="n")
+    result = runner.invoke(
+        delete_source, ["test-user", "hello-world"], input="wrong/id"
+    )
     assert result.exit_code == 1
     assert (
         result.output
-        == "Are you sure you want to delete test-user hello-world? [y/N]: n\nAborted!\n"
+        == "To confirm source deletion please enter the name of the tileset test-user/hello-world?: wrong/id\nError: wrong/id does not match test-user/hello-world. Aborted!\n"
     )
 
 

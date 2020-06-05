@@ -212,9 +212,14 @@ def delete(tileset, token=None, indent=None, force=None):
     mapbox_token = _get_token(token)
 
     if not force:
-        click.confirm(
-            "Are you sure you want to delete {0}?".format(tileset), abort=True
+        val = click.prompt(
+            "To confirm tileset deletion please enter the name of the tileset {0}?".format(
+                tileset
+            ),
+            type=str,
         )
+        if val != tileset:
+            raise click.ClickException(f"{val} does not match {tileset}. Aborted!")
 
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
@@ -515,9 +520,17 @@ def delete_source(username, id, force, token=None):
     tilesets delete-source <username> <id>
     """
     if not force:
-        click.confirm(
-            "Are you sure you want to delete {0} {1}?".format(username, id), abort=True
+        val = click.prompt(
+            "To confirm source deletion please enter the name of the tileset {0}/{1}?".format(
+                username, id
+            ),
+            type=str,
         )
+        if val != f"{username}/{id}":
+            raise click.ClickException(
+                f"{val} does not match {username}/{id}. Aborted!"
+            )
+
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
