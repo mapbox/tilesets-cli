@@ -227,23 +227,18 @@ def tilejson(tileset, token=None, indent=None, secure=False):
     """View the TileJSON of a particular tileset.
     Can take a comma-separated list of tilesets for a composited TileJSON.
 
-    tilesets publish <tileset_id>,<tileset_id>
+    tilesets tilejson <tileset_id>,<tileset_id>
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
 
     # validate tilesets by splitting comma-delimted string
     # and rejoining it
-    print(tileset)
-    tilesets = []
     for t in tileset.split(","):
         if not utils.validate_tileset_id(t):
             raise errors.TilesetNameError(t)
-        tilesets.append(t)
 
-    url = "{0}/v4/{1}.json?access_token={2}".format(
-        mapbox_api, ",".join(tilesets), mapbox_token
-    )
+    url = "{0}/v4/{1}.json?access_token={2}".format(mapbox_api, tileset, mapbox_token)
     if secure:
         url = url + "&secure"
 
