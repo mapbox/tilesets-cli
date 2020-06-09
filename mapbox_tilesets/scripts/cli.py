@@ -6,7 +6,7 @@ import tempfile
 
 import click
 import cligj
-from requests_toolbelt import MultipartEncoder
+from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
 from mapbox_tilesets import utils, errors
@@ -471,15 +471,26 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
             file.write((json.dumps(feature) + "\n").encode("utf-8"))
 
         file.seek(0)
-        m = MultipartEncoder(fields={"file": ("file", file)})
-        resp = requests.post(
-            url,
-            data=m,
-            headers={
-                "Content-Disposition": "multipart/form-data",
-                "Content-type": m.content_type,
-            },
+        encoder = MultipartEncoder(fields={"file": ("file", file)})
+        prog = click.progressbar(
+            length=encoder.len, fill_char="=", width=0, label="upload progress"
         )
+
+        with prog:
+
+            def callback(m):
+                prog.pos = m.bytes_read
+                prog.update(0)  # Step is 0 because we set pos above
+
+            monitor = MultipartEncoderMonitor(encoder, callback)
+            resp = requests.post(
+                url,
+                data=monitor,
+                headers={
+                    "Content-Disposition": "multipart/form-data",
+                    "Content-Type": monitor.content_type,
+                },
+            )
 
     if resp.status_code == 200:
         click.echo(json.dumps(resp.json(), indent=indent))
