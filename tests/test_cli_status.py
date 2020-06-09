@@ -8,7 +8,7 @@ from mapbox_tilesets.scripts.cli import status
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_status(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -24,7 +24,7 @@ def test_cli_status(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_status_use_token_flag(mock_request_get, MockResponse):
     runner = CliRunner()
     message = {"message": "mock message"}

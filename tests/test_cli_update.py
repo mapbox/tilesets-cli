@@ -21,7 +21,7 @@ class MockResponse:
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.patch")
+@mock.patch("requests.Session.patch")
 def test_cli_patch(mock_request_patch):
     runner = CliRunner()
 
@@ -54,7 +54,7 @@ def test_cli_patch(mock_request_patch):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.patch")
+@mock.patch("requests.Session.patch")
 def test_cli_patch_no_options(mock_request_patch):
     runner = CliRunner()
 
