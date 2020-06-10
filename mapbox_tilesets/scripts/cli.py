@@ -6,6 +6,9 @@ import tempfile
 
 import click
 import cligj
+from contextlib import ExitStack
+from functools import partial
+from concurrent.futures import ThreadPoolExecutor
 from requests_toolbelt import MultipartEncoder
 
 import mapbox_tilesets
@@ -445,6 +448,25 @@ def validate_source(features):
     click.echo("✔ valid")
 
 
+def _upload_source(file, url=None):
+    """Upload an individual source part
+    """
+    m = MultipartEncoder(fields={"file": ("file", file)})
+    resp = requests.post(
+        url,
+        data=m,
+        headers={
+            "Content-Disposition": "multipart/form-data",
+            "Content-type": m.content_type,
+        },
+    )
+
+    if resp.status_code == 200:
+        return resp.json()
+    else:
+        raise errors.TilesetsError(resp.text)
+
+
 @cli.command("add-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
@@ -452,8 +474,13 @@ def validate_source(features):
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
+@click.option(
+    "--parts", default=1, type=click.IntRange(1, 10), help="Number of parts to use"
+)
 @click.pass_context
-def add_source(ctx, username, id, features, no_validation, token=None, indent=None):
+def add_source(
+    ctx, username, id, features, no_validation, token=None, indent=None, parts=1
+):
     """Create/add a tileset source
 
     tilesets add-source <username> <id> <path/to/source/data>
@@ -464,27 +491,20 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
         f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
     )
 
-    with tempfile.TemporaryFile() as file:
-        for feature in features:
+    with ExitStack() as task:
+        tmpfiles = [
+            task.enter_context(tempfile.TemporaryFile()) for part in range(parts)
+        ]
+        for i, feature in enumerate(features):
             if not no_validation:
                 utils.validate_geojson(feature)
-            file.write((json.dumps(feature) + "\n").encode("utf-8"))
-
-        file.seek(0)
-        m = MultipartEncoder(fields={"file": ("file", file)})
-        resp = requests.post(
-            url,
-            data=m,
-            headers={
-                "Content-Disposition": "multipart/form-data",
-                "Content-type": m.content_type,
-            },
-        )
-
-    if resp.status_code == 200:
-        click.echo(json.dumps(resp.json(), indent=indent))
-    else:
-        raise errors.TilesetsError(resp.text)
+            tmpfiles[i % parts].write((json.dumps(feature) + "\n").encode("utf-8"))
+        for file in tmpfiles:
+            file.seek(0)
+        upload_source = partial(_upload_source, url=url)
+        with ThreadPoolExecutor(max_workers=4) as exec:
+            for resp in exec.map(upload_source, tmpfiles):
+                click.echo(json.dumps(resp, indent=indent))
 
 
 @cli.command("view-source")
