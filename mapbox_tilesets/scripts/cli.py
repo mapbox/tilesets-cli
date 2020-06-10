@@ -464,7 +464,7 @@ def _upload_source(file, url=None):
     if resp.status_code == 200:
         return resp.json()
     else:
-        raise errors.TilesetsError(resp.text)
+        raise errors.SourceUploadFailed(resp.text)
 
 
 @cli.command("add-source")
@@ -503,8 +503,43 @@ def add_source(
             file.seek(0)
         upload_source = partial(_upload_source, url=url)
         with ThreadPoolExecutor(max_workers=4) as exec:
-            for resp in exec.map(upload_source, tmpfiles):
-                click.echo(json.dumps(resp, indent=indent))
+            if parts > 1:
+                delete_url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
+                    mapbox_api, username, id, mapbox_token
+                )
+                r = requests.delete(delete_url)
+                if r.status_code == 204:
+                    pass
+                else:
+                    raise errors.TilesetsError(r.text)
+            try:
+                uploaded = [i for i in exec.map(upload_source, tmpfiles)]
+            except errors.SourceUploadFailed as err:
+                if parts != 1:
+                    url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
+                        mapbox_api, username, id, mapbox_token
+                    )
+                    r = requests.delete(url)
+                    if r.status_code == 204:
+                        raise errors.TilesetsError(
+                            "Multipart upload failed -- deleting extra parts"
+                        )
+                    else:
+                        raise errors.TilesetsError(r.text)
+                raise err
+
+            if parts == 1:
+                click.echo(json.dumps(uploaded[0], indent=indent))
+            else:
+                url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
+                    mapbox_api, username, id, mapbox_token
+                )
+
+                r = requests.get(url)
+                if r.status_code == 200:
+                    click.echo(json.dumps(r.json(), indent=indent))
+                else:
+                    raise errors.TilesetsError(r.text)
 
 
 @cli.command("view-source")
