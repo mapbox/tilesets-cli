@@ -29,7 +29,15 @@ def _get_api():
 
 def _get_session():
     """Get a configured session"""
-    return Session()
+    s = Session()
+    s.headers.update(
+        {
+            "user-agent": "{}/{}".format(
+                mapbox_tilesets.__name__, mapbox_tilesets.__version__
+            )
+        }
+    )
+    return s
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
