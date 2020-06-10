@@ -27,16 +27,12 @@ def _get_api():
     return os.environ.get("MAPBOX_API", "https://api.mapbox.com")
 
 
-def _get_session():
+def _get_session(
+    application=mapbox_tilesets.__name__, version=mapbox_tilesets.__version__
+):
     """Get a configured session"""
     s = Session()
-    s.headers.update(
-        {
-            "user-agent": "{}/{}".format(
-                mapbox_tilesets.__name__, mapbox_tilesets.__version__
-            )
-        }
-    )
+    s.headers.update({"user-agent": "{}/{}".format(application, version)})
     return s
 
 
