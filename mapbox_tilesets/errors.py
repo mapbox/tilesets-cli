@@ -25,3 +25,10 @@ class TilesetNameError(TilesetsError):
 
     def __init__(self, tileset_id):
         self.message = f"{tileset_id} is not a valid Tileset ID"
+
+
+class SourceUploadFailed(TilesetsError):
+    """Source upload failed"""
+
+    def __init__(self, message):
+        self.message = message
