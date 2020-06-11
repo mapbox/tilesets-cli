@@ -20,7 +20,7 @@ class MockResponse:
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.delete")
+@mock.patch("requests.Session.delete")
 def test_cli_delete(mock_request_delete):
     runner = CliRunner()
 
@@ -38,7 +38,7 @@ def test_cli_delete(mock_request_delete):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.delete")
+@mock.patch("requests.Session.delete")
 def test_cli_delete_prompt_no(mock_request_delete):
     runner = CliRunner()
 
@@ -54,7 +54,7 @@ def test_cli_delete_prompt_no(mock_request_delete):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.delete")
+@mock.patch("requests.Session.delete")
 def test_cli_delete_force(mock_request_delete):
     runner = CliRunner()
 
@@ -69,7 +69,7 @@ def test_cli_delete_force(mock_request_delete):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.delete")
+@mock.patch("requests.Session.delete")
 def test_cli_delete_fail(mock_request_delete):
     runner = CliRunner()
 

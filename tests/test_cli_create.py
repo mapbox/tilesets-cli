@@ -29,7 +29,7 @@ def test_cli_create_missing_name():
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_create_success(mock_request_post, MockResponse):
     runner = CliRunner()
     # sends request to proper endpoints
@@ -86,7 +86,7 @@ def test_cli_create_attribution_json_parse_error():
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_create_success_description(mock_request_post, MockResponse):
     runner = CliRunner()
     # sends request with "description" included
@@ -119,7 +119,7 @@ def test_cli_create_success_description(mock_request_post, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_create_private_invalid(mock_request_post, MockResponse):
     runner = CliRunner()
     # sends request with "description" included
@@ -146,7 +146,7 @@ def test_cli_create_private_invalid(mock_request_post, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_use_token_flag(mock_request_post, MockResponse):
     runner = CliRunner()
     message = {"message": "mock message"}

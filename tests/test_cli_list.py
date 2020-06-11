@@ -9,7 +9,7 @@ from mapbox_tilesets.scripts.cli import list
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_list(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -28,7 +28,7 @@ def test_cli_list(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_list_verbose(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -50,7 +50,7 @@ def test_cli_list_verbose(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_list_bad_token(mock_request_get, MockResponse):
     runner = CliRunner()
 

@@ -25,7 +25,7 @@ def test_cli_validate_recipe_no_recipe():
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.put")
+@mock.patch("requests.Session.put")
 def test_cli_validate_recipe(mock_request_put, MockResponse):
     runner = CliRunner()
 
@@ -42,7 +42,7 @@ def test_cli_validate_recipe(mock_request_put, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.put")
+@mock.patch("requests.Session.put")
 def test_cli_validate_recipe_use_token_flag(mock_request_put, MockResponse):
     runner = CliRunner()
     message = {"message": "mock message"}

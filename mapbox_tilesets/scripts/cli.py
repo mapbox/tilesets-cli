@@ -1,11 +1,11 @@
 """Tilesets command line interface"""
 import os
 import json
-import requests
 import tempfile
 
 import click
 import cligj
+from requests import Session
 from requests_toolbelt import MultipartEncoder
 
 import mapbox_tilesets
@@ -25,6 +25,15 @@ def _get_token(token=None):
 def _get_api():
     """Get Mapbox tileset API base URL from environment"""
     return os.environ.get("MAPBOX_API", "https://api.mapbox.com")
+
+
+def _get_session(
+    application=mapbox_tilesets.__name__, version=mapbox_tilesets.__version__
+):
+    """Get a configured session"""
+    s = Session()
+    s.headers.update({"user-agent": "{}/{}".format(application, version)})
+    return s
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -85,6 +94,7 @@ def create(
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -108,7 +118,7 @@ def create(
             click.echo("Unable to parse attribution JSON")
             click.exit(1)
 
-    r = requests.post(url, json=body)
+    r = s.post(url, json=body)
 
     click.echo(json.dumps(r.json(), indent=indent))
 
@@ -124,10 +134,11 @@ def publish(tileset, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}/publish?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
-    r = requests.post(url)
+    r = s.post(url)
     if r.status_code == 200:
         click.echo(json.dumps(r.json(), indent=indent))
         click.echo(
@@ -174,6 +185,7 @@ def update(
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -191,7 +203,7 @@ def update(
             click.echo("Unable to parse attribution JSON")
             click.exit(1)
 
-    r = requests.patch(url, json=body)
+    r = s.patch(url, json=body)
 
     if r.status_code != 204:
         raise errors.TilesetsError(r.text)
@@ -210,6 +222,7 @@ def delete(tileset, token=None, indent=None, force=None):
 
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
 
     if not force:
         val = click.prompt(
@@ -224,7 +237,7 @@ def delete(tileset, token=None, indent=None, force=None):
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
-    r = requests.delete(url)
+    r = s.delete(url)
     if r.status_code == 200 or r.status_code == 204:
         click.echo("Tileset deleted.")
     else:
@@ -242,10 +255,11 @@ def status(tileset, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}/status?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
-    r = requests.get(url)
+    r = s.get(url)
 
     click.echo(json.dumps(r.json(), indent=indent))
 
@@ -265,6 +279,7 @@ def tilejson(tileset, token=None, indent=None, secure=False):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
 
     # validate tilesets by splitting comma-delimted string
     # and rejoining it
@@ -276,7 +291,7 @@ def tilejson(tileset, token=None, indent=None, secure=False):
     if secure:
         url = url + "&secure"
 
-    r = requests.get(url)
+    r = s.get(url)
     if r.status_code == 200:
         click.echo(json.dumps(r.json(), indent=indent))
     else:
@@ -295,6 +310,7 @@ def jobs(tileset, stage, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}/jobs?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -303,7 +319,7 @@ def jobs(tileset, stage, token=None, indent=None):
             mapbox_api, tileset, stage, mapbox_token
         )
 
-    r = requests.get(url)
+    r = s.get(url)
 
     click.echo(json.dumps(r.json(), indent=indent))
 
@@ -320,10 +336,11 @@ def job(tileset, job_id, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}/jobs/{2}?access_token={3}".format(
         mapbox_api, tileset, job_id, mapbox_token
     )
-    r = requests.get(url)
+    r = s.get(url)
 
     click.echo(json.dumps(r.json(), indent=indent))
 
@@ -349,10 +366,11 @@ def list(username, verbose, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, username, mapbox_token
     )
-    r = requests.get(url)
+    r = s.get(url)
     if r.status_code == 200:
         if verbose:
             for tileset in r.json():
@@ -375,13 +393,14 @@ def validate_recipe(recipe, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/validateRecipe?access_token={1}".format(
         mapbox_api, mapbox_token
     )
     with open(recipe) as json_recipe:
         recipe_json = json.load(json_recipe)
 
-        r = requests.put(url, json=recipe_json)
+        r = s.put(url, json=recipe_json)
         click.echo(json.dumps(r.json(), indent=indent))
 
 
@@ -396,10 +415,11 @@ def view_recipe(tileset, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}/recipe?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
-    r = requests.get(url)
+    r = s.get(url)
     if r.status_code == 200:
         click.echo(json.dumps(r.json(), indent=indent))
     else:
@@ -418,13 +438,14 @@ def update_recipe(tileset, recipe, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/{1}/recipe?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
     with open(recipe) as json_recipe:
         recipe_json = json.load(json_recipe)
 
-        r = requests.patch(url, json=recipe_json)
+        r = s.patch(url, json=recipe_json)
         if r.status_code == 201 or r.status_code == 204:
             click.echo("Updated recipe.", err=True)
         else:
@@ -460,6 +481,7 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = (
         f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
     )
@@ -472,7 +494,7 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
 
         file.seek(0)
         m = MultipartEncoder(fields={"file": ("file", file)})
-        resp = requests.post(
+        resp = s.post(
             url,
             data=m,
             headers={
@@ -499,10 +521,11 @@ def view_source(username, id, token=None, indent=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
         mapbox_api, username, id, mapbox_token
     )
-    r = requests.get(url)
+    r = s.get(url)
     if r.status_code == 200:
         click.echo(json.dumps(r.json(), indent=indent))
     else:
@@ -533,10 +556,11 @@ def delete_source(username, id, force, token=None):
 
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
         mapbox_api, username, id, mapbox_token
     )
-    r = requests.delete(url)
+    r = s.delete(url)
     if r.status_code == 204:
         click.echo("Source deleted.")
     else:
@@ -553,10 +577,11 @@ def list_sources(username, token=None):
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
+    s = _get_session()
     url = "{0}/tilesets/v1/sources/{1}?access_token={2}".format(
         mapbox_api, username, mapbox_token
     )
-    r = requests.get(url)
+    r = s.get(url)
     if r.status_code == 200:
         for source in r.json():
             click.echo(source["id"])

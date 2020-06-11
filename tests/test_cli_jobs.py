@@ -8,7 +8,7 @@ from mapbox_tilesets.scripts.cli import jobs, job
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_job(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -25,7 +25,7 @@ def test_cli_job(mock_request_get, MockResponse):
 
 # noting for future that this test really is a copy of above
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_job_error(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -41,7 +41,7 @@ def test_cli_job_error(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_jobs_and_stage(mock_request_get, MockResponse):
     """test jobs + stage endpoint"""
     runner = CliRunner()
@@ -58,7 +58,7 @@ def test_cli_jobs_and_stage(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_single_job(mock_request_get, MockResponse):
     """test job endpoint"""
     runner = CliRunner()
