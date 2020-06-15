@@ -355,6 +355,12 @@ def job(tileset, job_id, token=None, indent=None):
     help="Will print all tileset information",
 )
 @click.option(
+    "--type",
+    required=False,
+    type=click.Choice(["vector", "raster"]),
+    help="Filter results by tileset type",
+)
+@click.option(
     "--visibility",
     required=False,
     type=click.Choice(["public", "private"]),
@@ -362,7 +368,7 @@ def job(tileset, job_id, token=None, indent=None):
 )
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def list(username, verbose, visibility=None, token=None, indent=None):
+def list(username, verbose, type=None, visibility=None, token=None, indent=None):
     """List all tilesets for an account.
     By default the response is a simple list of tileset IDs.
     If you would like an array of all tileset's information,
@@ -376,6 +382,7 @@ def list(username, verbose, visibility=None, token=None, indent=None):
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, username, mapbox_token
     )
+    url = "{0}&type={1}".format(url, type) if type else url
     url = "{0}&visibility={1}".format(url, visibility) if visibility else url
     r = s.get(url)
     if r.status_code == 200:
