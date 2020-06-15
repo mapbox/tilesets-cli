@@ -258,7 +258,8 @@ List all tilesets for an account. Just lists tileset IDs by default. Use the `--
 tilesets list <username>
 ```
 
-- --verbose: will list out the entire response object from the API
+* `--visibility [public|private]` [optional]: filter results by visibility
+* `--verbose` [optional]: will list out the entire response object from the API
 
 ### tilejson
 

@@ -63,3 +63,41 @@ def test_cli_list_bad_token(mock_request_get, MockResponse):
     )
     assert result.exit_code == 1
     assert result.exception
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.Session.get")
+def test_cli_list_visibility_public(mock_request_get, MockResponse):
+    runner = CliRunner()
+
+    message = [
+        {"id": "test.tileset-1", "something": "beep"},
+        {"id": "test.tileset-2", "something": "boop"},
+    ]
+
+    mock_request_get.return_value = MockResponse(message)
+    result = runner.invoke(list, ["test", "--visibility", "public"])
+    mock_request_get.assert_called_with(
+        "https://api.mapbox.com/tilesets/v1/test?access_token=fake-token&visibility=public"
+    )
+    assert result.exit_code == 0
+    assert result.output == """test.tileset-1\ntest.tileset-2\n"""
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.Session.get")
+def test_cli_list_visibility_private(mock_request_get, MockResponse):
+    runner = CliRunner()
+
+    message = [
+        {"id": "test.tileset-1", "something": "beep"},
+        {"id": "test.tileset-2", "something": "boop"},
+    ]
+
+    mock_request_get.return_value = MockResponse(message)
+    result = runner.invoke(list, ["test", "--visibility", "private"])
+    mock_request_get.assert_called_with(
+        "https://api.mapbox.com/tilesets/v1/test?access_token=fake-token&visibility=private"
+    )
+    assert result.exit_code == 0
+    assert result.output == """test.tileset-1\ntest.tileset-2\n"""
