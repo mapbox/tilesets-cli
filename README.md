@@ -248,7 +248,9 @@ Check all jobs associated with a tileset. You can filter jobs by a particular `s
 tilesets jobs <tileset_id> --stage=processing
 ```
 
-- --stage: Filter by the stage of jobs. (Optional.)
+Flags:
+
+* `--stage` [optional]: filter by the stage of jobs
 
 ### list
 
@@ -257,6 +259,8 @@ List all tilesets for an account. Just lists tileset IDs by default. Use the `--
 ```shell
 tilesets list <username>
 ```
+
+Flags:
 
 * `--type [vector|raster]` [optional]: filter results by tileset type
 * `--visibility [public|private]` [optional]: filter results by visibility
@@ -274,6 +278,6 @@ A TileJSON document, according to the [specification](https://github.com/mapbox/
 tilesets tilejson <tileset_id>
 ```
 
-Flags
+Flags:
 
 * `--secure`: By default, resource URLs in the retrieved TileJSON (such as in the "tiles" array) will use the HTTP scheme. Include this query parameter in your request to receive HTTPS resource URLs instead.
