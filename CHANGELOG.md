@@ -1,3 +1,6 @@
+# Unreleased
+- Pin pytest version
+
 # 1.1.0.dev0 (2020-06-11)
 - `update-recipe` command handles 204 status code in addition to 201 and no longer prints response text
 - Add `update` command for updating `--name`, `--description`, `--privacy`, and `--attribution` of a tileset
