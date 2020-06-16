@@ -260,6 +260,7 @@ tilesets list <username>
 
 * `--type [vector|raster]` [optional]: filter results by tileset type
 * `--visibility [public|private]` [optional]: filter results by visibility
+* `--sortby [created|modified]` [optional]: sort results by their `created` or `modified` timestamps
 * `--verbose` [optional]: will list out the entire response object from the API
 
 ### tilejson

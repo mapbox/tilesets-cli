@@ -366,9 +366,17 @@ def job(tileset, job_id, token=None, indent=None):
     type=click.Choice(["public", "private"]),
     help="Filter results by visibility",
 )
+@click.option(
+    "--sortby",
+    required=False,
+    type=click.Choice(["created", "modified"]),
+    help="Sort the results by their created or modified timestamps",
+)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def list(username, verbose, type=None, visibility=None, token=None, indent=None):
+def list(
+    username, verbose, type=None, visibility=None, sortby=None, token=None, indent=None
+):
     """List all tilesets for an account.
     By default the response is a simple list of tileset IDs.
     If you would like an array of all tileset's information,
@@ -384,6 +392,7 @@ def list(username, verbose, type=None, visibility=None, token=None, indent=None)
     )
     url = "{0}&type={1}".format(url, type) if type else url
     url = "{0}&visibility={1}".format(url, visibility) if visibility else url
+    url = "{0}&sortby={1}".format(url, sortby) if sortby else url
     r = s.get(url)
     if r.status_code == 200:
         if verbose:
