@@ -1,11 +1,14 @@
 language: python
 python:
   - '3.6'
+before_install:
+  - python --version
+  - pip install -U pip
+  - pip install -U pytest
+  - pytest --version
 install:
   - pip install -r requirements.txt -e .[test]
 script:
-  - python --version
-  - pytest --version
   - pre-commit run --all-files
   - pytest --cov --cov-config=.coveragerc
 after_script:
