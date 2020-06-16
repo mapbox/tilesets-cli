@@ -261,6 +261,7 @@ tilesets list <username>
 * `--type [vector|raster]` [optional]: filter results by tileset type
 * `--visibility [public|private]` [optional]: filter results by visibility
 * `--sortby [created|modified]` [optional]: sort results by their `created` or `modified` timestamps
+* `--limit [1-500]` [optional]: the maximum number of results to return, from 1 to 500. The default is 100.
 * `--verbose` [optional]: will list out the entire response object from the API
 
 ### tilejson
