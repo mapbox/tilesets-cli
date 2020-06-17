@@ -105,4 +105,4 @@ def test_cli_tilejson_invalid_tileset_id():
     result = runner.invoke(tilejson, ["invalid@@id"])
     assert result.exit_code == 1
     assert isinstance(result.exception, TilesetNameError)
-    assert str(result.exception) == "invalid@@id"
+    assert "invalid@@id" in str(result.exception)
