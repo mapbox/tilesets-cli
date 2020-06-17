@@ -178,6 +178,8 @@ Creates a brand new, empty tileset with a recipe passed in from your local files
 ```shell
 tilesets create <tileset_id> --recipe /path/to/recipe.json --name "My neat tileset"
 ```
+The `tileset_id` is in the form of `username.handle` - for example "mapbox.neat-tileset". The handle may only include "-" or "\_" special characters and must be 32 characters or fewer.
+
 
 Flags:
 

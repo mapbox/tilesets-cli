@@ -10,7 +10,7 @@ def validate_tileset_id(tileset_id):
     ----------
     tileset_id: str
         tileset_id of the form {account}.{tileset}
-        - account and tileset should each be under 32 characters
+        - account and tileset should each be 32 characters or fewer.
 
     Returns
     -------

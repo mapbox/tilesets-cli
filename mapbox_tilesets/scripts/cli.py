@@ -90,7 +90,7 @@ def create(
     $ tilesets create <tileset_id>
 
     <tileset_id> is in the form of username.handle - for example "mapbox.neat-tileset".
-    The handle may only include "-" or "_" special characters.
+    The handle may only include "-" or "_" special characters and must be 32 characters or fewer.
     """
     mapbox_api = _get_api()
     mapbox_token = _get_token(token)
