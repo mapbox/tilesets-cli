@@ -1,6 +1,7 @@
 # Unreleased
 - Pin pytest version
 - Add `--type`, `--visibility`, `--sortby`, and `--limit` options to `list` command
+- Make TilesetNameError message more descriptive
 
 # 1.1.0.dev0 (2020-06-11)
 - `update-recipe` command handles 204 status code in addition to 201 and no longer prints response text
