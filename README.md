@@ -179,7 +179,7 @@ Flags:
 * `--recipe` or `-r` [required]: path to your Recipe JSON document
 * `--name` or `-n` [required]: human-readable name of your tileset. (If your tileset_id is user.my_amazing_tileset, you might want your `name` field to be "My Amazing Tileset".)
 * `--description` or `-d`: description of your tileset
-* `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. If not provided, will default to your plan level on Mapbox.com. Pay-As-You-Go plans only support public maps.
+* `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. By default, new tilesets are private.
 * `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
 
 ### publish
