@@ -165,6 +165,8 @@ Example error output:
 
 Update the Recipe JSON for a tileset. Performs a server-side validation of the new document.
 
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
 ```shell
 tilesets update-recipe <tileset_id> /path/to/recipe.json
 ```
@@ -188,6 +190,8 @@ Flags:
 ### publish
 
 Queues a tiling _job_ using the recipe provided. Use to publish a new tileset or update an existing one. Returns a job ID for progress tracking.
+
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 
 ```
 tilesets publish <tileset_id>
@@ -236,6 +240,8 @@ tilesets status <tileset_id>
 
 Retrieve a single job for a tileset.
 
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
 ```shell
 tilesets job <tileset_id> <job_id>
 ```
@@ -246,6 +252,7 @@ tilesets job <tileset_id> <job_id>
 
 Check all jobs associated with a tileset. You can filter jobs by a particular `stage` - processing, queued, success, or failed.
 
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 
 ```shell
 tilesets jobs <tileset_id> --stage=processing

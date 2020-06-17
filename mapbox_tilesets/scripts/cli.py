@@ -130,6 +130,8 @@ def create(
 def publish(tileset, token=None, indent=None):
     """Publish your tileset.
 
+    Only supports tilesets created with the Mapbox Tiling Service.
+
     tilesets publish <tileset_id>
     """
     mapbox_api = _get_api()
@@ -306,6 +308,8 @@ def tilejson(tileset, token=None, indent=None, secure=False):
 def jobs(tileset, stage, token=None, indent=None):
     """View all jobs for a particular tileset.
 
+    Only supports tilesets created with the Mapbox Tiling Service.
+
     tilesets jobs <tileset_id>
     """
     mapbox_api = _get_api()
@@ -331,6 +335,8 @@ def jobs(tileset, stage, token=None, indent=None):
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 def job(tileset, job_id, token=None, indent=None):
     """View a single job for a particular tileset.
+
+    Only supports tilesets created with the Mapbox Tiling Service.
 
     tilesets job <tileset_id> <job_id>
     """
@@ -471,6 +477,8 @@ def view_recipe(tileset, token=None, indent=None):
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 def update_recipe(tileset, recipe, token=None, indent=None):
     """Update a Recipe JSON document for a particular tileset
+
+    Only supports tilesets created with the Mapbox Tiling Service.
 
     tilesets update-recipe <tileset_id> <path_to_recipe>
     """
