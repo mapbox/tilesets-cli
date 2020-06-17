@@ -28,4 +28,6 @@ class TilesetNameError(TilesetsError):
         self.message = "Invalid Tileset ID"
 
     def __str__(self):
-        return f"{self.tileset_id} -> {self.message}"
+        return "{tileset_id} -> {message}".format(
+            tileset_id=self.tileset_id, message=self.message
+        )
