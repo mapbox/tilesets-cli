@@ -2,7 +2,10 @@
 
 [![Build Status](https://travis-ci.com/mapbox/tilesets-cli.svg?token=wqR3RcWUEprcQ1ttsgiP&branch=master)](https://travis-ci.com/mapbox/tilesets-cli) [![codecov](https://codecov.io/gh/mapbox/tilesets-cli/branch/master/graph/badge.svg?token=YBTKyc2o3j)](https://codecov.io/gh/mapbox/tilesets-cli)
 
-CLI for interacting with and preparing data for [Mapbox Tilesets API](https://docs.mapbox.com/api/maps/#tilesets).
+CLI for interacting with and preparing data for the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
+📚 If you have a question that isn't answered here, please refer to the complete [Mapbox Tiling Service documentation](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
 
 # Contributing
 
@@ -162,6 +165,8 @@ Example error output:
 
 Update the Recipe JSON for a tileset. Performs a server-side validation of the new document.
 
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
 ```shell
 tilesets update-recipe <tileset_id> /path/to/recipe.json
 ```
@@ -173,18 +178,22 @@ Creates a brand new, empty tileset with a recipe passed in from your local files
 ```shell
 tilesets create <tileset_id> --recipe /path/to/recipe.json --name "My neat tileset"
 ```
+The `tileset_id` is in the form of `username.handle` - for example "mapbox.neat-tileset". The handle may only include "-" or "\_" special characters and must be 32 characters or fewer.
+
 
 Flags:
 
 * `--recipe` or `-r` [required]: path to your Recipe JSON document
 * `--name` or `-n` [required]: human-readable name of your tileset. (If your tileset_id is user.my_amazing_tileset, you might want your `name` field to be "My Amazing Tileset".)
 * `--description` or `-d`: description of your tileset
-* `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. If not provided, will default to your plan level on Mapbox.com. Pay-As-You-Go plans only support public maps.
+* `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. By default, new tilesets are private.
 * `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
 
 ### publish
 
 Queues a tiling _job_ using the recipe provided. Use to publish a new tileset or update an existing one. Returns a job ID for progress tracking.
+
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 
 ```
 tilesets publish <tileset_id>
@@ -233,6 +242,8 @@ tilesets status <tileset_id>
 
 Retrieve a single job for a tileset.
 
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
 ```shell
 tilesets job <tileset_id> <job_id>
 ```
@@ -243,6 +254,7 @@ tilesets job <tileset_id> <job_id>
 
 Check all jobs associated with a tileset. You can filter jobs by a particular `stage` - processing, queued, success, or failed.
 
+This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 
 ```shell
 tilesets jobs <tileset_id> --stage=processing
