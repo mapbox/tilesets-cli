@@ -21,7 +21,7 @@ CLI for interacting with and preparing data for the [Mapbox Tiling Service](http
 
 #### Mapbox Access Tokens
 
-In order to use the tilesets endpoints, you need a Mapbox Access Token with `tilesets:write` and `tilesets:read` scopes. This is a secret token, so do not share it publicly!
+In order to use the tilesets endpoints, you need a Mapbox Access Token with `tilesets:write`, `tilesets:read`, and `tilesets:list` scopes. This is a secret token, so do not share it publicly!
 
 You can either pass the Mapbox access token to each command with the `--token` flag or export it as an environment variable. Acceptable values are:
 
