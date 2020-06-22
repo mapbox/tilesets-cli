@@ -1,7 +1,20 @@
 import os
 import pytest
-from mapbox_tilesets.utils import _get_session, _get_token, validate_tileset_id
+from mapbox_tilesets.utils import (
+    _get_api,
+    _get_session,
+    _get_token,
+    validate_tileset_id,
+)
 from mapbox_tilesets.errors import TilesetsError
+
+
+def test_get_api():
+    api = _get_api()
+    assert api == "https://api.mapbox.com"
+    os.environ["MAPBOX_API"] = "https://different.com"
+    api = _get_api()
+    assert api == "https://different.com"
 
 
 def test_get_session():
