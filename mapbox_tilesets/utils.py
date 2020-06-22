@@ -18,7 +18,7 @@ def _get_token(token=None):
     if token is not None:
         return token
 
-    raise Exception(
+    raise mapbox_tilesets.errors.TilesetsError(
         "No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag."
     )
 

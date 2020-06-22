@@ -1,6 +1,7 @@
 from click.testing import CliRunner
-from unittest import mock
 import json
+import os
+from unittest import mock
 
 import pytest
 
@@ -31,6 +32,11 @@ def test_cli_add_source(mock_request_post, MockResponse):
 
 
 def test_cli_add_source_no_token():
+    if "MAPBOX_ACCESS_TOKEN" in os.environ:
+        del os.environ["MAPBOX_ACCESS_TOKEN"]
+    if "MapboxAccessToken" in os.environ:
+        del os.environ["MapboxAccessToken"]
+
     runner = CliRunner()
     unauthenticated_result = runner.invoke(
         add_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson"]
