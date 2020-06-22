@@ -51,7 +51,7 @@ def test_cli_jobs_and_stage(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(jobs, ["test.id", "--stage", "complete"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs?stage=complete&access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=fake-token&stage=complete"
     )
     assert result.exit_code == 0
     assert json.loads(result.output) == message

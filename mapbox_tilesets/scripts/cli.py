@@ -279,7 +279,7 @@ def tilejson(tileset, token=None, indent=None, secure=False):
 @click.option("--stage", "-s", required=False, type=str, help="job stage")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def jobs(tileset, stage, token=None, indent=None):
+def jobs(tileset, stage=None, token=None, indent=None):
     """View all jobs for a particular tileset.
 
     Only supports tilesets created with the Mapbox Tiling Service.
@@ -292,13 +292,8 @@ def jobs(tileset, stage, token=None, indent=None):
     url = "{0}/tilesets/v1/{1}/jobs?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
-    if stage:
-        url = "{0}/tilesets/v1/{1}/jobs?stage={2}&access_token={3}".format(
-            mapbox_api, tileset, stage, mapbox_token
-        )
-
+    url = "{0}&stage={1}".format(url, stage) if stage else url
     r = s.get(url)
-
     click.echo(json.dumps(r.json(), indent=indent))
 
 
