@@ -263,6 +263,7 @@ tilesets jobs <tileset_id> --stage=processing
 Flags:
 
 * `--stage` [optional]: filter by the stage of jobs
+* `--limit [1-500]` [optional]: the maximum number of results to return, from 1 to 500. The default is 100.
 
 ### list
 
