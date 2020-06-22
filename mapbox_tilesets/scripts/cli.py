@@ -1,39 +1,13 @@
 """Tilesets command line interface"""
-import os
 import json
 import tempfile
 
 import click
 import cligj
-from requests import Session
 from requests_toolbelt import MultipartEncoder
 
 import mapbox_tilesets
 from mapbox_tilesets import utils, errors
-
-
-def _get_token(token=None):
-    """Get Mapbox access token from arg or environment"""
-    if token is not None:
-        return token
-    else:
-        return os.environ.get("MAPBOX_ACCESS_TOKEN") or os.environ.get(
-            "MapboxAccessToken"
-        )
-
-
-def _get_api():
-    """Get Mapbox tileset API base URL from environment"""
-    return os.environ.get("MAPBOX_API", "https://api.mapbox.com")
-
-
-def _get_session(
-    application=mapbox_tilesets.__name__, version=mapbox_tilesets.__version__
-):
-    """Get a configured session"""
-    s = Session()
-    s.headers.update({"user-agent": "{}/{}".format(application, version)})
-    return s
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -92,9 +66,9 @@ def create(
     <tileset_id> is in the form of username.handle - for example "mapbox.neat-tileset".
     The handle may only include "-" or "_" special characters and must be 32 characters or fewer.
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -134,9 +108,9 @@ def publish(tileset, token=None, indent=None):
 
     tilesets publish <tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}/publish?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -185,9 +159,9 @@ def update(
 
     tilesets update <tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -222,9 +196,9 @@ def delete(tileset, token=None, indent=None, force=None):
     tilesets delete <tileset_id>
     """
 
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
 
     if not force:
         val = click.prompt(
@@ -255,9 +229,9 @@ def status(tileset, token=None, indent=None):
 
     tilesets status <tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}/status?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -279,9 +253,9 @@ def tilejson(tileset, token=None, indent=None, secure=False):
 
     tilesets tilejson <tileset_id>,<tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
 
     # validate tilesets by splitting comma-delimted string
     # and rejoining it
@@ -312,9 +286,9 @@ def jobs(tileset, stage, token=None, indent=None):
 
     tilesets jobs <tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}/jobs?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -340,9 +314,9 @@ def job(tileset, job_id, token=None, indent=None):
 
     tilesets job <tileset_id> <job_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}/jobs/{2}?access_token={3}".format(
         mapbox_api, tileset, job_id, mapbox_token
     )
@@ -404,9 +378,9 @@ def list(
 
     tilests list <username>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
         mapbox_api, username, mapbox_token
     )
@@ -435,9 +409,9 @@ def validate_recipe(recipe, token=None, indent=None):
 
     tilesets validate-recipe <path_to_recipe>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/validateRecipe?access_token={1}".format(
         mapbox_api, mapbox_token
     )
@@ -457,9 +431,9 @@ def view_recipe(tileset, token=None, indent=None):
 
     tilesets view-recipe <tileset_id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}/recipe?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -482,9 +456,9 @@ def update_recipe(tileset, recipe, token=None, indent=None):
 
     tilesets update-recipe <tileset_id> <path_to_recipe>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/{1}/recipe?access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
@@ -525,9 +499,9 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
 
     tilesets add-source <username> <id> <path/to/source/data>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = (
         f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
     )
@@ -565,9 +539,9 @@ def view_source(username, id, token=None, indent=None):
 
     tilesets view-source <username> <id>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
         mapbox_api, username, id, mapbox_token
     )
@@ -600,9 +574,9 @@ def delete_source(username, id, force, token=None):
                 f"{val} does not match {username}/{id}. Aborted!"
             )
 
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/sources/{1}/{2}?access_token={3}".format(
         mapbox_api, username, id, mapbox_token
     )
@@ -621,9 +595,9 @@ def list_sources(username, token=None):
 
     tilesets list-sources <username>
     """
-    mapbox_api = _get_api()
-    mapbox_token = _get_token(token)
-    s = _get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
     url = "{0}/tilesets/v1/sources/{1}?access_token={2}".format(
         mapbox_api, username, mapbox_token
     )
