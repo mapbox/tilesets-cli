@@ -20,7 +20,7 @@ class MockResponse:
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_tilejson(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -55,7 +55,7 @@ def test_cli_tilejson(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_tilejson_composite(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -69,7 +69,7 @@ def test_cli_tilejson_composite(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_tilejson_secure(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -83,7 +83,7 @@ def test_cli_tilejson_secure(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_tilejson_error(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -105,4 +105,4 @@ def test_cli_tilejson_invalid_tileset_id():
     result = runner.invoke(tilejson, ["invalid@@id"])
     assert result.exit_code == 1
     assert isinstance(result.exception, TilesetNameError)
-    assert str(result.exception) == "invalid@@id"
+    assert "invalid@@id" in str(result.exception)

@@ -1,6 +1,7 @@
 from click.testing import CliRunner
-from unittest import mock
 import json
+import os
+from unittest import mock
 
 import pytest
 
@@ -14,7 +15,7 @@ from mapbox_tilesets.scripts.cli import (
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_add_source(mock_request_post, MockResponse):
     okay_response = {"id": "mapbox://tileset-source/test-user/hello-world"}
     mock_request_post.return_value = MockResponse(okay_response, status_code=200)
@@ -30,8 +31,26 @@ def test_cli_add_source(mock_request_post, MockResponse):
     )
 
 
+def test_cli_add_source_no_token():
+    if "MAPBOX_ACCESS_TOKEN" in os.environ:
+        del os.environ["MAPBOX_ACCESS_TOKEN"]
+    if "MapboxAccessToken" in os.environ:
+        del os.environ["MapboxAccessToken"]
+
+    runner = CliRunner()
+    unauthenticated_result = runner.invoke(
+        add_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson"]
+    )
+    assert unauthenticated_result.exit_code == 1
+
+    assert (
+        str(unauthenticated_result.exception)
+        == """No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag."""
+    )
+
+
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_add_source_no_validation(mock_request_post, MockResponse):
     error_response = {
         "message": "Invalid file format. Only GeoJSON features are allowed."
@@ -56,7 +75,7 @@ def test_cli_add_source_no_validation(mock_request_post, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_view_source(mock_request_get, MockResponse):
     message = {"id": "mapbox://tileset-source/test-user/hello-world"}
     mock_request_get.return_value = MockResponse(message, status_code=200)
@@ -68,7 +87,7 @@ def test_cli_view_source(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.delete")
+@mock.patch("requests.Session.delete")
 def test_cli_delete_source(mock_request_delete, MockResponse):
     mock_request_delete.return_value = MockResponse("", status_code=204)
     runner = CliRunner()
@@ -86,7 +105,7 @@ def test_cli_delete_source(mock_request_delete, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.delete")
+@mock.patch("requests.Session.delete")
 def test_cli_delete_source_aborted(mock_request_delete, MockResponse):
     mock_request_delete.return_value = MockResponse("", status_code=201)
     runner = CliRunner()
@@ -101,7 +120,7 @@ def test_cli_delete_source_aborted(mock_request_delete, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_view_source_2(mock_request_get, MockResponse):
     message = [
         {"id": "mapbox://tileset-source/test-user/hello-world"},

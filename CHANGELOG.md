@@ -1,9 +1,17 @@
 # Unreleased
+- Pin pytest version
+- Add `--type`, `--visibility`, `--sortby`, and `--limit` options to `list` command
+- Make TilesetNameError message more descriptive
+- Fail early if no access_token is provided
+- Add `--limit` option to `jobs` command
+
+# 1.1.0.dev0 (2020-06-11)
 - `update-recipe` command handles 204 status code in addition to 201 and no longer prints response text
 - Add `update` command for updating `--name`, `--description`, `--privacy`, and `--attribution` of a tileset
 - Add `--attribution` option to the `create` command
 - Add `delete` command for deleting a tileset
 - Add `tilejson` command
+- Add user-agent header to API requests
 
 # 1.0.1.dev0 (2020-04-07)
 - Fixed http status code for tilesets sources delete so it will no longer error

@@ -16,7 +16,7 @@ def test_cli_update_recipe_no_recipe():
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.patch")
+@mock.patch("requests.Session.patch")
 def test_cli_update_recipe_201(mock_request_patch, MockResponse):
     runner = CliRunner()
 
@@ -31,7 +31,7 @@ def test_cli_update_recipe_201(mock_request_patch, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.patch")
+@mock.patch("requests.Session.patch")
 def test_cli_update_recipe_204(mock_request_patch, MockResponse):
     runner = CliRunner()
 
@@ -46,7 +46,7 @@ def test_cli_update_recipe_204(mock_request_patch, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.patch")
+@mock.patch("requests.Session.patch")
 def test_cli_update_recipe2(mock_request_patch, MockResponse):
     runner = CliRunner()
 

@@ -21,7 +21,7 @@ class MockResponse:
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_publish(mock_request_post):
     runner = CliRunner()
 
@@ -39,7 +39,7 @@ def test_cli_publish(mock_request_post):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.post")
+@mock.patch("requests.Session.post")
 def test_cli_publish_use_token_flag(mock_request_post):
     runner = CliRunner()
     mock_request_post.return_value = MockResponse({"message": "mock message"}, 200)

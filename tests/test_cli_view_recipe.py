@@ -8,7 +8,7 @@ from mapbox_tilesets.scripts.cli import view_recipe
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_view_recipe(mock_request_get, MockResponse):
     runner = CliRunner()
 
@@ -24,7 +24,7 @@ def test_cli_view_recipe(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_view_recipe_use_token_flag(mock_request_get, MockResponse):
     runner = CliRunner()
     message = {"fake": "recipe_data"}
@@ -39,7 +39,7 @@ def test_cli_view_recipe_use_token_flag(mock_request_get, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.get")
+@mock.patch("requests.Session.get")
 def test_cli_view_recipe_raises(mock_request_get, MockResponse):
     runner = CliRunner()
 
