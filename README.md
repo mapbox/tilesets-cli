@@ -67,6 +67,7 @@ Adds GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or Geo
 Flags:
 
 * `--no-validation` [optional]: do not validate source data locally before uploading
+* `--quiet` [optional]: do not display an upload progress bar
 
 Usage
 

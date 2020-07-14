@@ -514,7 +514,6 @@ def add_source(
 
     with tempfile.TemporaryFile() as file:
         for feature in features:
-            print(feature)
             if not no_validation:
                 utils.validate_geojson(feature)
 
@@ -527,7 +526,7 @@ def add_source(
             length=m.len, fill_char="=", width=0, label="upload progress"
         )
 
-        if not quiet:
+        if quiet:
             resp = s.post(
                 url,
                 data=m,
