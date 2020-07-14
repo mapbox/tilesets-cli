@@ -494,10 +494,13 @@ def validate_source(features):
 @click.argument("id", required=True, type=str)
 @cligj.features_in_arg
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
+@click.option("--quiet", is_flag=True, help="Don't show progress bar")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def add_source(ctx, username, id, features, no_validation, token=None, indent=None):
+def add_source(
+    ctx, username, id, features, no_validation, quiet, token=None, indent=None
+):
     """Create/add a tileset source
 
     tilesets add-source <username> <id> <path/to/source/data>
@@ -511,32 +514,44 @@ def add_source(ctx, username, id, features, no_validation, token=None, indent=No
 
     with tempfile.TemporaryFile() as file:
         for feature in features:
+            print(feature)
             if not no_validation:
                 utils.validate_geojson(feature)
+
             file.write((json.dumps(feature) + "\n").encode("utf-8"))
 
         file.seek(0)
 
-        encoder = MultipartEncoder(fields={"file": ("file", file)})
+        m = MultipartEncoder(fields={"file": ("file", file)})
         prog = click.progressbar(
-            length=encoder.len, fill_char="=", width=0, label="upload progress"
+            length=m.len, fill_char="=", width=0, label="upload progress"
         )
 
-        with prog:
-
-            def callback(m):
-                prog.pos = m.bytes_read
-                prog.update(0)  # Step is 0 because we set pos above
-
-            monitor = MultipartEncoderMonitor(encoder, callback)
+        if not quiet:
             resp = s.post(
                 url,
-                data=monitor,
+                data=m,
                 headers={
                     "Content-Disposition": "multipart/form-data",
-                    "Content-type": monitor.content_type,
+                    "Content-type": m.content_type,
                 },
             )
+        else:
+            with prog:
+
+                def callback(m):
+                    prog.pos = m.bytes_read
+                    prog.update(0)  # Step is 0 because we set pos above
+
+                monitor = MultipartEncoderMonitor(m, callback)
+                resp = s.post(
+                    url,
+                    data=monitor,
+                    headers={
+                        "Content-Disposition": "multipart/form-data",
+                        "Content-type": monitor.content_type,
+                    },
+                )
 
     if resp.status_code == 200:
         click.echo(json.dumps(resp.json(), indent=indent))
