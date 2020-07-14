@@ -521,12 +521,8 @@ def add_source(
 
         file.seek(0)
 
-        m = MultipartEncoder(fields={"file": ("file", file)})
-        prog = click.progressbar(
-            length=m.len, fill_char="=", width=0, label="upload progress"
-        )
-
         if quiet:
+            m = MultipartEncoder(fields={"file": ("file", file)})
             resp = s.post(
                 url,
                 data=m,
@@ -536,6 +532,9 @@ def add_source(
                 },
             )
         else:
+            prog = click.progressbar(
+                length=m.len, fill_char="=", width=0, label="upload progress"
+            )
             with prog:
 
                 def callback(m):
