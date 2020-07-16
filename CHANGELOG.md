@@ -1,4 +1,6 @@
 # Unreleased
+
+# 1.2.0.dev0 (2020-07-16)
 - Pin pytest version
 - Add `--type`, `--visibility`, `--sortby`, and `--limit` options to `list` command
 - Make TilesetNameError message more descriptive
