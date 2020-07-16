@@ -4,6 +4,8 @@
 - Make TilesetNameError message more descriptive
 - Fail early if no access_token is provided
 - Add `--limit` option to `jobs` command
+- Update `add-source` to show a progress bar
+- Add `--quiet` option to `add-source` to silence progress bar
 
 # 1.1.0.dev0 (2020-06-11)
 - `update-recipe` command handles 204 status code in addition to 201 and no longer prints response text
