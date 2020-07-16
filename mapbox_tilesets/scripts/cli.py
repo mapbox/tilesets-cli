@@ -520,9 +520,9 @@ def add_source(
             file.write((json.dumps(feature) + "\n").encode("utf-8"))
 
         file.seek(0)
+        m = MultipartEncoder(fields={"file": ("file", file)})
 
         if quiet:
-            m = MultipartEncoder(fields={"file": ("file", file)})
             resp = s.post(
                 url,
                 data=m,
