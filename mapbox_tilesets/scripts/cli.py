@@ -517,7 +517,7 @@ def add_source(
             if not no_validation:
                 utils.validate_geojson(feature)
 
-            file.write((json.dumps(feature) + "\n").encode("utf-8"))
+            file.write((json.dumps(feature, separators=(',', ':')) + "\n").encode("utf-8"))
 
         file.seek(0)
         m = MultipartEncoder(fields={"file": ("file", file)})
