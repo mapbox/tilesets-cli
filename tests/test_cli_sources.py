@@ -30,6 +30,11 @@ def test_cli_add_source(mock_request_post, MockResponse):
         == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
 
+    expected_json = """{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6, 10.1]},"properties":{"name":"Dinagat Islands"}}"""
+
+    # the length of the data sent is the length of the compact string, plus 140 bytes of header
+    assert mock_request_post.call_args.kwargs["data"].len == len(expected_json) + 140
+
 
 def test_cli_add_source_no_token():
     if "MAPBOX_ACCESS_TOKEN" in os.environ:
