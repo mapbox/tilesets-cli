@@ -15,10 +15,19 @@ from mapbox_tilesets.scripts.cli import (
 
 
 @pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
-def test_cli_add_source(mock_request_post, MockResponse):
+def test_cli_add_source(mock_request_post, mock_multipart_encoder_monitor, mock_multipart_encoder, MockResponse, MockMultipartEncoding):
     okay_response = {"id": "mapbox://tileset-source/test-user/hello-world"}
     mock_request_post.return_value = MockResponse(okay_response, status_code=200)
+
+    expected_json = b'{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n'
+    def side_effect(fields):
+        assert fields['file'][1].read() == expected_json
+        return MockMultipartEncoding()
+    mock_multipart_encoder.side_effect = side_effect
+
     runner = CliRunner()
     validated_result = runner.invoke(
         add_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson"]
@@ -30,10 +39,9 @@ def test_cli_add_source(mock_request_post, MockResponse):
         == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
 
-    expected_json = """{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6, 10.1]},"properties":{"name":"Dinagat Islands"}}"""
-
     # the length of the data sent is the length of the compact string, plus 140 bytes of header
-    assert mock_request_post.call_args[1]["data"].len == len(expected_json) + 140
+    # assert mock_multipart_encoder.call_args == "hello"
+    # assert mock_request_post.call_args[1]["data"].len == len(expected_json) + 140
 
 
 def test_cli_add_source_no_token():
