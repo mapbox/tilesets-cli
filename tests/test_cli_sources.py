@@ -39,10 +39,6 @@ def test_cli_add_source(mock_request_post, mock_multipart_encoder_monitor, mock_
         == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
 
-    # the length of the data sent is the length of the compact string, plus 140 bytes of header
-    # assert mock_multipart_encoder.call_args == "hello"
-    # assert mock_request_post.call_args[1]["data"].len == len(expected_json) + 140
-
 
 def test_cli_add_source_no_token():
     if "MAPBOX_ACCESS_TOKEN" in os.environ:
