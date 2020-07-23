@@ -34,7 +34,7 @@ def MockResponse():
 
 class _MockMultipartEncoding:
     def __init__(self):
-        self.content_type = 'whatever'
+        self.content_type = "whatever"
         self.len = 8
 
     def MockMultipartEncoding(self):
