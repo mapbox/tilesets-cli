@@ -30,3 +30,17 @@ class _MockResponse:
 @pytest.fixture
 def MockResponse():
     return _MockResponse
+
+
+class _MockMultipartEncoding:
+    def __init__(self):
+        self.content_type = "whatever"
+        self.len = 8
+
+    def MockMultipartEncoding(self):
+        return self
+
+
+@pytest.fixture
+def MockMultipartEncoding():
+    return _MockMultipartEncoding
