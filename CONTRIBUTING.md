@@ -62,6 +62,10 @@ Releases to PyPi are handled via TravisCI and GitHub tags. Once changes have bee
 4. Tag on GitHub with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
 5. Look for the release at https://pypi.org/project/mapbox-tilesets/#history
 
+### pre-release
+
+Same as normal release process but include a dev tag in the `tilesets/__init__.py` version string. For example `0.2.0-dev0`. When you publish a git tag `v0.2.0-dev0` pypi will mark this as a "pre-release", which will only be installable when users include `--pre` in their pip installs.
+
 ## Tests
 
 All tests are runnable with pytest. pytest is not installed by default and can be installed with the pip test extras

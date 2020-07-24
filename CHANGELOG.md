@@ -1,5 +1,8 @@
 # Unreleased
 
+# 1.2.1.dev0 (2020-07-24)
+- Send compact JSON during source upload
+
 # 1.2.0.dev0 (2020-07-16)
 - Pin pytest version
 - Add `--type`, `--visibility`, `--sortby`, and `--limit` options to `list` command
