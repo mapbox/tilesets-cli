@@ -54,12 +54,13 @@ After which you can add these changes and commit again. Note that failing pre-co
 
 ## Release process
 
-Releases are simply tags on GitHub. Once changes have been merged to master:
+Releases to PyPi are handled via TravisCI and GitHub tags. Once changes have been merged to master:
 
 1. Update the version in tilesets/__init__.py
 2. Update the changelog
-3. Tag on github with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
-4. [Push new release to pypi](https://packaging.python.org/tutorials/packaging-projects/#generating-distribution-archives)
+3. Commit changes to GitHub. For example `git commit -am 'v0.2.0' && git push origin master`
+4. Tag on GitHub with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
+5. Look for the release at https://pypi.org/project/mapbox-tilesets/#history
 
 ## Tests
 

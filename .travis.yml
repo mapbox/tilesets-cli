@@ -13,3 +13,9 @@ after_script:
   - curl -S -f https://codecov.io/bash -o codecov
   - chmod +x codecov
   - ./codecov -Z
+deploy:
+  provider: pypi
+  user: mapboxci
+  distributions: "sdist bdist_wheel"
+  on:
+    tags: true
