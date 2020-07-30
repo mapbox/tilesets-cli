@@ -1,3 +1,3 @@
 """mapbox_tilesets package"""
 
-__version__ = "1.2.1t1"
+__version__ = "1.0.0"
