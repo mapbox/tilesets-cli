@@ -14,7 +14,7 @@ def read(fname):
 
 
 setup(
-    name="mapbox-tilesets",
+    name="mapsam-test-package",
     version=__version__,
     description=u"CLI for interacting with and preparing data for the Tilesets API",
     long_description=long_description,
