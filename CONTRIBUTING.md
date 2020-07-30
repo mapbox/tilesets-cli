@@ -58,10 +58,12 @@ Releases to PyPi are handled via TravisCI and GitHub tags. Once changes have bee
 
 1. Update the version in tilesets/__init__.py
 2. Update the changelog
-3. Commit changes to GitHub. For example `git commit -am '0.2.0' && git push origin master`
-4. Tag on GitHub with `git tag`. For example `git tag -a v0.2.0 -m 'v0.2.0'`
-5. Watch for tag build on travis at https://travis-ci.com/github/mapbox/tilesets-cli/builds
-6. Once travis completes successfully, look for the release at https://pypi.org/project/mapbox-tilesets/#history
+3. Commit changes to **your branch**. For example `git commit -am '0.2.0' && git push origin HEAD`
+4. Get a review and merge your changes to master.
+5. Get the latest changes locally from master `git checkout master && git pull origin master`
+6. Tag on GitHub with `git tag` and push tags. For example `git tag -a v0.2.0 -m 'v0.2.0' && git push --tags`
+7. Watch for tag build on travis at https://travis-ci.com/github/mapbox/tilesets-cli/builds
+8. Once travis completes successfully, look for the release at https://pypi.org/project/mapbox-tilesets/#history
 
 ## Tests
 
