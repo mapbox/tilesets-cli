@@ -1,6 +1,6 @@
 # Unreleased
 
-# 1.2.1.test1 (2020-07-30)
+# 1.2.1t1 (2020-07-30)
 - test publishing `mapbox-tilesets` package on pypi with TravisCI
 
 # 1.2.1.dev0 (2020-07-24)
