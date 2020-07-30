@@ -15,8 +15,7 @@ after_script:
   - ./codecov -Z
 deploy:
   provider: pypi
-  user: "__token__"
+  user: "mapboxci"
   distributions: "sdist bdist_wheel"
-  server: https://test.pypi.org/legacy/
   on:
     tags: true
