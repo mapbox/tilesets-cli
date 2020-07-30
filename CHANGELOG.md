@@ -1,5 +1,8 @@
 # Unreleased
 
+# 1.2.1-test-publish1 (2020-07-30)
+- test publishing `mapbox-tilesets` package on pypi with TravisCI
+
 # 1.2.1.dev0 (2020-07-24)
 - Send compact JSON during source upload
 
