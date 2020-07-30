@@ -7,6 +7,7 @@ import pytest
 
 from mapbox_tilesets.scripts.cli import (
     add_source,
+    upload_source,
     view_source,
     delete_source,
     validate_source,
