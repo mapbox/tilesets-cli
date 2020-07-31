@@ -15,7 +15,8 @@ after_script:
   - ./codecov -Z
 deploy:
   provider: pypi
-  user: "mapboxci"
+  user: __token__
+  password: $PYPI_PASSWORD
   distributions: "sdist bdist_wheel"
   on:
     tags: true
