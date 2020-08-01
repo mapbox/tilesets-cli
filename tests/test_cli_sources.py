@@ -116,7 +116,8 @@ def test_cli_upload_source_replace(
 
     runner = CliRunner()
     validated_result = runner.invoke(
-        upload_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson", "--replace"]
+        upload_source,
+        ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson", "--replace"],
     )
     assert validated_result.exit_code == 0
 

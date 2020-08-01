@@ -507,15 +507,7 @@ def upload_source(
     ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
 ):
     return _upload_source(
-        ctx,
-        username,
-        id,
-        features,
-        no_validation,
-        quiet,
-        replace,
-        token,
-        indent
+        ctx, username, id, features, no_validation, quiet, replace, token, indent
     )
 
 
@@ -601,15 +593,7 @@ def add_source(
     tilesets add-source <username> <id> <path/to/source/data>
     """
     return _upload_source(
-        ctx,
-        username,
-        id,
-        features,
-        no_validation,
-        quiet,
-        False,
-        token,
-        indent
+        ctx, username, id, features, no_validation, quiet, False, token, indent
     )
 
 
