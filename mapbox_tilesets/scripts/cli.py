@@ -506,6 +506,22 @@ def validate_source(features):
 def upload_source(
     ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
 ):
+    return _upload_source(
+        ctx,
+        username,
+        id,
+        features,
+        no_validation,
+        quiet,
+        replace,
+        token,
+        indent
+    )
+
+
+def _upload_source(
+    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+):
     """Create/add a tileset source
 
     tilesets add-source <username> <id> <path/to/source/data>
@@ -582,9 +598,9 @@ def add_source(
 ):
     """Create/add/replace a tileset source
 
-    tilesets upload-source <username> <id> <path/to/source/data>
+    tilesets add-source <username> <id> <path/to/source/data>
     """
-    upload_source(
+    return _upload_source(
         ctx,
         username,
         id,
@@ -593,7 +609,7 @@ def add_source(
         quiet,
         False,
         token,
-        indent,
+        indent
     )
 
 
