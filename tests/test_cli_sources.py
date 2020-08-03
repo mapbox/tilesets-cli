@@ -128,6 +128,41 @@ def test_cli_upload_source_replace(
 
 
 @pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.put")
+def test_cli_upload_source_replace(
+    mock_request_post,
+    mock_multipart_encoder_monitor,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    okay_response = {"id": "mapbox://tileset-source/test-user/hello-world"}
+    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
+
+    expected_json = b'{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        upload_source,
+        ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson", "--replace"],
+    )
+    assert validated_result.exit_code == 0
+
+    assert (
+        validated_result.output
+        == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
+    )
+
+
+@pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.Session.get")
 def test_cli_view_source(mock_request_get, MockResponse):
     message = {"id": "mapbox://tileset-source/test-user/hello-world"}

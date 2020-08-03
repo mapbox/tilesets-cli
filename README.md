@@ -36,8 +36,8 @@ export MAPBOX_ACCESS_TOKEN=my.token
 # Commands
 
 * Tileset Sources
-  * [`upload-source`](#add-source)
-  * *deprecated* [`add-source`](#add-source)
+  * [`upload-source`](#upload-source)
+  * *deprecated* [`add-source`](#deprecated-add-source)
   * [`validate-source`](#validate-source)
   * [`view-source`](#view-source)
   * [`list-sources`](#list-source)
