@@ -13,27 +13,29 @@ def test_cli_status(mock_request_get, MockResponse):
     runner = CliRunner()
 
     # sends expected request
-    message = {"message": "mock message"}
+    message = [{"id": "a123", "created_nice": "Tuesday, August 04, 2020", "stage": "processing", "tilesetId": "test.id"}]
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(status, ["test.id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/status?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?limit=1&access_token=fake-token"
     )
     assert result.exit_code == 0
-    assert json.loads(result.output) == message
+    expected_status = {"id": "test.id", "last_modified": "Tuesday, August 04, 2020", "status": "processing", "latest_job": "a123"}
+    assert json.loads(result.output) == expected_status
 
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.Session.get")
 def test_cli_status_use_token_flag(mock_request_get, MockResponse):
     runner = CliRunner()
-    message = {"message": "mock message"}
+    message = [{"id": "a123", "created_nice": "Tuesday, August 04, 2020", "stage": "processing", "tilesetId": "test.id"}]
     mock_request_get.return_value = MockResponse(message)
     # Provides the flag --token
     result = runner.invoke(status, ["test.id", "--token", "flag-token"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/status?access_token=flag-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?limit=1&access_token=flag-token"
     )
 
     assert result.exit_code == 0
-    assert json.loads(result.output) == {"message": "mock message"}
+    expected_status = {"id": "test.id", "last_modified": "Tuesday, August 04, 2020", "status": "processing", "latest_job": "a123"}
+    assert json.loads(result.output) == expected_status

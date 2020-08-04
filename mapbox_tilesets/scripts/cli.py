@@ -232,12 +232,19 @@ def status(tileset, token=None, indent=None):
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
     s = utils._get_session()
-    url = "{0}/tilesets/v1/{1}/status?access_token={2}".format(
+    url = "{0}/tilesets/v1/{1}/jobs?limit=1&access_token={2}".format(
         mapbox_api, tileset, mapbox_token
     )
     r = s.get(url)
 
-    click.echo(json.dumps(r.json(), indent=indent))
+    status = {}
+    for job in r.json():
+        status["id"] = job["tilesetId"]
+        status["latest_job"] = job["id"]
+        status["status"] = job["stage"]
+        status["last_modified"] = job["created_nice"]
+
+    click.echo(json.dumps(status, indent=indent))
 
 
 @cli.command("tilejson")
