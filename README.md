@@ -36,7 +36,8 @@ export MAPBOX_ACCESS_TOKEN=my.token
 # Commands
 
 * Tileset Sources
-  * [`add-source`](#add-source)
+  * [`upload-source`](#upload-source)
+  * *deprecated* [`add-source`](#deprecated-add-source)
   * [`validate-source`](#validate-source)
   * [`view-source`](#view-source)
   * [`list-sources`](#list-source)
@@ -56,7 +57,37 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * [`list`](#list)
   * [`tilejson`](#tilejson)
 
-### add-source
+### upload-source
+
+```shell
+tilesets upload-source <username> <id> <file>
+```
+
+Uploads GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading. Can be used to add data to a source or to replace all of the data in a source with the `--replace` flag.
+
+Flags:
+
+* `--no-validation` [optional]: do not validate source data locally before uploading
+* `--replace` [optional]: delete all existing source data and replace with data from the file
+* `--quiet` [optional]: do not display an upload progress bar
+
+Usage
+
+```shell
+# single file
+tilesets upload-source <username> <id> ./file.geojson
+
+# multiple files
+tilesets upload-source <username> <id> file-1.geojson file-4.geojson
+
+# directory of files
+# Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
+tilesets upload-source <username> <id> ./path/to/multiple/files/
+```
+
+### *deprecated* add-source
+
+*WARNING: add-source is maintained for legacy purposes. Please use the `upload-source` command instead.*
 
 ```shell
 tilesets add-source <username> <id> <file>

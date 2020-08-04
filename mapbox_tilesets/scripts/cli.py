@@ -489,17 +489,30 @@ def validate_source(features):
     click.echo("✔ valid")
 
 
-@cli.command("add-source")
+@cli.command("upload-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
 @cligj.features_in_arg
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
 @click.option("--quiet", is_flag=True, help="Don't show progress bar")
+@click.option(
+    "--replace",
+    is_flag=True,
+    help="Replace the existing source with the new source file",
+)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def add_source(
-    ctx, username, id, features, no_validation, quiet, token=None, indent=None
+def upload_source(
+    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+):
+    return _upload_source(
+        ctx, username, id, features, no_validation, quiet, replace, token, indent
+    )
+
+
+def _upload_source(
+    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
 ):
     """Create/add a tileset source
 
@@ -511,6 +524,10 @@ def add_source(
     url = (
         f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
     )
+
+    method = "post"
+    if replace:
+        method = "put"
 
     with tempfile.TemporaryFile() as file:
         for feature in features:
@@ -525,7 +542,7 @@ def add_source(
         m = MultipartEncoder(fields={"file": ("file", file)})
 
         if quiet:
-            resp = s.post(
+            resp = getattr(s, method)(
                 url,
                 data=m,
                 headers={
@@ -544,7 +561,7 @@ def add_source(
                     prog.update(0)  # Step is 0 because we set pos above
 
                 monitor = MultipartEncoderMonitor(m, callback)
-                resp = s.post(
+                resp = getattr(s, method)(
                     url,
                     data=monitor,
                     headers={
@@ -557,6 +574,27 @@ def add_source(
         click.echo(json.dumps(resp.json(), indent=indent))
     else:
         raise errors.TilesetsError(resp.text)
+
+
+@cli.command("add-source")
+@click.argument("username", required=True, type=str)
+@click.argument("id", required=True, type=str)
+@cligj.features_in_arg
+@click.option("--no-validation", is_flag=True, help="Bypass source file validation")
+@click.option("--quiet", is_flag=True, help="Don't show progress bar")
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+@click.pass_context
+def add_source(
+    ctx, username, id, features, no_validation, quiet, token=None, indent=None
+):
+    """Create/add/replace a tileset source
+
+    tilesets add-source <username> <id> <path/to/source/data>
+    """
+    return _upload_source(
+        ctx, username, id, features, no_validation, quiet, False, token, indent
+    )
 
 
 @cli.command("view-source")
