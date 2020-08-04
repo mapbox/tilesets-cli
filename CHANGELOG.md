@@ -1,5 +1,8 @@
 # Unreleased
 
+# 1.4.0 (2020-08-04)
+- Create upload-source command to replace add-source, with extra `--replace` option
+
 # 1.3.0 (2020-07-30)
 - Official PyPi release via TravisCI
 
