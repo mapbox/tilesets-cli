@@ -131,7 +131,7 @@ def test_cli_upload_source_replace(
 @mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
 @mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
 @mock.patch("requests.Session.put")
-def test_cli_upload_source_replace(
+def test_cli_upload_source_no_replace(
     mock_request_post,
     mock_multipart_encoder_monitor,
     mock_multipart_encoder,
