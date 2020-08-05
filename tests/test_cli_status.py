@@ -13,13 +13,7 @@ def test_cli_status(mock_request_get, MockResponse):
     runner = CliRunner()
 
     # sends expected request
-    message = [
-        {
-            "id": "a123",
-            "stage": "processing",
-            "tilesetId": "test.id",
-        }
-    ]
+    message = [{"id": "a123", "stage": "processing", "tilesetId": "test.id",}]
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(status, ["test.id"])
     mock_request_get.assert_called_with(
@@ -38,13 +32,7 @@ def test_cli_status(mock_request_get, MockResponse):
 @mock.patch("requests.Session.get")
 def test_cli_status_use_token_flag(mock_request_get, MockResponse):
     runner = CliRunner()
-    message = [
-        {
-            "id": "a123",
-            "stage": "processing",
-            "tilesetId": "test.id",
-        }
-    ]
+    message = [{"id": "a123", "stage": "processing", "tilesetId": "test.id",}]
     mock_request_get.return_value = MockResponse(message)
     # Provides the flag --token
     result = runner.invoke(status, ["test.id", "--token", "flag-token"])
