@@ -530,13 +530,15 @@ def _upload_source(
     if replace:
         method = "put"
 
-    token_parts = mapbox_token.split('.')
+    token_parts = mapbox_token.split(".")
     if len(token_parts) > 1:
         while len(token_parts[1]) % 4 != 0:
-            token_parts[1] = token_parts[1] + '='
+            token_parts[1] = token_parts[1] + "="
         body = json.loads(base64.b64decode(token_parts[1]))
-        if 'u' in body and username != body['u']:
-            raise errors.TilesetsError(f"Token username {body['u']} does not match username {username}")
+        if "u" in body and username != body["u"]:
+            raise errors.TilesetsError(
+                f"Token username {body['u']} does not match username {username}"
+            )
 
     with tempfile.TemporaryFile() as file:
         for feature in features:
