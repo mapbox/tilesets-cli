@@ -264,7 +264,7 @@ Flags:
 
 ### status
 
-View the status of a tileset. This includes how many jobs are queued, processing, and complete.
+View the status of a tileset. To get more detailed information about a tileset's jobs, including the timestamps of failed and successful jobs, use the `tielsets jobs <tileset_id>` command.
 
 ```
 tilesets status <tileset_id>

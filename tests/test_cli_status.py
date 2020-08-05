@@ -16,7 +16,6 @@ def test_cli_status(mock_request_get, MockResponse):
     message = [
         {
             "id": "a123",
-            "created_nice": "Tuesday, August 04, 2020",
             "stage": "processing",
             "tilesetId": "test.id",
         }
@@ -29,7 +28,6 @@ def test_cli_status(mock_request_get, MockResponse):
     assert result.exit_code == 0
     expected_status = {
         "id": "test.id",
-        "last_modified": "Tuesday, August 04, 2020",
         "status": "processing",
         "latest_job": "a123",
     }
@@ -43,7 +41,6 @@ def test_cli_status_use_token_flag(mock_request_get, MockResponse):
     message = [
         {
             "id": "a123",
-            "created_nice": "Tuesday, August 04, 2020",
             "stage": "processing",
             "tilesetId": "test.id",
         }
@@ -58,7 +55,6 @@ def test_cli_status_use_token_flag(mock_request_get, MockResponse):
     assert result.exit_code == 0
     expected_status = {
         "id": "test.id",
-        "last_modified": "Tuesday, August 04, 2020",
         "status": "processing",
         "latest_job": "a123",
     }

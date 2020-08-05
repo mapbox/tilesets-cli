@@ -242,7 +242,6 @@ def status(tileset, token=None, indent=None):
         status["id"] = job["tilesetId"]
         status["latest_job"] = job["id"]
         status["status"] = job["stage"]
-        status["last_modified"] = job["created_nice"]
 
     click.echo(json.dumps(status, indent=indent))
 
