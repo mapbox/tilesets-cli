@@ -49,6 +49,47 @@ def test_cli_add_source(
     )
 
 
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.post")
+def test_cli_add_source_wrong_username(
+    mock_request_post,
+    mock_multipart_encoder_monitor,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    if "MAPBOX_ACCESS_TOKEN" in os.environ:
+        del os.environ["MAPBOX_ACCESS_TOKEN"]
+    if "MapboxAccessToken" in os.environ:
+        del os.environ["MapboxAccessToken"]
+
+    os.environ["MapboxAccessToken"] = "pk.eyJ1Ijoid3JvbmctdXNlciJ9Cg.xxx"
+
+    okay_response = {"id": "mapbox://tileset-source/test-user/hello-world"}
+    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
+
+    expected_json = b'{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        add_source, ["test-user-wrong", "hello-world", "tests/fixtures/valid.ldgeojson"]
+    )
+    assert validated_result.exit_code == 1
+
+    assert (
+        str(validated_result.exception)
+        == "Token username wrong-user does not match username test-user-wrong"
+    )
+
+
 def test_cli_add_source_no_token():
     if "MAPBOX_ACCESS_TOKEN" in os.environ:
         del os.environ["MAPBOX_ACCESS_TOKEN"]
