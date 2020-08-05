@@ -62,21 +62,8 @@ def test_cli_add_source_wrong_username(
 ):
     if "MAPBOX_ACCESS_TOKEN" in os.environ:
         del os.environ["MAPBOX_ACCESS_TOKEN"]
-    if "MapboxAccessToken" in os.environ:
-        del os.environ["MapboxAccessToken"]
 
     os.environ["MapboxAccessToken"] = "pk.eyJ1Ijoid3JvbmctdXNlciJ9Cg.xxx"
-
-    okay_response = {"id": "mapbox://tileset-source/test-user/hello-world"}
-    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
-
-    expected_json = b'{"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n'
-
-    def side_effect(fields):
-        assert fields["file"][1].read() == expected_json
-        return MockMultipartEncoding()
-
-    mock_multipart_encoder.side_effect = side_effect
 
     runner = CliRunner()
     validated_result = runner.invoke(
