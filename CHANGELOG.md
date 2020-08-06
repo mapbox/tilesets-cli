@@ -1,5 +1,8 @@
 # Unreleased
 
+# 1.4.1 (2020-08-06)
+- Use the `/jobs` endpoint in the `status` command
+
 # 1.4.0 (2020-08-04)
 - Create upload-source command to replace add-source, with extra `--replace` option
 
