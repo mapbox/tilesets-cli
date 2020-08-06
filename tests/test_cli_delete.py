@@ -28,7 +28,7 @@ def test_cli_delete(mock_request_delete):
     mock_request_delete.return_value = MockResponse("", status_code=200)
     result = runner.invoke(delete, ["test.id"], input="test.id")
     mock_request_delete.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
     assert (
@@ -62,7 +62,7 @@ def test_cli_delete_force(mock_request_delete):
     mock_request_delete.return_value = MockResponse("", status_code=204)
     result = runner.invoke(delete, ["test.id", "--force"])
     mock_request_delete.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
     assert result.output == "Tileset deleted.\n"
@@ -79,7 +79,7 @@ def test_cli_delete_fail(mock_request_delete):
     )
     result = runner.invoke(delete, ["test.id", "--force"])
     mock_request_delete.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 1
     assert isinstance(result.exception, TilesetsError)

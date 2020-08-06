@@ -6,7 +6,8 @@ from json.decoder import JSONDecodeError
 
 @pytest.fixture(scope="function")
 def token_environ(monkeypatch):
-    monkeypatch.setenv("MAPBOX_ACCESS_TOKEN", "fake-token")
+    # '{"u":"test-user"}' in base64
+    monkeypatch.setenv("MAPBOX_ACCESS_TOKEN", "pk.eyJ1IjoidGVzdC11c2VyIn0K")
     monkeypatch.setenv("MapboxAccessToken", "test-token")
 
 

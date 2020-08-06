@@ -49,7 +49,7 @@ def test_cli_tilejson(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(tilejson, ["test.id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/v4/test.id.json?access_token=fake-token"
+        "https://api.mapbox.com/v4/test.id.json?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
 
@@ -63,7 +63,7 @@ def test_cli_tilejson_composite(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse("")
     result = runner.invoke(tilejson, ["test.id,test.another"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/v4/test.id,test.another.json?access_token=fake-token"
+        "https://api.mapbox.com/v4/test.id,test.another.json?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
 
@@ -77,7 +77,7 @@ def test_cli_tilejson_secure(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse("")
     result = runner.invoke(tilejson, ["test.id", "--secure"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/v4/test.id.json?access_token=fake-token&secure"
+        "https://api.mapbox.com/v4/test.id.json?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&secure"
     )
     assert result.exit_code == 0
 
@@ -91,7 +91,7 @@ def test_cli_tilejson_error(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse({"message": "uh oh"}, 422)
     result = runner.invoke(tilejson, ["test.id,test.another"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/v4/test.id,test.another.json?access_token=fake-token"
+        "https://api.mapbox.com/v4/test.id,test.another.json?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 1
     assert isinstance(result.exception, TilesetsError)

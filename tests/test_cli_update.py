@@ -39,7 +39,7 @@ def test_cli_patch(mock_request_patch):
     )
 
     mock_request_patch.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token",
+        "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={
             "name": "hola",
             "description": "hello world",
@@ -63,7 +63,7 @@ def test_cli_patch_no_options(mock_request_patch):
     result = runner.invoke(update, ["test.id"])
 
     mock_request_patch.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token", json={}
+        "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K", json={}
     )
     assert result.exit_code == 0
     assert result.output == ""

@@ -17,7 +17,7 @@ def test_cli_view_recipe(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(view_recipe, ["test.id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
     assert json.loads(result.output) == message
@@ -47,7 +47,7 @@ def test_cli_view_recipe_raises(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse("not found", status_code=404)
     result = runner.invoke(view_recipe, ["test.id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 1
 
