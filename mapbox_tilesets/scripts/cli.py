@@ -4,6 +4,7 @@ import tempfile
 
 import click
 import cligj
+import base64
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
@@ -534,6 +535,27 @@ def _upload_source(
     method = "post"
     if replace:
         method = "put"
+
+    # This does the decoding by hand instead of using pyjwt because
+    # pyjwt rejects tokens that don't pad the base64 with = signs.
+    token_parts = mapbox_token.split(".")
+    if len(token_parts) < 2:
+        raise errors.TilesetsError(
+            f"Token {mapbox_token} does not contain a payload component"
+        )
+    else:
+        while len(token_parts[1]) % 4 != 0:
+            token_parts[1] = token_parts[1] + "="
+        body = json.loads(base64.b64decode(token_parts[1]))
+        if "u" in body:
+            if username != body["u"]:
+                raise errors.TilesetsError(
+                    f"Token username {body['u']} does not match username {username}"
+                )
+        else:
+            raise errors.TilesetsError(
+                f"Token {mapbox_token} does not contain a username"
+            )
 
     with tempfile.TemporaryFile() as file:
         for feature in features:

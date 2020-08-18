@@ -50,7 +50,7 @@ def test_cli_create_success(mock_request_post, MockResponse):
     )
     assert result.exit_code == 0
     mock_request_post.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token",
+        "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={
             "name": "test name",
             "description": "",
@@ -108,7 +108,7 @@ def test_cli_create_success_description(mock_request_post, MockResponse):
     assert result.exit_code == 0
 
     mock_request_post.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id?access_token=fake-token",
+        "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={
             "name": "test name",
             "description": "test description",

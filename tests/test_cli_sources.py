@@ -49,6 +49,35 @@ def test_cli_add_source(
     )
 
 
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.post")
+def test_cli_add_source_wrong_username(
+    mock_request_post,
+    mock_multipart_encoder_monitor,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    if "MAPBOX_ACCESS_TOKEN" in os.environ:
+        del os.environ["MAPBOX_ACCESS_TOKEN"]
+
+    # This is the base64 encoding of '{"u":"wrong-user"}', not a real token
+    os.environ["MapboxAccessToken"] = "pk.eyJ1Ijoid3JvbmctdXNlciJ9Cg.xxx"
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        add_source, ["test-user-wrong", "hello-world", "tests/fixtures/valid.ldgeojson"]
+    )
+    assert validated_result.exit_code == 1
+
+    assert (
+        str(validated_result.exception)
+        == "Token username wrong-user does not match username test-user-wrong"
+    )
+
+
 def test_cli_add_source_no_token():
     if "MAPBOX_ACCESS_TOKEN" in os.environ:
         del os.environ["MAPBOX_ACCESS_TOKEN"]

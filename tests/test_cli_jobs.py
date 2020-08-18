@@ -17,7 +17,7 @@ def test_cli_job(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(jobs, ["test.id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=fake-token&limit=100"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=100"
     )
     assert result.exit_code == 0
     assert json.loads(result.output) == message
@@ -34,7 +34,7 @@ def test_cli_job_error(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message, status_code=404)
     result = runner.invoke(jobs, ["test.id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=fake-token&limit=100"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=100"
     )
     assert result.exit_code == 0
     assert json.loads(result.output) == message
@@ -51,7 +51,7 @@ def test_cli_jobs_and_stage(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(jobs, ["test.id", "--stage", "success"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=fake-token&limit=100&stage=success"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=100&stage=success"
     )
     assert result.exit_code == 0
     assert json.loads(result.output) == message
@@ -68,7 +68,7 @@ def test_cli_jobs_limit(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(jobs, ["test.id", "--limit", "10"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=fake-token&limit=10"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=10"
     )
     assert result.exit_code == 0
 
@@ -93,7 +93,7 @@ def test_cli_jobs_stage_and_limit(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(jobs, ["test.id", "--stage", "success", "--limit", "10"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=fake-token&limit=10&stage=success"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=10&stage=success"
     )
     assert result.exit_code == 0
     assert json.loads(result.output) == message
@@ -110,7 +110,7 @@ def test_cli_single_job(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(job, ["test.id", "job_id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs/job_id?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs/job_id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
     assert json.loads(result.output) == message

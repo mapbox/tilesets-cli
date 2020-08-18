@@ -29,7 +29,7 @@ def test_cli_publish(mock_request_post):
     mock_request_post.return_value = MockResponse({"message": "mock message"}, 200)
     result = runner.invoke(publish, ["test.id"])
     mock_request_post.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/publish?access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/publish?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
     assert (

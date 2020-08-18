@@ -34,7 +34,7 @@ def test_cli_validate_recipe(mock_request_put, MockResponse):
     mock_request_put.return_value = MockResponse(message)
     result = runner.invoke(validate_recipe, ["tests/fixtures/recipe.json"])
     mock_request_put.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/validateRecipe?access_token=fake-token",
+        "https://api.mapbox.com/tilesets/v1/validateRecipe?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
     )
     assert result.exit_code == 0

@@ -17,7 +17,7 @@ def test_cli_status(mock_request_get, MockResponse):
     mock_request_get.return_value = MockResponse(message)
     result = runner.invoke(status, ["test.id"])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/jobs?limit=1&access_token=fake-token"
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?limit=1&access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
     expected_status = {

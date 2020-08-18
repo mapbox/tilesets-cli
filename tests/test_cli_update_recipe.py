@@ -24,7 +24,7 @@ def test_cli_update_recipe_201(mock_request_patch, MockResponse):
     mock_request_patch.return_value = MockResponse({}, status_code=201)
     result = runner.invoke(update_recipe, ["test.id", "tests/fixtures/recipe.json"])
     mock_request_patch.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=fake-token",
+        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
     )
     assert result.exit_code == 0
@@ -39,7 +39,7 @@ def test_cli_update_recipe_204(mock_request_patch, MockResponse):
     mock_request_patch.return_value = MockResponse("", status_code=204)
     result = runner.invoke(update_recipe, ["test.id", "tests/fixtures/recipe.json"])
     mock_request_patch.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=fake-token",
+        "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={"minzoom": 0, "maxzoom": 10, "layer_name": "test_layer"},
     )
     assert result.exit_code == 0
