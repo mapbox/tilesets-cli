@@ -1,5 +1,8 @@
 # Unreleased
 
+# 1.4.2 (2020-08-18)
+- Check if the token matches the username before uploading sources
+
 # 1.4.1 (2020-08-06)
 - Use the `/jobs` endpoint in the `status` command
 
