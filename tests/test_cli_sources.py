@@ -63,6 +63,7 @@ def test_cli_add_source_wrong_username(
     if "MAPBOX_ACCESS_TOKEN" in os.environ:
         del os.environ["MAPBOX_ACCESS_TOKEN"]
 
+    # This is the base64 encoding of '{"u":"wrong-user"}', not a real token
     os.environ["MapboxAccessToken"] = "pk.eyJ1Ijoid3JvbmctdXNlciJ9Cg.xxx"
 
     runner = CliRunner()
