@@ -703,3 +703,27 @@ def list_sources(username, token=None):
             click.echo(source["id"])
     else:
         raise errors.TilesetsError(r.text)
+
+@cli.command("estimate-area")
+@cligj.features_in_arg 
+@click.option("--precision","-p",required=True,type=str,help="Precision level")
+def estimate_area(features,precision):
+    """Estimate area of features with a precision level.
+
+    tilesets estimate-area <file> <precision> 
+    """
+    ## validate features, exceptions thrown in jsonschema validate func 
+    try :
+        for feature in features:
+            utils.validate_geojson(feature)
+    ## error opening file throws IOError 
+    except ValueError as e: ## feature value error 
+        print(e)
+    
+    ## validate precision
+    if not utils.validate_precision(precision):
+        raise errors.TilesetsError("The precision value {precision} is invalid. The options are '10m', '1m', '30cm', or '1cm')")
+
+    ## calculate area 
+
+    ## output area 
