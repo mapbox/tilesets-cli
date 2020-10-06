@@ -20,8 +20,7 @@ class TilesetsError(Exception):
 
 
 class TilesetNameError(TilesetsError):
-    """Not a valid tileset id
-    """
+    """Not a valid tileset id"""
 
     def __init__(self, tileset_id):
         self.tileset_id = tileset_id
