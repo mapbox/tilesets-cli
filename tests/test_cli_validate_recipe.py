@@ -21,7 +21,7 @@ def test_cli_validate_recipe_no_recipe():
     runner = CliRunner()
     result = runner.invoke(validate_recipe, ["does/not/exist/recipe.json"])
     assert result.exit_code == 2
-    assert 'Path "does/not/exist/recipe.json" does not exist' in result.output
+    assert "Path 'does/not/exist/recipe.json' does not exist" in result.output
 
 
 @pytest.mark.usefixtures("token_environ")
