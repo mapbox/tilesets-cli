@@ -105,18 +105,5 @@ def validate_geojson(feature):
     return validate(instance=feature, schema=schema)
 
 
-def validate_precision(precision):
-    """Assess if a precision is valid
-
-    Parameters
-    ----------
-    precision: str
-        options are : “10m”, “1m”, “30cm”, “1cm”
-
-    Returns
-    -------
-    is_valid: bool
-        boolean indicating if the precision is valid
-    """
-    precisionsList = ["10m","1m","30cm","1cm"]
-    return precision in precisionsList
+def calculate_tiles_area(features, precision):
+    print("Calculating!")
