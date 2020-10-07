@@ -717,11 +717,14 @@ def list_sources(username, token=None):
 def estimate_area(features, precision):
     """Estimate area of features with a precision level.
 
-    tilesets estimate-area <file> <precision>
+    tilesets estimate-area <features> <precision>
     """
     for feature in features:
+        print(feature)
         utils.validate_geojson(feature)
+        print("Done")
 
+    # char count for stdin (1024)
     # except Warning as w: ##thrown by numpy math
     #     print("Warning caught!!")
     #     print(w)
