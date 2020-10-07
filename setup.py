@@ -34,6 +34,8 @@ setup(
         "requests-toolbelt",
         "jsonschema~=3.0",
         "jsonseq~=1.0",
+        "mercantile",
+        "supermercado",
     ],
     include_package_data=True,
     zip_safe=False,

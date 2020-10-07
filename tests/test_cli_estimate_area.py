@@ -2,14 +2,15 @@ from click.testing import CliRunner
 
 from mapbox_tilesets.scripts.cli import estimate_area
 
-# this just keeps running indefinetly
-# def test_cli_estimate_area_no_features():
-#     runner = CliRunner()
-#     invalidated_result = runner.invoke(
-#         estimate_area,
-#         ["features", " ", "--precision", "10m"],
-#     )
-#     assert invalidated_result.exit_code == 1
+
+# rainy day scenarios
+def test_cli_estimate_area_features_from_invalid_stdin_geojson():
+    runner = CliRunner()
+    invalidated_result = runner.invoke(
+        estimate_area, ["--precision", "10m"], input="invalidGeoJson input"
+    )
+    assert invalidated_result.exit_code == 1
+    assert type(invalidated_result.exception).__name__ == "JSONDecodeError"
 
 
 def test_cli_estimate_area_no_precision():
@@ -32,7 +33,8 @@ def test_cli_estimate_area_invalid_precision():
     assert "Invalid value for '--precision' / '-p'" in invalidated_result.output
 
 
-# TODO : add output validation
+# TODO : add output validation for sunny day scenarios
+# sunny day scenarios
 def test_cli_estimate_area_valid_features_files_and_precision():
     runner = CliRunner()
     validated_result = runner.invoke(
