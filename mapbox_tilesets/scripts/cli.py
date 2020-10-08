@@ -716,13 +716,15 @@ def list_sources(username, token=None):
     type=click.Choice(["10m", "1m", "30cm", "1cm"]),
     help="Precision level",
 )
+@click.option("--force-1cm", is_flag=True, help="enables 1cm precision")
 def estimate_area(features, precision):
     """Estimate area of features with a precision level.
 
     tilesets estimate-area <features> <precision>
     """
-    features = builtins.list(filter_features(features))
+    # builtins.list because there is a list command in the cli & will thrown an error
 
+    features = builtins.list(filter_features(features))
     for feature in features:
         utils.validate_geojson(feature)
 
@@ -735,6 +737,8 @@ def estimate_area(features, precision):
     except Exception as e:
         print("Error with area calculation!")
         print(e)
+
+    area = round(area)
 
     click.echo(
         json.dumps(
