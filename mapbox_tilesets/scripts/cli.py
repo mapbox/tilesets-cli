@@ -337,79 +337,79 @@ def job(tileset, job_id, token=None, indent=None):
     click.echo(json.dumps(r.json(), indent=indent))
 
 
-# @cli.command("list")
-# @click.argument("username", required=True, type=str)
-# @click.option(
-#     "--verbose",
-#     "-v",
-#     required=False,
-#     is_flag=True,
-#     help="Will print all tileset information",
-# )
-# @click.option(
-#     "--type",
-#     required=False,
-#     type=click.Choice(["vector", "raster"]),
-#     help="Filter results by tileset type",
-# )
-# @click.option(
-#     "--visibility",
-#     required=False,
-#     type=click.Choice(["public", "private"]),
-#     help="Filter results by visibility",
-# )
-# @click.option(
-#     "--sortby",
-#     required=False,
-#     type=click.Choice(["created", "modified"]),
-#     help="Sort the results by their created or modified timestamps",
-# )
-# @click.option(
-#     "--limit",
-#     required=False,
-#     type=click.IntRange(1, 500),
-#     default=100,
-#     help="The maximum number of results to return, from 1 to 500 (default 100)",
-# )
-# @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-# @click.option("--indent", type=int, default=None, help="Indent for JSON output")
-# def list(
-#     username,
-#     verbose,
-#     type=None,
-#     visibility=None,
-#     sortby=None,
-#     limit=None,
-#     token=None,
-#     indent=None,
-# ):
-#     """List all tilesets for an account.
-#     By default the response is a simple list of tileset IDs.
-#     If you would like an array of all tileset's information,
-#     use the --versbose flag.
+@cli.command("list")
+@click.argument("username", required=True, type=str)
+@click.option(
+    "--verbose",
+    "-v",
+    required=False,
+    is_flag=True,
+    help="Will print all tileset information",
+)
+@click.option(
+    "--type",
+    required=False,
+    type=click.Choice(["vector", "raster"]),
+    help="Filter results by tileset type",
+)
+@click.option(
+    "--visibility",
+    required=False,
+    type=click.Choice(["public", "private"]),
+    help="Filter results by visibility",
+)
+@click.option(
+    "--sortby",
+    required=False,
+    type=click.Choice(["created", "modified"]),
+    help="Sort the results by their created or modified timestamps",
+)
+@click.option(
+    "--limit",
+    required=False,
+    type=click.IntRange(1, 500),
+    default=100,
+    help="The maximum number of results to return, from 1 to 500 (default 100)",
+)
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def list(
+    username,
+    verbose,
+    type=None,
+    visibility=None,
+    sortby=None,
+    limit=None,
+    token=None,
+    indent=None,
+):
+    """List all tilesets for an account.
+    By default the response is a simple list of tileset IDs.
+    If you would like an array of all tileset's information,
+    use the --versbose flag.
 
-#     tilests list <username>
-#     """
-#     mapbox_api = utils._get_api()
-#     mapbox_token = utils._get_token(token)
-#     s = utils._get_session()
-#     url = "{0}/tilesets/v1/{1}?access_token={2}".format(
-#         mapbox_api, username, mapbox_token
-#     )
-#     url = "{0}&limit={1}".format(url, limit) if limit else url
-#     url = "{0}&type={1}".format(url, type) if type else url
-#     url = "{0}&visibility={1}".format(url, visibility) if visibility else url
-#     url = "{0}&sortby={1}".format(url, sortby) if sortby else url
-#     r = s.get(url)
-#     if r.status_code == 200:
-#         if verbose:
-#             for tileset in r.json():
-#                 click.echo(json.dumps(tileset, indent=indent))
-#         else:
-#             for tileset in r.json():
-#                 click.echo(tileset["id"])
-#     else:
-#         raise errors.TilesetsError(r.text)
+    tilests list <username>
+    """
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
+    url = "{0}/tilesets/v1/{1}?access_token={2}".format(
+        mapbox_api, username, mapbox_token
+    )
+    url = "{0}&limit={1}".format(url, limit) if limit else url
+    url = "{0}&type={1}".format(url, type) if type else url
+    url = "{0}&visibility={1}".format(url, visibility) if visibility else url
+    url = "{0}&sortby={1}".format(url, sortby) if sortby else url
+    r = s.get(url)
+    if r.status_code == 200:
+        if verbose:
+            for tileset in r.json():
+                click.echo(json.dumps(tileset, indent=indent))
+        else:
+            for tileset in r.json():
+                click.echo(tileset["id"])
+    else:
+        raise errors.TilesetsError(r.text)
 
 
 @cli.command("validate-recipe")
