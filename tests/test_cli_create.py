@@ -14,7 +14,7 @@ def test_cli_create_missing_recipe():
     # missing --recipe option
     result = runner.invoke(create, ["test.id"])
     assert result.exit_code == 2
-    assert 'Missing option "--recipe"' in result.output
+    assert "Missing option '--recipe' / '-r'" in result.output
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -25,7 +25,7 @@ def test_cli_create_missing_name():
         create, ["test.id", "--recipe", "tests/fixtures/recipe.json"]
     )
     assert result.exit_code == 2
-    assert 'Missing option "--name"' in result.output
+    assert "Missing option '--name'" in result.output
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -140,7 +140,7 @@ def test_cli_create_private_invalid(mock_request_post, MockResponse):
     )
     assert result.exit_code == 2
     assert (
-        'Invalid value for "--privacy" / "-p": invalid choice: invalid-privacy-value. (choose from public, private)'
+        "Invalid value for '--privacy' / '-p': invalid choice: invalid-privacy-value. (choose from public, private)"
         in result.output
     )
 
