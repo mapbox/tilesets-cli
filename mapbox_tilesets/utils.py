@@ -110,7 +110,7 @@ def validate_geojson(feature):
     return validate(instance=feature, schema=schema)
 
 
-def convert_precision_to_zoom(precision):
+def _convert_precision_to_zoom(precision):
     if precision == "10m":
         return 6
     elif precision == "1m":
@@ -121,11 +121,11 @@ def convert_precision_to_zoom(precision):
         return 17
 
 
-def tile2lng(tile_x, zoom):
+def _tile2lng(tile_x, zoom):
     return ((tile_x / 2 ** zoom) * 360.0) - 180.0
 
 
-def tile2lat(tile_y, zoom):
+def _tile2lat(tile_y, zoom):
     n = np.pi - 2 * np.pi * tile_y / 2 ** zoom
     return (180.0 / np.pi) * np.arctan(0.5 * (np.exp(n) - np.exp(-n)))
 
@@ -134,10 +134,10 @@ def _calculate_tiles_area(tiles):
     """ Returns tile area in square kilometers"""
     EARTH_RADIUS = 6371.0088
 
-    left = np.deg2rad(tile2lng(tiles[:, 0], tiles[:, 2]))
-    top = np.deg2rad(tile2lat(tiles[:, 1], tiles[:, 2]))
-    right = np.deg2rad(tile2lng(tiles[:, 0] + 1, tiles[:, 2]))
-    bottom = np.deg2rad(tile2lat(tiles[:, 1] + 1, tiles[:, 2]))
+    left = np.deg2rad(_tile2lng(tiles[:, 0], tiles[:, 2]))
+    top = np.deg2rad(_tile2lat(tiles[:, 1], tiles[:, 2]))
+    right = np.deg2rad(_tile2lng(tiles[:, 0] + 1, tiles[:, 2]))
+    bottom = np.deg2rad(_tile2lat(tiles[:, 1] + 1, tiles[:, 2]))
     return (
         (np.pi / np.deg2rad(180))
         * EARTH_RADIUS ** 2
@@ -147,6 +147,6 @@ def _calculate_tiles_area(tiles):
 
 
 def calculate_tiles_area(features, precision):
-    zoom = convert_precision_to_zoom(precision)
+    zoom = _convert_precision_to_zoom(precision)
     tiles = burn(features, min(zoom, MAXZOOM_TILE_COVER))
     return np.sum(_calculate_tiles_area(tiles))

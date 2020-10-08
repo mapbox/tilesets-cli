@@ -5,6 +5,7 @@ from mapbox_tilesets.utils import (
     _get_session,
     _get_token,
     validate_tileset_id,
+    _convert_precision_to_zoom,
 )
 from mapbox_tilesets.errors import TilesetsError
 
@@ -65,3 +66,23 @@ def test_validate_tileset_id_toolong():
     tileset = "hellooooooooooooooooooooooooooooooo.hiiiiiiiuuuuuuuuuuuuuuuuuuuuuu"
 
     assert not validate_tileset_id(tileset)
+
+
+def test_convert_precision_to_zoom_10m():
+    precision = "10m"
+    assert _convert_precision_to_zoom(precision) == 6
+
+
+def test_convert_precision_to_zoom_1m():
+    precision = "1m"
+    assert _convert_precision_to_zoom(precision) == 11
+
+
+def test_convert_precision_to_zoom_30cm():
+    precision = "30cm"
+    assert _convert_precision_to_zoom(precision) == 14
+
+
+def test_convert_precision_to_zoom_1cm():
+    precision = "1cm"
+    return _convert_precision_to_zoom(precision) == 17

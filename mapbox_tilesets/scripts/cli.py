@@ -716,27 +716,34 @@ def list_sources(username, token=None):
     type=click.Choice(["10m", "1m", "30cm", "1cm"]),
     help="Precision level",
 )
-@click.option("--force-1cm", is_flag=True, help="enables 1cm precision")
-def estimate_area(features, precision):
+@click.option("--force-1cm", required=False, is_flag=True, help="enables 1cm precision")
+def estimate_area(features, precision, force_1cm=False):
     """Estimate area of features with a precision level.
 
     tilesets estimate-area <features> <precision>
     """
-    # builtins.list because there is a list command in the cli & will thrown an error
+    area = 0
+    if precision == "1cm" and not force_1cm:
+        raise errors.TilesetsError(
+            "The --force-1cm flag must be present to enable 1cm precision area calculation and may take longer. 1cm precision for tileset processing is only available upon request after contacting Mapbox support."
+        )
+    if precision != "1cm" and force_1cm:
+        raise errors.TilesetsError(
+            "The --force-1cm flag is enabled but the precision is not 1cm."
+        )
 
-    features = builtins.list(filter_features(features))
+    # builtins.list because there is a list command in the cli & will thrown an error
+    try:
+        features = builtins.list(filter_features(features))
+    except ValueError:
+        raise errors.TilesetsError(
+            "Error with feature input. Ensure that feature inputs are valid if they're used and coordinates are formatted correctly. Try 'tilesets --help' for help."
+        )
+
     for feature in features:
         utils.validate_geojson(feature)
 
-    try:
-        area = utils.calculate_tiles_area(features, precision)
-    # thrown by numpy math
-    except Warning as w:
-        print("Warning caught!!")
-        print(w)
-    except Exception as e:
-        print("Error with area calculation!")
-        print(e)
+    area = utils.calculate_tiles_area(features, precision)
 
     area = round(area)
 
@@ -745,7 +752,7 @@ def estimate_area(features, precision):
             {
                 "km2": area,
                 "precision": precision,
-                "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets”",
+                "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets",
             }
         )
     )
