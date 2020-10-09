@@ -21,7 +21,6 @@ def test_cli_estimate_area_features_from_invalid_geojson_content():
         ["tests/fixtures/invalid-geojson.ldgeojson", "--precision", "1m"],
     )
     assert invalidated_result.exit_code == 1
-    # assert the exception type raised is jsondecodeerror?
 
 
 def test_cli_estimate_area_features_from_nonexistent_geojson_file():
@@ -87,3 +86,8 @@ def test_cli_estimate_area_valid_features_files_and_1cm_precision():
     )
     assert validated_result.exit_code == 0
     assert validated_result.output == output
+
+
+# test for correct input=""
+
+# test scenario for each precision and get expected output
