@@ -707,7 +707,6 @@ def list_sources(username, token=None):
         raise errors.TilesetsError(r.text)
 
 
-# TODO : add no-validation
 @cli.command("estimate-area")
 @cligj.features_in_arg
 @click.option(
@@ -717,9 +716,14 @@ def list_sources(username, token=None):
     type=click.Choice(["10m", "1m", "30cm", "1cm"]),
     help="Precision level",
 )
-@click.option("--no-validation", is_flag=True, help="Bypass source file validation")
+@click.option(
+    "--no-validation",
+    required=False,
+    is_flag=True,
+    help="Bypass source file validation",
+)
 @click.option("--force-1cm", required=False, is_flag=True, help="enables 1cm precision")
-def estimate_area(features, precision, no_validation, force_1cm=False):
+def estimate_area(features, precision, no_validation=False, force_1cm=False):
     """Estimate area of features with a precision level.
 
     tilesets estimate-area <features> <precision>
@@ -737,15 +741,16 @@ def estimate_area(features, precision, no_validation, force_1cm=False):
     # builtins.list because there is a list command in the cli & will thrown an error
     try:
         features = builtins.list(filter_features(features))
-    except ValueError:
+    except (ValueError, json.decoder.JSONDecodeError):
         raise errors.TilesetsError(
             "Error with feature input. Ensure that feature inputs are valid if they're used and coordinates are formatted correctly. Try 'tilesets --help' for help."
         )
     except Exception:
         raise errors.TilesetsError("Error with feature filtering.")
 
-    for feature in features:
-        utils.validate_geojson(feature)
+    if not no_validation:
+        for feature in features:
+            utils.validate_geojson(feature)
 
     try:
         area = utils.calculate_tiles_area(features, precision)
