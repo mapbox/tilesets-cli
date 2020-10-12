@@ -181,8 +181,7 @@ cat ./file.geojson | tilesets estimate-area -p <precision>
 tilesets estimate-area --precision <precision>
 <features>  
 
-# Coordinate pairs 
-# coordinates must be in quotes
+# coordinate pairs (must be in quotes)
 tilesets estimate-area "[lng,lat]" "[lng,lat]" --precision <precision>
 ```
 
