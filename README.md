@@ -42,6 +42,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * [`view-source`](#view-source)
   * [`list-sources`](#list-source)
   * [`delete-source`](#delete-source)
+  * [`estimate-area`](#estimate-area)
 * Recipes
   * [`view-recipe`](#view-recipe)
   * [`validate-recipe`](#validate-recipe)
@@ -149,6 +150,41 @@ tilesets delete-source
 ```
 
 Permanently delete a tileset source and all of its files. This is not a recoverable action!
+
+### estimate-area 
+
+```shell
+tilesets estimate-area <features> -p/--precision <precision>
+```
+
+Estimates area (km<sup>2</sup>) of features with a specified precision. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin` or a list of string-encoded coordinate pairs of the form "[lng, lat]", or "lng, lat", or "lng lat". Precision must be 10m, 1m, 30cm or 1cm.
+
+Flags:
+
+* `--no-validation` [optional]: do not validate source data locally before area calculation
+* `--force-1cm` [optional]: enables 1cm precision 
+
+Usage
+
+```shell
+
+# GeoJSON feature files
+tilesets estimate-area ./file.geojson ./file.geojson -p <precision>
+
+# GeoJSON features in stdin redirection 1
+tilesets estimate-area -p <precision> < ./file.geojson
+
+# GeoJSON features in stdin redirection 2
+cat ./file.geojson | tilesets estimate-area -p <precision>
+
+# GeoJSON features in stdin stream 
+tilesets estimate-area --precision <precision>
+<features>  
+
+# Coordinate pairs 
+# coordinates must be in quotes
+tilesets estimate-area "[lng,lat]" "[lng,lat]" --precision <precision>
+```
 
 ### view-recipe
 
