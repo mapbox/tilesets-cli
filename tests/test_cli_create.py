@@ -14,7 +14,7 @@ def test_cli_create_missing_recipe():
     # missing --recipe option
     result = runner.invoke(create, ["test.id"])
     assert result.exit_code == 2
-    assert "Missing option '--recipe'" in result.output
+    assert "Missing option '--recipe' / '-r'" in result.output
 
 
 @pytest.mark.usefixtures("token_environ")

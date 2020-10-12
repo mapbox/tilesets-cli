@@ -1,5 +1,8 @@
 # Unreleased
 
+# 1.4.3 (2020-10-08)
+- Update Click version to 7.1.2 and fix assertions to pass all tests 
+
 # 1.4.2 (2020-08-18)
 - Check if the token matches the username before uploading sources
 
