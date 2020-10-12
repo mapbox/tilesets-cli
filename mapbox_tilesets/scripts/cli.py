@@ -727,6 +727,8 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
     """Estimate area of features with a precision level.
 
     tilesets estimate-area <features> <precision>
+
+    features must be a list of paths to local files containing GeoJSON feature collections or feature sequences from argument or stdin, or a list of string-encoded coordinate pairs of the form "[lng, lat]", or "lng, lat", or "lng lat".
     """
     area = 0
     if precision == "1cm" and not force_1cm:
@@ -743,7 +745,7 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
         features = builtins.list(filter_features(features))
     except (ValueError, json.decoder.JSONDecodeError):
         raise errors.TilesetsError(
-            "Error with feature input. Ensure that feature inputs are valid if they're used and coordinates are formatted correctly. Try 'tilesets --help' for help."
+            "Error with feature parsing. Ensure that feature inputs are valid and formatted correctly. Try 'tilesets estimate-area --help' for help."
         )
     except Exception:
         raise errors.TilesetsError("Error with feature filtering.")

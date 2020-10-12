@@ -155,7 +155,7 @@ def calculate_tiles_area(features, precision):
     Parameters
     ----------
     features: list
-        Features from GEOJson or coordinates
+        Features from GeoJSON source and coordinates
 
     Returns
     -------

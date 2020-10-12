@@ -5,7 +5,7 @@ from mapbox_tilesets.scripts.cli import estimate_area
 
 # rainy day scenarios
 def test_cli_estimate_area_features_from_invalid_stdin_geojson():
-    message = "Error with feature input. Ensure that feature inputs are valid if they're used and coordinates are formatted correctly. Try 'tilesets --help' for help."
+    message = "Error with feature parsing. Ensure that feature inputs are valid and formatted correctly. Try 'tilesets estimate-area --help' for help."
     runner = CliRunner()
     invalidated_result = runner.invoke(
         estimate_area, ["--precision", "10m"], input="invalidGeoJson input"
@@ -24,7 +24,7 @@ def test_cli_estimate_area_features_from_invalid_geojson_content():
 
 
 def test_cli_estimate_area_features_from_nonexistent_geojson_file():
-    message = "Error with feature input. Ensure that feature inputs are valid if they're used and coordinates are formatted correctly. Try 'tilesets --help' for help."
+    message = "Error with feature parsing. Ensure that feature inputs are valid and formatted correctly. Try 'tilesets estimate-area --help' for help."
     runner = CliRunner()
     invalidated_result = runner.invoke(
         estimate_area,
