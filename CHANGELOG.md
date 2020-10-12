@@ -1,5 +1,8 @@
 # Unreleased
 
+# 1.5.0 (2020-10-16)
+- Create estimate-area command 
+
 # 1.4.3 (2020-10-08)
 - Update Click version to 7.1.2 and fix assertions to pass all tests 
 
