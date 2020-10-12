@@ -722,7 +722,7 @@ def list_sources(username, token=None):
     is_flag=True,
     help="Bypass source file validation",
 )
-@click.option("--force-1cm", required=False, is_flag=True, help="enables 1cm precision")
+@click.option("--force-1cm", required=False, is_flag=True, help="Enables 1cm precision")
 def estimate_area(features, precision, no_validation=False, force_1cm=False):
     """Estimate area of features with a precision level.
 
@@ -731,7 +731,7 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
     area = 0
     if precision == "1cm" and not force_1cm:
         raise errors.TilesetsError(
-            "The --force-1cm flag must be present to enable 1cm precision area calculation and may take longer. 1cm precision for tileset processing is only available upon request after contacting Mapbox support."
+            "The --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs. 1cm precision for tileset processing is only available upon request after contacting Mapbox support."
         )
     if precision != "1cm" and force_1cm:
         raise errors.TilesetsError(
@@ -759,7 +759,7 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
             "Error with are calculation. Please check features and try again."
         )
 
-    area = round(area)
+    area = str(round(area))
 
     click.echo(
         json.dumps(
