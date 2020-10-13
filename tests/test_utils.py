@@ -1,11 +1,13 @@
 import os
 import pytest
+import json
 from mapbox_tilesets.utils import (
     _get_api,
     _get_session,
     _get_token,
     validate_tileset_id,
     _convert_precision_to_zoom,
+    calculate_tiles_area,
 )
 from mapbox_tilesets.errors import TilesetsError
 
@@ -86,3 +88,40 @@ def test_convert_precision_to_zoom_30cm():
 def test_convert_precision_to_zoom_1cm():
     precision = "1cm"
     return _convert_precision_to_zoom(precision) == 17
+
+
+# area assertions from Mapbox Studio tiled area with zooms specified in recipes
+def test_calculate_tiles_area_with_10m_precision():
+    filename = "tests/fixtures/precisionTesting.ldgeojson"
+    features = []
+    with open(filename) as f:
+        features = [json.loads(line) for line in f]
+    area = round(calculate_tiles_area(features, "10m"))
+    assert area == 1485128
+
+
+def test_calculate_tiles_area_with_1m_precision():
+    filename = "tests/fixtures/precisionTesting.ldgeojson"
+    features = []
+    with open(filename) as f:
+        features = [json.loads(line) for line in f]
+    area = round(calculate_tiles_area(features, "1m"))
+    assert area == 2562
+
+
+def test_calculate_tiles_area_with_30cm_precision():
+    filename = "tests/fixtures/precisionTesting.ldgeojson"
+    features = []
+    with open(filename) as f:
+        features = [json.loads(line) for line in f]
+    area = round(calculate_tiles_area(features, "30cm"))
+    assert area == 65
+
+
+def test_calculate_tiles_area_with_1cm_precision():
+    filename = "tests/fixtures/precisionTesting.ldgeojson"
+    features = []
+    with open(filename) as f:
+        features = [json.loads(line) for line in f]
+    area = round(calculate_tiles_area(features, "1cm"))
+    assert area == 2

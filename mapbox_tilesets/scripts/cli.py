@@ -760,13 +760,7 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
         for feature in features:
             utils.validate_geojson(feature)
 
-    try:
-        area = utils.calculate_tiles_area(features, precision)
-    except Exception:
-        raise errors.TilesetsError(
-            "Error with area calculation. Please check features and try again."
-        )
-
+    area = utils.calculate_tiles_area(features, precision)
     area = str(round(area))
 
     click.echo(

@@ -9,8 +9,6 @@ from supermercado.burntiles import burn
 
 import mapbox_tilesets
 
-MAXZOOM_TILE_COVER = 18
-
 
 def _get_token(token=None):
     """Get Mapbox access token from arg or environment"""
@@ -111,7 +109,18 @@ def validate_geojson(feature):
 
 
 def _convert_precision_to_zoom(precision):
-    """Converts precision to zoom level based on the minimum zoom"""
+    """Converts precision to zoom level based on the minimum zoom
+
+    Parameters
+    ----------
+    precision: string
+        precision level
+
+    Returns
+    -------
+        zoom level
+
+    """
     if precision == "10m":
         return 6
     elif precision == "1m":
@@ -123,24 +132,58 @@ def _convert_precision_to_zoom(precision):
 
 
 def _tile2lng(tile_x, zoom):
-    """Returns tile longitude"""
+    """Returns tile longitude
+
+    Parameters
+    ----------
+    tile_x: int
+        x coordinate
+    zoom: int
+        zoom level
+
+    Returns
+    -------
+        longitude
+    """
     return ((tile_x / 2 ** zoom) * 360.0) - 180.0
 
 
 def _tile2lat(tile_y, zoom):
-    """Returns tile latitude"""
+    """Returns tile latitude
+
+    Parameters
+    ----------
+    tile_y: int
+        y coordinate
+    zoom: int
+        zoom level
+
+    Returns
+    -------
+        latitude
+    """
     n = np.pi - 2 * np.pi * tile_y / 2 ** zoom
     return (180.0 / np.pi) * np.arctan(0.5 * (np.exp(n) - np.exp(-n)))
 
 
-def _calculate_tile_area(tiles):
-    """Returns tile area in square kilometers"""
-    EARTH_RADIUS = 6371.0088
+def _calculate_tile_area(tile):
+    """Returns tile area in square kilometers
 
-    left = np.deg2rad(_tile2lng(tiles[:, 0], tiles[:, 2]))
-    top = np.deg2rad(_tile2lat(tiles[:, 1], tiles[:, 2]))
-    right = np.deg2rad(_tile2lng(tiles[:, 0] + 1, tiles[:, 2]))
-    bottom = np.deg2rad(_tile2lat(tiles[:, 1] + 1, tiles[:, 2]))
+    Parameters
+    ----------
+    tile: list
+        tile in format [x,y,z]
+
+    Returns
+    -------
+        area of tile
+
+    """
+    EARTH_RADIUS = 6371.0088
+    left = np.deg2rad(_tile2lng(tile[:, 0], tile[:, 2]))
+    top = np.deg2rad(_tile2lat(tile[:, 1], tile[:, 2]))
+    right = np.deg2rad(_tile2lng(tile[:, 0] + 1, tile[:, 2]))
+    bottom = np.deg2rad(_tile2lat(tile[:, 1] + 1, tile[:, 2]))
     return (
         (np.pi / np.deg2rad(180))
         * EARTH_RADIUS ** 2
@@ -155,12 +198,14 @@ def calculate_tiles_area(features, precision):
     Parameters
     ----------
     features: list
-        features from GeoJSON source and coordinates
+        features from GeoJSON sources and coordinates
+    precision: string
+        precision level
 
     Returns
     -------
         total area of all tiles in square kilometers
     """
     zoom = _convert_precision_to_zoom(precision)
-    tiles = burn(features, min(zoom, MAXZOOM_TILE_COVER))
+    tiles = burn(features, zoom)
     return np.sum(_calculate_tile_area(tiles))
