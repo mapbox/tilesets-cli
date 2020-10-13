@@ -722,7 +722,12 @@ def list_sources(username, token=None):
     is_flag=True,
     help="Bypass source file validation",
 )
-@click.option("--force-1cm", required=False, is_flag=True, help="Enables 1cm precision")
+@click.option(
+    "--force-1cm",
+    required=False,
+    is_flag=True,
+    help="Enables 1cm precision",
+)
 def estimate_area(features, precision, no_validation=False, force_1cm=False):
     """Estimate area of features with a precision level.
 
@@ -750,6 +755,7 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
     except Exception:
         raise errors.TilesetsError("Error with feature filtering.")
 
+    # expect users to bypass source validation when users rerun command and their features passed validation previously
     if not no_validation:
         for feature in features:
             utils.validate_geojson(feature)
@@ -758,7 +764,7 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
         area = utils.calculate_tiles_area(features, precision)
     except Exception:
         raise errors.TilesetsError(
-            "Error with are calculation. Please check features and try again."
+            "Error with area calculation. Please check features and try again."
         )
 
     area = str(round(area))

@@ -15,11 +15,13 @@ def test_cli_estimate_area_features_from_invalid_stdin_geojson():
 
 
 def test_cli_estimate_area_features_from_invalid_geojson_content():
+    message = "'properties' is a required property"
     runner = CliRunner()
     invalidated_result = runner.invoke(
         estimate_area,
         ["tests/fixtures/invalid-geojson.ldgeojson", "--precision", "1m"],
     )
+    assert message in str(invalidated_result.exception)
     assert invalidated_result.exit_code == 1
 
 
@@ -143,6 +145,7 @@ def test_cli_estimate_area_valid_fatures_and_1cm_precision():
 
 
 def test_cli_estimate_area_with_no_validation_flag_and_invalid_feature():
+    output = '{"km2": "382565", "precision": "10m", "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets"}\n'
     runner = CliRunner()
     # the input is missing "properties"
     validated_result = runner.invoke(
@@ -151,3 +154,4 @@ def test_cli_estimate_area_with_no_validation_flag_and_invalid_feature():
         input='{"type": "Feature", "geometry": { "type": "Point","coordinates": [125.6, 10.1]}}',
     )
     assert validated_result.exit_code == 0
+    assert validated_result.output == output

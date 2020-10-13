@@ -133,7 +133,7 @@ def _tile2lat(tile_y, zoom):
     return (180.0 / np.pi) * np.arctan(0.5 * (np.exp(n) - np.exp(-n)))
 
 
-def _calculate_tiles_area(tiles):
+def _calculate_tile_area(tiles):
     """Returns tile area in square kilometers"""
     EARTH_RADIUS = 6371.0088
 
@@ -155,7 +155,7 @@ def calculate_tiles_area(features, precision):
     Parameters
     ----------
     features: list
-        Features from GeoJSON source and coordinates
+        features from GeoJSON source and coordinates
 
     Returns
     -------
@@ -163,4 +163,4 @@ def calculate_tiles_area(features, precision):
     """
     zoom = _convert_precision_to_zoom(precision)
     tiles = burn(features, min(zoom, MAXZOOM_TILE_COVER))
-    return np.sum(_calculate_tiles_area(tiles))
+    return np.sum(_calculate_tile_area(tiles))
