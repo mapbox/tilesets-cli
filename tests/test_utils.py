@@ -92,36 +92,32 @@ def test_convert_precision_to_zoom_1cm():
 
 # area assertions from Mapbox Studio tiled area with zooms specified in recipes
 def test_calculate_tiles_area_with_10m_precision():
-    filename = "tests/fixtures/precisionTesting.ldgeojson"
-    features = []
-    with open(filename) as f:
-        features = [json.loads(line) for line in f]
+    filename = "tests/fixtures/precision-testing.ldgeojson"
+    f = open(filename)
+    features = json.load(f)
     area = round(calculate_tiles_area(features, "10m"))
     assert area == 1485128
 
 
 def test_calculate_tiles_area_with_1m_precision():
-    filename = "tests/fixtures/precisionTesting.ldgeojson"
-    features = []
-    with open(filename) as f:
-        features = [json.loads(line) for line in f]
+    filename = "tests/fixtures/precision-testing.ldgeojson"
+    f = open(filename)
+    features = json.load(f)
     area = round(calculate_tiles_area(features, "1m"))
     assert area == 2562
 
 
 def test_calculate_tiles_area_with_30cm_precision():
-    filename = "tests/fixtures/precisionTesting.ldgeojson"
-    features = []
-    with open(filename) as f:
-        features = [json.loads(line) for line in f]
+    filename = "tests/fixtures/precision-testing.ldgeojson"
+    f = open(filename)
+    features = json.load(f)
     area = round(calculate_tiles_area(features, "30cm"))
     assert area == 65
 
 
 def test_calculate_tiles_area_with_1cm_precision():
-    filename = "tests/fixtures/precisionTesting.ldgeojson"
-    features = []
-    with open(filename) as f:
-        features = [json.loads(line) for line in f]
+    filename = "tests/fixtures/precision-testing.ldgeojson"
+    f = open(filename)
+    features = json.load(f)
     area = round(calculate_tiles_area(features, "1cm"))
     assert area == 2
