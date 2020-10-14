@@ -57,7 +57,7 @@ def test_cli_estimate_area_invalid_precision():
 
 
 def test_cli_estimate_area_1cm_precision_without_flag():
-    message = "The --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs. 1cm precision for tileset processing is only available upon request after contacting Mapbox support."
+    message = "The --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs or data with global extents. 1cm precision for tileset processing is only available upon request after contacting Mapbox support."
     runner = CliRunner()
     invalidated_result = runner.invoke(
         estimate_area,
