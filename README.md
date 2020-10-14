@@ -161,7 +161,7 @@ Estimates tiled area (km<sup>2</sup>) of features with a specified precision. Ac
 
 Flags:
 
-* `-p` or `--precision` [required]: precision level 
+* `-p` or `--precision` [required]: precision level
 * `--no-validation` [optional]: do not validate source data locally before area calculation
 * `--force-1cm` [optional]: the --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs. 1cm precision for tileset processing is only available upon request after contacting [Mapbox support](https://support.mapbox.com/hc/en-us/requests/new?ticket_form_id=360000291231).
 
