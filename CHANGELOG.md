@@ -1,6 +1,9 @@
 # Unreleased
 
-# 1.5.0 (2020-10-16)
+# 1.5.1 (2020-10-19)
+- Update README for estimate-area
+
+# 1.5.0 (2020-10-19)
 - Create estimate-area command 
 
 # 1.4.3 (2020-10-08)
