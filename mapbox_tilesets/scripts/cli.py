@@ -9,6 +9,8 @@ from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
 from mapbox_tilesets import utils, errors
+from supermercado.super_utils import filter_features
+import builtins
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -703,3 +705,70 @@ def list_sources(username, token=None):
             click.echo(source["id"])
     else:
         raise errors.TilesetsError(r.text)
+
+
+@cli.command("estimate-area")
+@cligj.features_in_arg
+@click.option(
+    "--precision",
+    "-p",
+    required=True,
+    type=click.Choice(["10m", "1m", "30cm", "1cm"]),
+    help="Precision level",
+)
+@click.option(
+    "--no-validation",
+    required=False,
+    is_flag=True,
+    help="Bypass source file validation",
+)
+@click.option(
+    "--force-1cm",
+    required=False,
+    is_flag=True,
+    help="Enables 1cm precision",
+)
+def estimate_area(features, precision, no_validation=False, force_1cm=False):
+    """Estimate area of features with a precision level.
+
+    tilesets estimate-area <features> <precision>
+
+    features must be a list of paths to local files containing GeoJSON feature collections or feature sequences from argument or stdin, or a list of string-encoded coordinate pairs of the form "[lng, lat]", or "lng, lat", or "lng lat".
+    """
+    area = 0
+    if precision == "1cm" and not force_1cm:
+        raise errors.TilesetsError(
+            "The --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs or data with global extents. 1cm precision for tileset processing is only available upon request after contacting Mapbox support."
+        )
+    if precision != "1cm" and force_1cm:
+        raise errors.TilesetsError(
+            "The --force-1cm flag is enabled but the precision is not 1cm."
+        )
+
+    # builtins.list because there is a list command in the cli & will thrown an error
+    try:
+        features = builtins.list(filter_features(features))
+    except (ValueError, json.decoder.JSONDecodeError):
+        raise errors.TilesetsError(
+            "Error with feature parsing. Ensure that feature inputs are valid and formatted correctly. Try 'tilesets estimate-area --help' for help."
+        )
+    except Exception:
+        raise errors.TilesetsError("Error with feature filtering.")
+
+    # expect users to bypass source validation when users rerun command and their features passed validation previously
+    if not no_validation:
+        for feature in features:
+            utils.validate_geojson(feature)
+
+    area = utils.calculate_tiles_area(features, precision)
+    area = str(round(area))
+
+    click.echo(
+        json.dumps(
+            {
+                "km2": area,
+                "precision": precision,
+                "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets",
+            }
+        )
+    )

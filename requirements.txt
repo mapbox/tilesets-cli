@@ -5,3 +5,5 @@ requests==2.21.0
 requests-toolbelt==0.9.1
 jsonschema==3.0.1
 jsonseq==1.0.0
+mercantile==1.1.6
+supermercado==0.2.0
