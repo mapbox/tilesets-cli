@@ -114,7 +114,8 @@ def publish(tileset, token=None, indent=None, accept_pricing=None):
     """
     if not accept_pricing:
         click.confirm(
-            f"There may be costs associated with uploading and hosting this tileset. Please review the pricing documentation:  https://docs.mapbox.com/accounts/overview/pricing/#tilesets\n To opt out of pricing warnings, pass the --accept_pricing flag. \n Do you want to continue?"
+            f"There may be costs associated with uploading and hosting this tileset. Please review the pricing documentation:  https://docs.mapbox.com/accounts/overview/pricing/#tilesets\n To opt out of pricing warnings, pass the --accept_pricing flag. \n Do you want to continue?",
+            abort=True
         )
 
     mapbox_api = utils._get_api()
@@ -172,7 +173,8 @@ def update(
     """
     if not accept_pricing:
         click.confirm(
-            f"There may be costs associated with uploading and hosting this tileset. Please review the pricing documentation:  https://docs.mapbox.com/accounts/overview/pricing/#tilesets\n To opt out of pricing warnings, pass the --accept_pricing flag. \n Do you want to continue?"
+            f"There may be costs associated with uploading and hosting this tileset. Please review the pricing documentation:  https://docs.mapbox.com/accounts/overview/pricing/#tilesets\n To opt out of pricing warnings, pass the --accept_pricing flag. \n Do you want to continue?",
+            abort=True
         )
 
     mapbox_api = utils._get_api()
