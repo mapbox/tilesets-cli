@@ -102,10 +102,10 @@ def create(
 
 @cli.command("publish")
 @click.argument("tileset", required=True, type=str)
-@click.option("--accept_pricing", is_flag=True, help="Bypass pricing warning")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def publish(tileset, accept_pricing, token=None, indent=None):
+@click.option("--accept_pricing", is_flag=True, help="Bypass pricing warning")
+def publish(tileset, token=None, indent=None, accept_pricing=None):
     """Publish your tileset.
 
     Only supports tilesets created with the Mapbox Tiling Service.
