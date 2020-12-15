@@ -102,15 +102,21 @@ def create(
 
 @cli.command("publish")
 @click.argument("tileset", required=True, type=str)
+@click.option("--accept_pricing", is_flag=True, help="Bypass pricing warning")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def publish(tileset, token=None, indent=None):
+def publish(tileset, accept_pricing, token=None, indent=None):
     """Publish your tileset.
 
     Only supports tilesets created with the Mapbox Tiling Service.
 
     tilesets publish <tileset_id>
     """
+    if not accept_pricing:
+        click.confirm(
+            f"There may be costs associated with uploading and hosting this tileset. Please review the pricing documentation:  https://docs.mapbox.com/accounts/overview/pricing/#tilesets\n To opt out of pricing warnings, pass the --accept_pricing flag. \n Do you want to continue?"
+        )
+
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
     s = utils._get_session()
@@ -149,6 +155,7 @@ def publish(tileset, token=None, indent=None):
     type=str,
     help="attribution for the tileset in the form of a JSON string - Array<Object<text,link>>",
 )
+@click.option("--accept_pricing", is_flag=True, help="Bypass pricing warning")
 def update(
     tileset,
     token=None,
@@ -157,11 +164,17 @@ def update(
     description=None,
     privacy=None,
     attribution=None,
+    accept_pricing=None
 ):
     """Update a tileset's information.
 
     tilesets update <tileset_id>
     """
+    if not accept_pricing:
+        click.confirm(
+            f"There may be costs associated with uploading and hosting this tileset. Please review the pricing documentation:  https://docs.mapbox.com/accounts/overview/pricing/#tilesets\n To opt out of pricing warnings, pass the --accept_pricing flag. \n Do you want to continue?"
+        )
+
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
     s = utils._get_session()
