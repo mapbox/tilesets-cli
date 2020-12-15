@@ -35,6 +35,7 @@ def test_cli_patch(mock_request_patch):
             "--description=hello world",
             "--privacy=private",
             '--attribution=[{"text":"natural earth data","link":"https://naturalearthdata.com"}]',
+            "--accept_pricing"
         ],
     )
 
@@ -55,13 +56,16 @@ def test_cli_patch(mock_request_patch):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.Session.patch")
-def test_cli_patch_no_options(mock_request_patch):
+@mock.patch("click.confirm")
+def test_cli_patch_no_options(mock_click_confirm, mock_request_patch):
     runner = CliRunner()
-
+    mock_click_confirm.return_value = "y"
     # sends expected request
     mock_request_patch.return_value = MockResponse("", 204)
     result = runner.invoke(update, ["test.id"])
-
+    mock_click_confirm.assert_called_with(
+        "There may be costs associated with uploading and hosting this tileset. Please review the pricing documentation:  https://docs.mapbox.com/accounts/overview/pricing/#tilesets\n To opt out of pricing warnings, pass the --accept_pricing flag. \n Do you want to continue?"
+    )
     mock_request_patch.assert_called_with(
         "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={},
@@ -71,9 +75,10 @@ def test_cli_patch_no_options(mock_request_patch):
 
 
 @pytest.mark.usefixtures("token_environ")
-def test_cli_patch_invalid_json():
+@mock.patch("click.confirm")
+def test_cli_patch_invalid_json(mock_click_confirm):
     runner = CliRunner()
-
+    mock_click_confirm.return_value = "y"
     # send invalid json request
     result = runner.invoke(update, ["test.id", "--attribution=invalid json"])
 
