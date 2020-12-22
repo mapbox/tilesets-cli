@@ -40,7 +40,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * *deprecated* [`add-source`](#deprecated-add-source)
   * [`validate-source`](#validate-source)
   * [`view-source`](#view-source)
-  * [`list-sources`](#list-source)
+  * [`list-sources`](#list-sources)
   * [`delete-source`](#delete-source)
   * [`estimate-area`](#estimate-area)
 * Recipes
