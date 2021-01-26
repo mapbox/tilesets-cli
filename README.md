@@ -66,6 +66,8 @@ tilesets upload-source <username> <id> <file>
 
 Uploads GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading. Can be used to add data to a source or to replace all of the data in a source with the `--replace` flag.
 
+Please note that if your source data is a FeatureCollection, `tilesets` must read it all into memory to split it up into separate features before uploading it to the Tilesets API. You are strongly encouraged to provide your data in line-delimited GeoJSON format instead, especially if it is large.
+
 Flags:
 
 * `--no-validation` [optional]: do not validate source data locally before uploading
@@ -95,6 +97,8 @@ tilesets add-source <username> <id> <file>
 ```
 
 Adds GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading.
+
+Please note that if your source data is a FeatureCollection, `tilesets` must read it all into memory to split it up into separate features before uploading it to the Tilesets API. You are strongly encouraged to provide your data in line-delimited GeoJSON format instead, especially if it is large.
 
 Flags:
 
