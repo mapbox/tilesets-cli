@@ -525,7 +525,7 @@ def _upload_source(
 ):
     """Create/add a tileset source
 
-    tilesets add-source <username> <id> <path/to/source/data>
+    tilesets add-source <username> <source_id> <path/to/source/data>
     """
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
@@ -620,7 +620,7 @@ def add_source(
 ):
     """Create/add/replace a tileset source
 
-    tilesets add-source <username> <id> <path/to/source/data>
+    tilesets add-source <username> <source_id> <path/to/source/data>
     """
     return _upload_source(
         ctx, username, id, features, no_validation, quiet, False, token, indent
@@ -635,7 +635,7 @@ def add_source(
 def view_source(username, id, token=None, indent=None):
     """View a Tileset Source's information
 
-    tilesets view-source <username> <id>
+    tilesets view-source <username> <source_id>
     """
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
@@ -658,7 +658,7 @@ def view_source(username, id, token=None, indent=None):
 def delete_source(username, id, force, token=None):
     """Delete a Tileset Source + all of its files.
 
-    tilesets delete-source <username> <id>
+    tilesets delete-source <username> <source_id>
     """
     if not force:
         val = click.prompt(
