@@ -155,6 +155,17 @@ tilesets delete-source <username> <source_id>
 
 Permanently delete a tileset source and all of its files. This is not a recoverable action!
 
+Flags:
+
+* `-f` or `--force`: Do not ask for confirmation before deleting
+
+Usage
+
+```shell
+# to delete mapbox://tileset-source/user/source_id
+tilesets delete-source user source_id
+```
+
 ### estimate-area 
 
 ```shell
