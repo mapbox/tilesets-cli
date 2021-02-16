@@ -102,6 +102,17 @@ def test_cli_estimate_area_valid_features_files_and_valid_feature_input():
     assert validated_result.output == output
 
 
+def test_cli_estimate_area_large_valid_features_files_and_valid_feature_input():
+    output = '{"km2": "1390828", "precision": "10m", "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets"}\n'
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        estimate_area,
+        ["tests/fixtures/twostates.ldgeojson", "-p", "10m"],
+    )
+    assert validated_result.exit_code == 0
+    assert validated_result.output == output
+
+
 def test_cli_estimate_area_valid_features_files_and_1cm_precision():
     output = '{"km2": "0", "precision": "1cm", "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets"}\n'
     runner = CliRunner()
