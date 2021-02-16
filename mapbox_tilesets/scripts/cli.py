@@ -746,19 +746,14 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
         )
 
     # builtins.list because there is a list command in the cli & will thrown an error
-    try:
-        features = builtins.list(filter_features(features))
-    except (ValueError, json.decoder.JSONDecodeError):
-        raise errors.TilesetsError(
-            "Error with feature parsing. Ensure that feature inputs are valid and formatted correctly. Try 'tilesets estimate-area --help' for help."
-        )
-    except Exception:
-        raise errors.TilesetsError("Error with feature filtering.")
+    features = builtins.list(features)
 
     # expect users to bypass source validation when users rerun command and their features passed validation previously
     if not no_validation:
         for feature in features:
             utils.validate_geojson(feature)
+
+    features = builtins.list(filter_features(features))
 
     area = utils.calculate_tiles_area(features, precision)
     area = str(round(area))
