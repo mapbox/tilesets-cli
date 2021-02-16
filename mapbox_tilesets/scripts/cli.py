@@ -707,6 +707,12 @@ def list_sources(username, token=None):
         raise errors.TilesetsError(r.text)
 
 
+def validate_stream(features):
+    for feature in features:
+        utils.validate_geojson(feature)
+        yield feature
+
+
 @cli.command("estimate-area")
 @cligj.features_in_arg
 @click.option(
@@ -745,20 +751,17 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
             "The --force-1cm flag is enabled but the precision is not 1cm."
         )
 
-    # builtins.list because there is a list command in the cli & will thrown an error
     try:
-        features = builtins.list(features)
+        # expect users to bypass source validation when users rerun command and their features passed validation previously
+        if not no_validation:
+            features = validate_stream(features)
+        # builtins.list because there is a list command in the cli & will thrown an error
+        # It is a list at all because calculate_tiles_area does not work with a stream
+        features = builtins.list(filter_features(features))
     except (ValueError, json.decoder.JSONDecodeError):
         raise errors.TilesetsError(
             "Error with feature parsing. Ensure that feature inputs are valid and formatted correctly. Try 'tilesets estimate-area --help' for help."
         )
-
-    # expect users to bypass source validation when users rerun command and their features passed validation previously
-    if not no_validation:
-        for feature in features:
-            utils.validate_geojson(feature)
-
-    features = builtins.list(filter_features(features))
 
     area = utils.calculate_tiles_area(features, precision)
     area = str(int(round(area)))
