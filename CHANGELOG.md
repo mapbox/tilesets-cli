@@ -1,5 +1,9 @@
 # Unreleased
 
+# 1.6.0 (2021-02-16)
+- Fix problem that prevented estimate-area from working for MultiPolygons
+- Improve documentation for delete-source and upload-source
+
 # 1.5.1 (2020-10-19)
 - Update README for estimate-area
 
