@@ -1,6 +1,7 @@
 """Tilesets command line interface"""
 import json
 import tempfile
+import math
 
 import click
 import cligj
@@ -509,19 +510,20 @@ def validate_source(features):
     is_flag=True,
     help="Replace the existing source with the new source file",
 )
+@click.option("--grid", is_flag=True, help="Add attributes for gridded data")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
 def upload_source(
-    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+    ctx, username, id, features, no_validation, quiet, replace, grid, token=None, indent=None
 ):
     return _upload_source(
-        ctx, username, id, features, no_validation, quiet, replace, token, indent
+        ctx, username, id, features, no_validation, quiet, replace, grid, token, indent
     )
 
 
 def _upload_source(
-    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+    ctx, username, id, features, no_validation, quiet, replace, grid, token=None, indent=None
 ):
     """Create/add a tileset source
 
@@ -559,14 +561,39 @@ def _upload_source(
                 f"Token {mapbox_token} does not contain a username"
             )
 
+    grid_x = {}
+    grid_y = {}
+
     with tempfile.TemporaryFile() as file:
         for feature in features:
             if not no_validation:
                 utils.validate_geojson(feature)
 
+            if grid:
+                (x, y) = utils.centroid(feature);
+                grid_x[str(x)] = grid_x.get(str(x), 0) + 1;
+                grid_y[str(y)] = grid_y.get(str(y), 0) + 1;
+                feature['properties']['grid_x'] = str(x);
+                feature['properties']['grid_y'] = str(y);
+
             file.write(
                 (json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8")
             )
+
+        if grid:
+            grid_spacing = math.inf
+            keys_x = builtins.list(grid_x.keys())
+            keys_y = builtins.list(grid_y.keys())
+            keys_x.sort(key=lambda a: float(a))
+            keys_y.sort(key=lambda a: float(a))
+            for i in range(len(keys_x)):
+                grid_x[keys_x[i]] = i
+                if i > 1:
+                   grid_spacing = min(grid_spacing, float(keys_x[i]) - float(keys_x[i - 1]))
+            for i in range(len(keys_y)):
+                grid_y[keys_y[i]] = i
+                if i > 1:
+                   grid_spacing = min(grid_spacing, float(keys_y[i]) - float(keys_y[i - 1]))
 
         file.seek(0)
         m = MultipartEncoder(fields={"file": ("file", file)})
