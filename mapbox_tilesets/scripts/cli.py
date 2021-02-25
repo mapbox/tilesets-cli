@@ -563,6 +563,7 @@ def _upload_source(
 
     grid_x = {}
     grid_y = {}
+    grid_keys = set()
 
     with tempfile.TemporaryFile() as file:
         for feature in features:
@@ -573,6 +574,8 @@ def _upload_source(
                 (x, y) = utils.centroid(feature);
                 grid_x[str(x)] = grid_x.get(str(x), 0) + 1;
                 grid_y[str(y)] = grid_y.get(str(y), 0) + 1;
+                for k in feature['properties']:
+                    grid_keys.add(k)
                 feature['properties']['grid_x'] = str(x);
                 feature['properties']['grid_y'] = str(y);
 
@@ -594,38 +597,88 @@ def _upload_source(
                 grid_y[keys_y[i]] = i
                 if i > 1:
                    grid_spacing = min(grid_spacing, float(keys_y[i]) - float(keys_y[i - 1]))
+            aggregations = {}
+            for k in grid_keys:
+                aggregations[k] = 'arbitrary'
+            # 7 because of the expectation that a 128x128 (2^7) grid is appropriate in each tile
+            maxzoom = math.ceil(math.log(360 / grid_spacing) / math.log(2)) - 7
+            recipe = {
+                'version': 1,
+                'layers': {
+                    'grid': {
+                        'minzoom': 0,
+                        'maxzoom': maxzoom,
+                        'source': 'mapbox://tileset-source/' + username + '/' + id,
+                        'features': {
+                            'simplification': 0,
+                            'attributes': {
+                                'allowed_output': builtins.list(grid_keys),
+                                'set': {
+                                    'grid_x': [ 'floor', [ '/', [ 'get', 'grid_x' ], [ '^', 2, [ '-', maxzoom, [ 'zoom' ] ] ] ] ],
+                                    'grid_y': [ 'floor', [ '/', [ 'get', 'grid_y' ], [ '^', 2, [ '-', maxzoom, [ 'zoom' ] ] ] ] ],
+                                }
+                            }
+                        },
+                        'tiles': {
+                            'union': [
+                                {
+                                    'group_by': [ 'grid_x', 'grid_y' ],
+                                    'aggregate': aggregations
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+            print(json.dumps(recipe, indent=indent))
 
         file.seek(0)
-        m = MultipartEncoder(fields={"file": ("file", file)})
 
-        if quiet:
+        if not grid:
+            m = MultipartEncoder(fields={"file": ("file", file)})
+            upload_multipart(m, s, method, url, quiet, indent)
+        else:
+            with tempfile.TemporaryFile() as file2:
+                for line in file:
+                    feature = json.loads(line)
+                    feature['properties']['grid_x'] = grid_x[feature['properties']['grid_x']]
+                    feature['properties']['grid_y'] = grid_y[feature['properties']['grid_y']]
+                    file2.write((json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8"))
+
+                file2.seek(0)
+                m = MultipartEncoder(fields={"file": ("file", file2)})
+                upload_multipart(m, s, method, url, quiet, indent)
+
+
+def upload_multipart(m, s, method, url, quiet, indent):
+    if quiet:
+        resp = getattr(s, method)(
+            url,
+            data=m,
+            headers={
+                "Content-Disposition": "multipart/form-data",
+                "Content-type": m.content_type,
+            },
+        )
+    else:
+        prog = click.progressbar(
+            length=m.len, fill_char="=", width=0, label="upload progress"
+        )
+        with prog:
+
+            def callback(m):
+                prog.pos = m.bytes_read
+                prog.update(0)  # Step is 0 because we set pos above
+
+            monitor = MultipartEncoderMonitor(m, callback)
             resp = getattr(s, method)(
                 url,
-                data=m,
+                data=monitor,
                 headers={
                     "Content-Disposition": "multipart/form-data",
-                    "Content-type": m.content_type,
+                    "Content-type": monitor.content_type,
                 },
             )
-        else:
-            prog = click.progressbar(
-                length=m.len, fill_char="=", width=0, label="upload progress"
-            )
-            with prog:
-
-                def callback(m):
-                    prog.pos = m.bytes_read
-                    prog.update(0)  # Step is 0 because we set pos above
-
-                monitor = MultipartEncoderMonitor(m, callback)
-                resp = getattr(s, method)(
-                    url,
-                    data=monitor,
-                    headers={
-                        "Content-Disposition": "multipart/form-data",
-                        "Content-type": monitor.content_type,
-                    },
-                )
 
     if resp.status_code == 200:
         click.echo(json.dumps(resp.json(), indent=indent))
