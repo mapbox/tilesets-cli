@@ -34,7 +34,7 @@ def cli():
     type=click.Path(exists=True),
     help="path to a Recipe JSON document",
 )
-@click.option("--name", "-n", required=True, type=str, help="name of the tileset")
+@click.option("--name", "-n", required=False, type=str, help="name of the tileset")
 @click.option(
     "--description", "-d", required=False, type=str, help="description of the tileset"
 )
@@ -77,7 +77,7 @@ def create(
         mapbox_api, tileset, mapbox_token
     )
     body = {}
-    body["name"] = name or ""
+    body["name"] = name or tileset
     body["description"] = description or ""
     if privacy:
         body["private"] = True if privacy == "private" else False
@@ -99,6 +99,11 @@ def create(
     r = s.post(url, json=body)
 
     click.echo(json.dumps(r.json(), indent=indent))
+    if r.status_code == 200:
+        click.echo(
+            f"You can publish tileset with the `tilesets publish {tileset}` command.",
+            err=True,
+        )
 
 
 @cli.command("publish")
@@ -561,8 +566,8 @@ def _upload_source(
                 f"Token {mapbox_token} does not contain a username"
             )
 
-    grid_x = {}
-    grid_y = {}
+    grid_x_size = 0
+    grid_y_size = 0
     grid_keys = set()
 
     with tempfile.TemporaryFile() as file:
@@ -571,37 +576,28 @@ def _upload_source(
                 utils.validate_geojson(feature)
 
             if grid:
-                (x, y) = utils.centroid(feature);
-                grid_x[str(x)] = grid_x.get(str(x), 0) + 1;
-                grid_y[str(y)] = grid_y.get(str(y), 0) + 1;
+                (x, y, wx, wy) = utils.centroid(feature);
+
+                if grid_x_size == 0:
+                    grid_x_size = wx
+                    grid_y_size = wy
+
                 for k in feature['properties']:
                     grid_keys.add(k)
-                feature['properties']['grid_x'] = str(x);
-                feature['properties']['grid_y'] = str(y);
+
+                feature['properties']['grid_x'] = int(math.floor(x / grid_x_size))
+                feature['properties']['grid_y'] = int(math.floor(y / grid_y_size))
 
             file.write(
                 (json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8")
             )
 
         if grid:
-            grid_spacing = math.inf
-            keys_x = builtins.list(grid_x.keys())
-            keys_y = builtins.list(grid_y.keys())
-            keys_x.sort(key=lambda a: float(a))
-            keys_y.sort(key=lambda a: float(a))
-            for i in range(len(keys_x)):
-                grid_x[keys_x[i]] = i
-                if i > 1:
-                   grid_spacing = min(grid_spacing, float(keys_x[i]) - float(keys_x[i - 1]))
-            for i in range(len(keys_y)):
-                grid_y[keys_y[i]] = i
-                if i > 1:
-                   grid_spacing = min(grid_spacing, float(keys_y[i]) - float(keys_y[i - 1]))
             aggregations = {}
             for k in grid_keys:
                 aggregations[k] = 'arbitrary'
             # 7 because of the expectation that a 128x128 (2^7) grid is appropriate in each tile
-            maxzoom = math.ceil(math.log(360 / grid_spacing) / math.log(2)) - 7
+            maxzoom = math.ceil(math.log(360 / ((grid_x_size + grid_y_size) / 2)) / math.log(2)) - 7
             recipe = {
                 'version': 1,
                 'layers': {
@@ -630,24 +626,11 @@ def _upload_source(
                     }
                 }
             }
-            print(json.dumps(recipe, indent=indent))
+            click.echo(json.dumps(recipe, indent=indent))
 
         file.seek(0)
-
-        if not grid:
-            m = MultipartEncoder(fields={"file": ("file", file)})
-            upload_multipart(m, s, method, url, quiet, indent)
-        else:
-            with tempfile.TemporaryFile() as file2:
-                for line in file:
-                    feature = json.loads(line)
-                    feature['properties']['grid_x'] = grid_x[feature['properties']['grid_x']]
-                    feature['properties']['grid_y'] = grid_y[feature['properties']['grid_y']]
-                    file2.write((json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8"))
-
-                file2.seek(0)
-                m = MultipartEncoder(fields={"file": ("file", file2)})
-                upload_multipart(m, s, method, url, quiet, indent)
+        m = MultipartEncoder(fields={"file": ("file", file)})
+        upload_multipart(m, s, method, url, quiet, indent)
 
 
 def upload_multipart(m, s, method, url, quiet, indent):

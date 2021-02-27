@@ -1,5 +1,6 @@
 import os
 import re
+import math
 
 import numpy as np
 
@@ -225,9 +226,20 @@ def centroid(poly):
     y = 0
     count = 0;
 
-    for i in range(len(poly['geometry']['coordinates'][0]) - 1):
-        x = x + poly['geometry']['coordinates'][0][i][0]
-        y = y + poly['geometry']['coordinates'][0][i][1]
-        count = count + 1
+    x_min = math.inf
+    x_max = -math.inf
+    y_min = math.inf
+    y_max = -math.inf
 
-    return (x / count, y / count)
+    for i in range(len(poly['geometry']['coordinates'][0]) - 1):
+        px = poly['geometry']['coordinates'][0][i][0]
+        py = poly['geometry']['coordinates'][0][i][1]
+        count = count + 1
+        x = x + px
+        y = y + py
+        x_max = max(x_max, px);
+        x_min = min(x_min, px);
+        y_max = max(y_max, py);
+        y_min = min(y_min, py);
+
+    return (x / count, y / count, x_max - x_min, y_max - y_min)
