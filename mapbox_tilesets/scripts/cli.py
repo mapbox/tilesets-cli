@@ -101,7 +101,7 @@ def create(
     click.echo(json.dumps(r.json(), indent=indent))
     if r.status_code == 200:
         click.echo(
-            f"You can publish tileset with the `tilesets publish {tileset}` command.",
+            f"You can publish your tileset with the `tilesets publish {tileset}` command.",
             err=True,
         )
 
@@ -610,8 +610,8 @@ def _upload_source(
                             'attributes': {
                                 'allowed_output': builtins.list(grid_keys),
                                 'set': {
-                                    'grid_x': [ 'floor', [ '/', [ 'get', 'grid_x' ], [ '^', 2, [ '-', maxzoom, [ 'zoom' ] ] ] ] ],
-                                    'grid_y': [ 'floor', [ '/', [ 'get', 'grid_y' ], [ '^', 2, [ '-', maxzoom, [ 'zoom' ] ] ] ] ],
+                                    'grid_x': [ 'let', 'maxzoom', maxzoom, [ 'floor', [ '/', [ 'get', 'grid_x' ], [ '^', 2, [ '-', [ 'var', 'maxzoom' ], [ 'zoom' ] ] ] ] ] ],
+                                    'grid_y': [ 'let', 'maxzoom', maxzoom, [ 'floor', [ '/', [ 'get', 'grid_y' ], [ '^', 2, [ '-', [ 'var', 'maxzoom' ], [ 'zoom' ] ] ] ] ] ]
                                 }
                             }
                         },
@@ -620,13 +620,19 @@ def _upload_source(
                                 {
                                     'group_by': [ 'grid_x', 'grid_y' ],
                                     'aggregate': aggregations
+                                },
+                                {
+                                    'group_by': builtins.list(grid_keys)
                                 }
                             ]
                         }
                     }
                 }
             }
+            click.echo('Suggested recipe:')
             click.echo(json.dumps(recipe, indent=indent))
+            click.echo('If your tiles get capped, try changing the "maxzoom" and the "set" expressions to use a zoom level of ' + str(maxzoom + 1) + ' instead of ' + str(maxzoom) + ', or remove some unneeded attributes.')
+            click.echo('You may want to change the "aggregate" to use "sum", "min", "max", or "mean" instead of taking the aggregated attribute value from some "arbitrary" one of the features being unioned.')
 
         file.seek(0)
         m = MultipartEncoder(fields={"file": ("file", file)})
