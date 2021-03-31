@@ -388,7 +388,7 @@ def list(
     If you would like an array of all tileset's information,
     use the --versbose flag.
 
-    tilests list <username>
+    tilesets list <username>
     """
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
