@@ -39,8 +39,7 @@ def test_cli_estimate_area_features_from_nonexistent_geojson_file():
 def test_cli_estimate_area_no_precision():
     runner = CliRunner()
     invalidated_result = runner.invoke(
-        estimate_area,
-        ["tests/fixtures/valid.ldgeojson"],
+        estimate_area, ["tests/fixtures/valid.ldgeojson"],
     )
     assert invalidated_result.exit_code == 2
     assert "Missing option '--precision' / '-p'" in invalidated_result.output
@@ -49,8 +48,7 @@ def test_cli_estimate_area_no_precision():
 def test_cli_estimate_area_invalid_precision():
     runner = CliRunner()
     invalidated_result = runner.invoke(
-        estimate_area,
-        ["tests/fixtures/valid.ldgeojson", "-p", "100m"],
+        estimate_area, ["tests/fixtures/valid.ldgeojson", "-p", "100m"],
     )
     assert invalidated_result.exit_code == 2
     assert "Invalid value for '--precision' / '-p'" in invalidated_result.output
@@ -60,8 +58,7 @@ def test_cli_estimate_area_1cm_precision_without_flag():
     message = "The --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs or data with global extents. 1cm precision for tileset processing is only available upon request after contacting Mapbox support."
     runner = CliRunner()
     invalidated_result = runner.invoke(
-        estimate_area,
-        ["tests/fixtures/valid.ldgeojson", "-p", "1cm"],
+        estimate_area, ["tests/fixtures/valid.ldgeojson", "-p", "1cm"],
     )
     assert invalidated_result.exit_code == 1
     assert str(invalidated_result.exception) == message
@@ -71,8 +68,7 @@ def test_cli_estimate_area_invalid_1cm_precision_flag():
     message = "The --force-1cm flag is enabled but the precision is not 1cm."
     runner = CliRunner()
     invalidated_result = runner.invoke(
-        estimate_area,
-        ["tests/fixtures/valid.ldgeojson", "-p", "1m", "--force-1cm"],
+        estimate_area, ["tests/fixtures/valid.ldgeojson", "-p", "1m", "--force-1cm"],
     )
     assert invalidated_result.exit_code == 1
     assert str(invalidated_result.exception) == message
@@ -83,8 +79,7 @@ def test_cli_estimate_area_valid_features_files_and_precision():
     output = '{"km2": "382565", "precision": "10m", "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets"}\n'
     runner = CliRunner()
     validated_result = runner.invoke(
-        estimate_area,
-        ["tests/fixtures/valid.ldgeojson", "-p", "10m"],
+        estimate_area, ["tests/fixtures/valid.ldgeojson", "-p", "10m"],
     )
     assert validated_result.exit_code == 0
     assert validated_result.output == output
@@ -106,8 +101,7 @@ def test_cli_estimate_area_large_valid_features_files_and_valid_feature_input():
     output = '{"km2": "1390828", "precision": "10m", "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets"}\n'
     runner = CliRunner()
     validated_result = runner.invoke(
-        estimate_area,
-        ["tests/fixtures/twostates.ldgeojson", "-p", "10m"],
+        estimate_area, ["tests/fixtures/twostates.ldgeojson", "-p", "10m"],
     )
     assert validated_result.exit_code == 0
     assert validated_result.output == output
@@ -128,8 +122,7 @@ def test_cli_estimate_area_valid_features_files_and_1cm_precision():
     output = '{"km2": "0", "precision": "1cm", "pricing_docs": "For more information, visit https://www.mapbox.com/pricing/#tilesets"}\n'
     runner = CliRunner()
     validated_result = runner.invoke(
-        estimate_area,
-        ["tests/fixtures/valid.ldgeojson", "-p", "1cm", "--force-1cm"],
+        estimate_area, ["tests/fixtures/valid.ldgeojson", "-p", "1cm", "--force-1cm"],
     )
     assert validated_result.exit_code == 0
     assert validated_result.output == output
