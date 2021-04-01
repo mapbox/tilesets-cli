@@ -119,13 +119,15 @@ def publish(tileset, token=None, indent=None):
     )
     r = s.post(url)
     if r.status_code == 200:
-        click.echo(json.dumps(r.json(), indent=indent))
+        response_msg = r.json()
+        click.echo(json.dumps(response_msg, indent=indent))
 
         studio_url = click.style(
             f"https://studio.mapbox.com/tilesets/{tileset}", bold=True
         )
-        status_cmd = click.style(f"tilesets status {tileset}", bold=True)
-        message = f"Successfully published. Visit {studio_url} or use {status_cmd} to view the status of your tileset."
+        job_id = response_msg["jobId"]
+        job_cmd = click.style(f"tilesets job {tileset} {job_id}", bold=True)
+        message = f"\n✔ Successfully published. Visit {studio_url} or run {job_cmd} to view the status of your tileset."
         # print(message)
         click.echo(
             message,
