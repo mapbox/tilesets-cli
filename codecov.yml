@@ -6,8 +6,9 @@ codecov:
   notify:
     require_ci_to_pass: yes
 
- coverage:
-   status:
-     project:
-      threshold: 3%
-      base: auto
+coverage:
+  status:
+    project:
+      default:
+        threshold: 3%
+        base: auto
