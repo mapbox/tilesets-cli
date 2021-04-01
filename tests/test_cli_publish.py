@@ -32,8 +32,9 @@ def test_cli_publish(mock_request_post):
         "https://api.mapbox.com/tilesets/v1/test.id/publish?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 0
+    print(result.output)
     assert (
-        "You can view the status of your tileset with the `tilesets status test.id` command."
+        '{"message": "mock message"}\nSuccessfully published. Visit https://studio.mapbox.com/tilesets/test.id or use tilesets status test.id to view the status of your tileset.\n'
         in result.output
     )
 
@@ -50,6 +51,6 @@ def test_cli_publish_use_token_flag(mock_request_post):
     )
     assert result.exit_code == 0
     assert (
-        "You can view the status of your tileset with the `tilesets status test.id` command."
+        '{"message": "mock message"}\nSuccessfully published. Visit https://studio.mapbox.com/tilesets/test.id or use tilesets status test.id to view the status of your tileset.\n'
         in result.output
     )

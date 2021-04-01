@@ -120,9 +120,16 @@ def publish(tileset, token=None, indent=None):
     r = s.post(url)
     if r.status_code == 200:
         click.echo(json.dumps(r.json(), indent=indent))
+
+        studio_url = click.style(
+            f"https://studio.mapbox.com/tilesets/{tileset}", bold=True
+        )
+        status_cmd = click.style(f"tilesets status {tileset}", bold=True)
+        message = f"Successfully published. Visit {studio_url} or use {status_cmd} to view the status of your tileset."
+        # print(message)
         click.echo(
-            f"You can view the status of your tileset with the `tilesets status {tileset}` command.",
-            err=True,
+            message,
+            err=True,  # print to stderr so the JSON output can be parsed separately from the success message
         )
     else:
         raise errors.TilesetsError(r.text)
@@ -729,10 +736,7 @@ def validate_stream(features):
     help="Bypass source file validation",
 )
 @click.option(
-    "--force-1cm",
-    required=False,
-    is_flag=True,
-    help="Enables 1cm precision",
+    "--force-1cm", required=False, is_flag=True, help="Enables 1cm precision",
 )
 def estimate_area(features, precision, no_validation=False, force_1cm=False):
     """Estimate area of features with a precision level.
