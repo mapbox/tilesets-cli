@@ -127,7 +127,7 @@ def publish(tileset, token=None, indent=None):
         )
         job_id = response_msg["jobId"]
         job_cmd = click.style(f"tilesets job {tileset} {job_id}", bold=True)
-        message = f"\n✔ Successfully published. Visit {studio_url} or run {job_cmd} to view the status of your tileset."
+        message = f"\n✔ Tileset job received. Visit {studio_url} or run {job_cmd} to view the status of your tileset."
         # print(message)
         click.echo(
             message,

@@ -36,7 +36,7 @@ def test_cli_publish(mock_request_post):
     assert result.exit_code == 0
     print(result.output)
     assert (
-        '{"message": "mock message", "jobId": "1234fakejob"}\n\n✔ Successfully published. Visit https://studio.mapbox.com/tilesets/test.id or run tilesets job test.id 1234fakejob to view the status of your tileset.\n'
+        '{"message": "mock message", "jobId": "1234fakejob"}\n\n✔ Tileset job received. Visit https://studio.mapbox.com/tilesets/test.id or run tilesets job test.id 1234fakejob to view the status of your tileset.\n'
         in result.output
     )
 
@@ -55,6 +55,6 @@ def test_cli_publish_use_token_flag(mock_request_post):
     )
     assert result.exit_code == 0
     assert (
-        '{"message": "mock message", "jobId": "1234fakejob"}\n\n✔ Successfully published. Visit https://studio.mapbox.com/tilesets/test.id or run tilesets job test.id 1234fakejob to view the status of your tileset.\n'
+        '{"message": "mock message", "jobId": "1234fakejob"}\n\n✔ Tileset job received. Visit https://studio.mapbox.com/tilesets/test.id or run tilesets job test.id 1234fakejob to view the status of your tileset.\n'
         in result.output
     )
