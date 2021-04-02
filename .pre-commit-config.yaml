@@ -2,13 +2,13 @@ repos:
     -
         repo: 'https://github.com/ambv/black'
         # 18.6b1
-        rev: stable
+        rev: 20.8b1
         hooks:
             - id: black
               args: ['--safe']
     -
-        repo: 'https://github.com/pre-commit/pre-commit-hooks'
-        rev: v2.0.0
+        repo: 'https://gitlab.com/pycqa/flake8'
+        rev: 3.9.0
         hooks:
             - id: flake8
               args: [
