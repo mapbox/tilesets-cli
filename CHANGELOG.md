@@ -1,13 +1,16 @@
 # Unreleased
 
+# 1.5.2
+- Switch to codecov python module
+
 # 1.5.1 (2020-10-19)
 - Update README for estimate-area
 
 # 1.5.0 (2020-10-19)
-- Create estimate-area command 
+- Create estimate-area command
 
 # 1.4.3 (2020-10-08)
-- Update Click version to 7.1.2 and fix assertions to pass all tests 
+- Update Click version to 7.1.2 and fix assertions to pass all tests
 
 # 1.4.2 (2020-08-18)
 - Check if the token matches the username before uploading sources
