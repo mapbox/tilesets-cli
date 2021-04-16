@@ -40,7 +40,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * *deprecated* [`add-source`](#deprecated-add-source)
   * [`validate-source`](#validate-source)
   * [`view-source`](#view-source)
-  * [`list-sources`](#list-source)
+  * [`list-sources`](#list-sources)
   * [`delete-source`](#delete-source)
   * [`estimate-area`](#estimate-area)
 * Recipes
@@ -61,10 +61,12 @@ export MAPBOX_ACCESS_TOKEN=my.token
 ### upload-source
 
 ```shell
-tilesets upload-source <username> <id> <file>
+tilesets upload-source <username> <source_id> <file>
 ```
 
 Uploads GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading. Can be used to add data to a source or to replace all of the data in a source with the `--replace` flag.
+
+Please note that if your source data is a FeatureCollection, `tilesets` must read it all into memory to split it up into separate features before uploading it to the Tilesets API. You are strongly encouraged to provide your data in line-delimited GeoJSON format instead, especially if it is large.
 
 Flags:
 
@@ -76,14 +78,14 @@ Usage
 
 ```shell
 # single file
-tilesets upload-source <username> <id> ./file.geojson
+tilesets upload-source <username> <source_id> ./file.geojson
 
 # multiple files
-tilesets upload-source <username> <id> file-1.geojson file-4.geojson
+tilesets upload-source <username> <source_id> file-1.geojson file-4.geojson
 
 # directory of files
 # Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
-tilesets upload-source <username> <id> ./path/to/multiple/files/
+tilesets upload-source <username> <source_id> ./path/to/multiple/files/
 ```
 
 ### *deprecated* add-source
@@ -91,10 +93,12 @@ tilesets upload-source <username> <id> ./path/to/multiple/files/
 *WARNING: add-source is maintained for legacy purposes. Please use the `upload-source` command instead.*
 
 ```shell
-tilesets add-source <username> <id> <file>
+tilesets add-source <username> <source_id> <file>
 ```
 
 Adds GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading.
+
+Please note that if your source data is a FeatureCollection, `tilesets` must read it all into memory to split it up into separate features before uploading it to the Tilesets API. You are strongly encouraged to provide your data in line-delimited GeoJSON format instead, especially if it is large.
 
 Flags:
 
@@ -105,14 +109,14 @@ Usage
 
 ```shell
 # single file
-tilesets add-source <username> <id> ./file.geojson
+tilesets add-source <username> <source_id> ./file.geojson
 
 # multiple files
-tilesets add-source <username> <id> file-1.geojson file-4.geojson
+tilesets add-source <username> <source_id> file-1.geojson file-4.geojson
 
 # directory of files
 # Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
-tilesets add-source <username> <id> ./path/to/multiple/files/
+tilesets add-source <username> <source_id> ./path/to/multiple/files/
 ```
 
 ### validate-source
@@ -130,7 +134,7 @@ Invalid line delimited geojson.
 ### view-source
 
 ```
-tilesets view-source <username> <id>
+tilesets view-source <username> <source_id>
 ```
 
 Get information for a tileset source, such as number of files, the size in bytes, and the ID in mapbox:// protocol format.
@@ -146,10 +150,21 @@ List all tileset sources from a particular account. Response is an array of sour
 ### delete-source
 
 ```
-tilesets delete-source
+tilesets delete-source <username> <source_id>
 ```
 
 Permanently delete a tileset source and all of its files. This is not a recoverable action!
+
+Flags:
+
+* `-f` or `--force`: Do not ask for confirmation before deleting
+
+Usage
+
+```shell
+# to delete mapbox://tileset-source/user/source_id
+tilesets delete-source user source_id
+```
 
 ### estimate-area 
 

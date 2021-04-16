@@ -119,10 +119,19 @@ def publish(tileset, token=None, indent=None):
     )
     r = s.post(url)
     if r.status_code == 200:
-        click.echo(json.dumps(r.json(), indent=indent))
+        response_msg = r.json()
+        click.echo(json.dumps(response_msg, indent=indent))
+
+        studio_url = click.style(
+            f"https://studio.mapbox.com/tilesets/{tileset}", bold=True
+        )
+        job_id = response_msg["jobId"]
+        job_cmd = click.style(f"tilesets job {tileset} {job_id}", bold=True)
+        message = f"\n✔ Tileset job received. Visit {studio_url} or run {job_cmd} to view the status of your tileset."
+        # print(message)
         click.echo(
-            f"You can view the status of your tileset with the `tilesets status {tileset}` command.",
-            err=True,
+            message,
+            err=True,  # print to stderr so the JSON output can be parsed separately from the success message
         )
     else:
         raise errors.TilesetsError(r.text)
@@ -388,7 +397,7 @@ def list(
     If you would like an array of all tileset's information,
     use the --versbose flag.
 
-    tilests list <username>
+    tilesets list <username>
     """
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
@@ -525,7 +534,7 @@ def _upload_source(
 ):
     """Create/add a tileset source
 
-    tilesets add-source <username> <id> <path/to/source/data>
+    tilesets add-source <username> <source_id> <path/to/source/data>
     """
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
@@ -620,7 +629,7 @@ def add_source(
 ):
     """Create/add/replace a tileset source
 
-    tilesets add-source <username> <id> <path/to/source/data>
+    tilesets add-source <username> <source_id> <path/to/source/data>
     """
     return _upload_source(
         ctx, username, id, features, no_validation, quiet, False, token, indent
@@ -635,7 +644,7 @@ def add_source(
 def view_source(username, id, token=None, indent=None):
     """View a Tileset Source's information
 
-    tilesets view-source <username> <id>
+    tilesets view-source <username> <source_id>
     """
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
@@ -658,7 +667,7 @@ def view_source(username, id, token=None, indent=None):
 def delete_source(username, id, force, token=None):
     """Delete a Tileset Source + all of its files.
 
-    tilesets delete-source <username> <id>
+    tilesets delete-source <username> <source_id>
     """
     if not force:
         val = click.prompt(
@@ -707,6 +716,12 @@ def list_sources(username, token=None):
         raise errors.TilesetsError(r.text)
 
 
+def validate_stream(features):
+    for feature in features:
+        utils.validate_geojson(feature)
+        yield feature
+
+
 @cli.command("estimate-area")
 @cligj.features_in_arg
 @click.option(
@@ -745,23 +760,20 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
             "The --force-1cm flag is enabled but the precision is not 1cm."
         )
 
-    # builtins.list because there is a list command in the cli & will thrown an error
     try:
+        # expect users to bypass source validation when users rerun command and their features passed validation previously
+        if not no_validation:
+            features = validate_stream(features)
+        # builtins.list because there is a list command in the cli & will thrown an error
+        # It is a list at all because calculate_tiles_area does not work with a stream
         features = builtins.list(filter_features(features))
     except (ValueError, json.decoder.JSONDecodeError):
         raise errors.TilesetsError(
             "Error with feature parsing. Ensure that feature inputs are valid and formatted correctly. Try 'tilesets estimate-area --help' for help."
         )
-    except Exception:
-        raise errors.TilesetsError("Error with feature filtering.")
-
-    # expect users to bypass source validation when users rerun command and their features passed validation previously
-    if not no_validation:
-        for feature in features:
-            utils.validate_geojson(feature)
 
     area = utils.calculate_tiles_area(features, precision)
-    area = str(round(area))
+    area = str(int(round(area)))
 
     click.echo(
         json.dumps(

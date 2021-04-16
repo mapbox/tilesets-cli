@@ -1,7 +1,16 @@
 # Unreleased
 
-# 1.5.2
+=======
+
+# 1.7.1 (2021-04-16)
 - Switch to codecov python module
+
+# 1.7.0 (2021-04-02)
+- Update `tilesets publish` success message to include link to studio.mapbox.com/tilesets/* endpoint and include `tilesets job` command to view the status.
+
+# 1.6.0 (2021-02-16)
+- Fix problem that prevented estimate-area from working for MultiPolygons
+- Improve documentation for delete-source and upload-source
 
 # 1.5.1 (2020-10-19)
 - Update README for estimate-area

@@ -41,12 +41,13 @@ setup(
     zip_safe=False,
     extras_require={
         "test": [
+            "codecov",
             "pytest==4.6.11",
             "pytest-cov",
             "pre-commit",
-            "black",
+            "black==20.8b1",
             "pep8",
-            "codecov",
+            "toml==0.10.2",
         ]
     },
     entry_points="""
