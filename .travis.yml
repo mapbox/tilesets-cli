@@ -9,10 +9,7 @@ script:
   - pre-commit run --all-files
   - pytest --cov --cov-config=.coveragerc
 after_script:
-  - echo "uploading to codecov"
-  - curl -S -f https://codecov.io/bash -o codecov
-  - chmod +x codecov
-  - ./codecov -Z
+  - python -m codecov
 deploy:
   provider: pypi
   user: __token__

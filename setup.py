@@ -40,7 +40,14 @@ setup(
     include_package_data=True,
     zip_safe=False,
     extras_require={
-        "test": ["pytest==4.6.11", "pytest-cov", "pre-commit", "black", "pep8"]
+        "test": [
+            "pytest==4.6.11",
+            "pytest-cov",
+            "pre-commit",
+            "black",
+            "pep8",
+            "codecov",
+        ]
     },
     entry_points="""
       [console_scripts]
