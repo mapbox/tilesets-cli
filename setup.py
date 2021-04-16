@@ -41,6 +41,7 @@ setup(
     zip_safe=False,
     extras_require={
         "test": [
+            "codecov",
             "pytest==4.6.11",
             "pytest-cov",
             "pre-commit",

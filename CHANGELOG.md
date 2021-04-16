@@ -1,5 +1,10 @@
 # Unreleased
 
+=======
+
+# 1.7.1 (2021-04-16)
+- Switch to codecov python module
+
 # 1.7.0 (2021-04-02)
 - Update `tilesets publish` success message to include link to studio.mapbox.com/tilesets/* endpoint and include `tilesets job` command to view the status.
 
