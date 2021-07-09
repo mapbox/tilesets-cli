@@ -5,6 +5,7 @@ import tempfile
 import click
 import cligj
 import base64
+import re
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
@@ -708,12 +709,19 @@ def list_sources(username, token=None):
     url = "{0}/tilesets/v1/sources/{1}?access_token={2}".format(
         mapbox_api, username, mapbox_token
     )
-    r = s.get(url)
-    if r.status_code == 200:
-        for source in r.json():
-            click.echo(source["id"])
-    else:
-        raise errors.TilesetsError(r.text)
+    pattern = re.compile("<(http[^>]*)>")
+    while url is not None:
+        r = s.get(url)
+        url = None
+        if 'Link' in r.headers:
+            matched = pattern.match(r.headers['Link'])
+            if matched:
+                url = matched[1] + "&access_token=" + mapbox_token
+        if r.status_code == 200:
+            for source in r.json():
+                click.echo(source["id"])
+        else:
+            raise errors.TilesetsError(r.text)
 
 
 def validate_stream(features):
