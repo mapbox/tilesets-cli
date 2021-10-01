@@ -2,6 +2,9 @@
 
 =======
 
+# 1.7.2 (2021-10-01)
+- Provide description for `upload-source` command, and label `add-source` command as deprecated.
+
 # 1.7.1 (2021-04-16)
 - Switch to codecov python module
 

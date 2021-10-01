@@ -524,6 +524,11 @@ def validate_source(features):
 def upload_source(
     ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
 ):
+    """Create a new tileset source, or add data to an existing tileset source.
+    Optionally, replace an existing tileset source.
+
+    tilesets upload-source <username> <source_id> <path/to/source/data>
+    """
     return _upload_source(
         ctx, username, id, features, no_validation, quiet, replace, token, indent
     )
@@ -532,10 +537,6 @@ def upload_source(
 def _upload_source(
     ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
 ):
-    """Create/add a tileset source
-
-    tilesets add-source <username> <source_id> <path/to/source/data>
-    """
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
     s = utils._get_session()
@@ -627,7 +628,7 @@ def _upload_source(
 def add_source(
     ctx, username, id, features, no_validation, quiet, token=None, indent=None
 ):
-    """Create/add/replace a tileset source
+    """[DEPRECATED] Create/add/replace a tileset source. Use upload-source instead.
 
     tilesets add-source <username> <source_id> <path/to/source/data>
     """
