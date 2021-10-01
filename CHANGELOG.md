@@ -1,4 +1,5 @@
 # Unreleased
+- Provide description for `upload-source` command, and label `add-source` command as deprecated.
 
 =======
 
