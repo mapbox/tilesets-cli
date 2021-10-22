@@ -1,6 +1,6 @@
 ## Welcome
 
-Hi there! Welcome to the tilesets-cli contributing document. Issues, comments, and pull requests are welcome. Please tag @mapsam, @dianeschulze, and @dnomadb for any questions or reviews.
+Hi there! Welcome to the tilesets-cli contributing document. Issues, comments, and pull requests are welcome. Please tag @mapbox/tilesets-api for any questions or reviews.
 
 ## Installation
 First, clone the repo and `cd` into the folder:
