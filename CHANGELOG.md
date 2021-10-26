@@ -2,6 +2,9 @@
 
 =======
 
+# 1.7.3 (unreleased)
+- Mark `add-source` command as deprecated and hide from `--help` output.
+
 # 1.7.2 (2021-10-01)
 - Provide description for `upload-source` command, and label `add-source` command as deprecated.
 

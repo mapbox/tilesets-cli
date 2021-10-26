@@ -616,7 +616,7 @@ def _upload_source(
         raise errors.TilesetsError(resp.text)
 
 
-@cli.command("add-source")
+@cli.command("add-source", deprecated=True, hidden=True)
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
 @cligj.features_in_arg
@@ -628,7 +628,9 @@ def _upload_source(
 def add_source(
     ctx, username, id, features, no_validation, quiet, token=None, indent=None
 ):
-    """[DEPRECATED] Create/add/replace a tileset source. Use upload-source instead.
+    """Use upload-source instead.
+
+    Create/add/replace a tileset source.
 
     tilesets add-source <username> <source_id> <path/to/source/data>
     """
