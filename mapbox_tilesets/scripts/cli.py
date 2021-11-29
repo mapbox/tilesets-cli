@@ -616,7 +616,7 @@ def _upload_source(
         raise errors.TilesetsError(resp.text)
 
 
-@cli.command("add-source")
+@cli.command("add-source", hidden=True)
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, type=str)
 @cligj.features_in_arg

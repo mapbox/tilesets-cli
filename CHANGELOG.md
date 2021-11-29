@@ -1,4 +1,5 @@
 # Unreleased
+- Hide deprecated `add-source` command from command list.
 
 =======
 
