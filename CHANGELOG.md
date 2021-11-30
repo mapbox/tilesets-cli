@@ -1,5 +1,6 @@
 # Unreleased
 - Hide deprecated `add-source` command from command list.
+- Raise error in `tilesets status` for non-200s (includes unpublished tilesets).
 
 =======
 

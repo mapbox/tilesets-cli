@@ -249,6 +249,9 @@ def status(tileset, token=None, indent=None):
     )
     r = s.get(url)
 
+    if r.status_code != 200:
+        raise errors.TilesetsError(r.text)
+
     status = {}
     for job in r.json():
         status["id"] = job["tilesetId"]
