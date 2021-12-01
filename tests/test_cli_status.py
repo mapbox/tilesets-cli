@@ -5,6 +5,7 @@ from click.testing import CliRunner
 from unittest import mock
 
 from mapbox_tilesets.scripts.cli import status
+from mapbox_tilesets.errors import TilesetsError
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -47,3 +48,20 @@ def test_cli_status_use_token_flag(mock_request_get, MockResponse):
         "latest_job": "a123",
     }
     assert json.loads(result.output) == expected_status
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.Session.get")
+def test_cli_status_error(mock_request_get, MockResponse):
+    runner = CliRunner()
+
+    # sends expected request
+    message = {"message": "test.id has no jobs."}
+    mock_request_get.return_value = MockResponse(message, 404)
+    result = runner.invoke(status, ["test.id"])
+    mock_request_get.assert_called_with(
+        "https://api.mapbox.com/tilesets/v1/test.id/jobs?limit=1&access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
+    )
+    assert result.exit_code == 1
+    assert isinstance(result.exception, TilesetsError)
+    assert result.exception.message == '{"message": "test.id has no jobs."}'
