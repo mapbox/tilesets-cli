@@ -18,6 +18,7 @@ CLI for interacting with and preparing data for the [Mapbox Tiling Service](http
 
 - Python >= 3.6 (can be installed via virtualenv)
 - Recommended: [virtualenv](https://virtualenv.pypa.io/) / [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/)
+- Windows only: binaries installed for [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio) (note: Windows is not officially supported at this time)  
 
 #### Mapbox Access Tokens
 
