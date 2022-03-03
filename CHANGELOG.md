@@ -4,6 +4,9 @@
 
 =======
 
+# 1.7.3
+ - Loads `supermercado` on request because binaries for arm64 MacOS and Windows are not easily available.
+
 # 1.7.2 (2021-10-01)
 - Provide description for `upload-source` command, and label `add-source` command as deprecated.
 

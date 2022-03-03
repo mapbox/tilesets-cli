@@ -30,16 +30,19 @@ setup(
         "boto3",
         "click~=7.1.2",
         "cligj",
+        "numpy",
         "requests",
         "requests-toolbelt",
         "jsonschema~=3.0",
         "jsonseq~=1.0",
         "mercantile~=1.1.6",
-        "supermercado~=0.2.0",
     ],
     include_package_data=True,
     zip_safe=False,
     extras_require={
+        "estimate-area": [
+            "supermercado~=0.2.0",
+        ],
         "test": [
             "codecov",
             "pytest==4.6.11",
@@ -47,8 +50,9 @@ setup(
             "pre-commit",
             "black==20.8b1",
             "pep8",
+            "supermercado~=0.2.0",
             "toml==0.10.2",
-        ]
+        ],
     },
     entry_points="""
       [console_scripts]

@@ -70,7 +70,7 @@ Releases to PyPi are handled via TravisCI and GitHub tags. Once changes have bee
 All tests are runnable with pytest. pytest is not installed by default and can be installed with the pip test extras
 
 ```shell
-pip install -e .[test]
+pip install -e '.[test]'
 ```
 
 Running tests

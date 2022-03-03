@@ -1,4 +1,5 @@
 """Tilesets command line interface"""
+import builtins
 import json
 import tempfile
 
@@ -9,8 +10,6 @@ from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
 from mapbox_tilesets import utils, errors
-from supermercado.super_utils import filter_features
-import builtins
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -754,6 +753,8 @@ def estimate_area(features, precision, no_validation=False, force_1cm=False):
 
     features must be a list of paths to local files containing GeoJSON feature collections or feature sequences from argument or stdin, or a list of string-encoded coordinate pairs of the form "[lng, lat]", or "lng, lat", or "lng lat".
     """
+    filter_features = utils.load_module("supermercado.super_utils").filter_features
+
     area = 0
     if precision == "1cm" and not force_1cm:
         raise errors.TilesetsError(

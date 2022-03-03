@@ -1,3 +1,4 @@
+import importlib
 import os
 import re
 
@@ -5,9 +6,20 @@ import numpy as np
 
 from jsonschema import validate
 from requests import Session
-from supermercado.burntiles import burn
 
 import mapbox_tilesets
+
+
+def load_module(modulename):
+    """Dynamically imports a module and throws a readable exception if not found"""
+    try:
+        module = importlib.import_module(modulename)
+    except (ImportError):
+        raise ValueError(
+            f"Couldn't find {modulename}. Check installation steps in the readme for help."
+        ) from None
+
+    return module
 
 
 def _get_token(token=None):
@@ -206,6 +218,8 @@ def calculate_tiles_area(features, precision):
     -------
         total area of all tiles in square kilometers
     """
+    burn = load_module("supermercado.burntiles").burn
+
     zoom = _convert_precision_to_zoom(precision)
     tiles = burn(features, zoom)
     return np.sum(_calculate_tile_area(tiles))

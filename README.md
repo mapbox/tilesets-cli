@@ -12,15 +12,38 @@ CLI for interacting with and preparing data for the [Mapbox Tiling Service](http
 [CONTRIBUTING.md](/CONTRIBUTING.md) includes information about release processes & running tests. :raised_hands:
 
 # Installation
-`pip install mapbox-tilesets`
 
-#### Requirements
+## Requirements
 
 - Python >= 3.6 (can be installed via virtualenv)
 - Recommended: [virtualenv](https://virtualenv.pypa.io/) / [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/)
-- Windows only: binaries installed for [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio) (note: Windows is not officially supported at this time)  
 
-#### Mapbox Access Tokens
+## Basic installation
+
+`pip install mapbox-tilesets` will install everything but [`estimate-area`](#estimate-area).
+## Installing optional `estimate-area` command
+If you are using an x86 Mac or Linux machine, run:
+`pip install 'mapbox-tilesets[estimate-area]'`
+
+Otherwise, you will need to install some dependencies.
+
+### arm64 MacOS
+If you're on an arm64 Mac (e.g., with an M1 chip), you'll need to install [GDAL](https://gdal.org/) first. On Mac, a simple way is to use [Homebrew](https://brew.sh/):
+```sh
+$ brew install gdal
+...
+$ pip install 'mapbox-tilesets[estimate-area]'
+```
+
+### Windows
+Note, Windows is not officially supported at this time.
+
+Windows users need to install [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio).
+Then `pip install 'mapbox-tilesets[estimate-area]'`
+
+
+
+## Mapbox Access Tokens
 
 In order to use the tilesets endpoints, you need a Mapbox Access Token with `tilesets:write`, `tilesets:read`, and `tilesets:list` scopes. This is a secret token, so do not share it publicly!
 
