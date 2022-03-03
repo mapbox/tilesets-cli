@@ -1,11 +1,11 @@
 # Unreleased
-- Hide deprecated `add-source` command from command list.
-- Raise error in `tilesets status` for non-200s (includes unpublished tilesets).
 
 =======
 
-# 1.7.3
+# 1.7.3a1
  - Loads `supermercado` on request because binaries for arm64 MacOS and Windows are not easily available.
+ - Hide deprecated `add-source` command from command list.
+ - Raise error in `tilesets status` for non-200s (includes unpublished tilesets).
 
 # 1.7.2 (2021-10-01)
 - Provide description for `upload-source` command, and label `add-source` command as deprecated.
