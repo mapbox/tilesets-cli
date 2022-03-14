@@ -2,7 +2,7 @@
 
 =======
 
-# 1.7.3
+# 1.7.3 (2022-03-14)
  - Loads `supermercado` on request because binaries for arm64 MacOS and Windows are not easily available.
  - Hide deprecated `add-source` command from command list.
  - Raise error in `tilesets status` for non-200s (includes unpublished tilesets).
