@@ -747,7 +747,7 @@ def validate_stream(features):
     help="Enables 1cm precision",
 )
 def estimate_area(features, precision, no_validation=False, force_1cm=False):
-    """Estimate area of features with a precision level.
+    """Estimate area of features with a precision level. Requires extra installation steps: see https://github.com/mapbox/tilesets-cli/blob/master/README.md
 
     tilesets estimate-area <features> <precision>
 
