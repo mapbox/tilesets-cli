@@ -56,6 +56,10 @@ Set the environment variable with `export`
 ```
 export MAPBOX_ACCESS_TOKEN=my.token
 ```
+In case of running for staging environment, you might also need to set MAPBOX_API
+```
+export MAPBOX_API=https://cloudfront-staging.tilestream.net
+```
 
 # Commands
 
