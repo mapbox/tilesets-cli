@@ -30,7 +30,7 @@ setup(
         "boto3",
         "click~=7.1.2",
         "cligj",
-        "numpy",
+        "numpy~=1.19.5",
         "requests",
         "requests-toolbelt",
         "jsonschema~=3.0",
