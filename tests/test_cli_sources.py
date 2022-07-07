@@ -190,6 +190,11 @@ def test_cli_upload_source_no_replace(
         == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
 
+@pytest.mark.usefixtures("token_environ")
+def validate_source_id(self):
+    self.assertRaises(click.BadParameter,value='mapbox://tileset-source/test-user/hello-world', param=None, ctx=None)
+    self.assertEqual('hello-world',value='hello-world', param=None, ctx=None)
+
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.Session.get")

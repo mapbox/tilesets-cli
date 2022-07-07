@@ -6,6 +6,7 @@ import tempfile
 import click
 import cligj
 import base64
+import re
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
@@ -508,10 +509,15 @@ def validate_source(features):
 
     click.echo("✔ valid")
 
+def validate_source_id(ctx, param, value):
+    if re.match('^[a-zA-Z0-9-_]{1,32}$', value):
+        return value
+    else:
+        raise click.BadParameter('Tileset Source ID is invalid. Must be no more than 32 characters and only include "-", "_", and alphanumeric characters.')
 
 @cli.command("upload-source")
 @click.argument("username", required=True, type=str)
-@click.argument("id", required=True, type=str)
+@click.argument("id", required=True, callback=validate_source_id, type=str)
 @cligj.features_in_arg
 @click.option("--no-validation", is_flag=True, help="Bypass source file validation")
 @click.option("--quiet", is_flag=True, help="Don't show progress bar")
