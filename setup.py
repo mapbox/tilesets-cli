@@ -28,7 +28,7 @@ setup(
     packages=find_packages(exclude=["ez_setup", "examples", "tests"]),
     install_requires=[
         "boto3",
-        "click~=7.1.2",
+        "click~=8.0.2",
         "cligj",
         "numpy",
         "requests",
