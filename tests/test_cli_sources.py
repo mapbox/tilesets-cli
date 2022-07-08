@@ -1,6 +1,7 @@
 from click.testing import CliRunner
 import json
 import os
+import click
 from unittest import mock
 
 import pytest
