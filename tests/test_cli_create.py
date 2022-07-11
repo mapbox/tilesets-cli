@@ -140,7 +140,7 @@ def test_cli_create_private_invalid(mock_request_post, MockResponse):
     )
     assert result.exit_code == 2
     assert (
-        "Invalid value for '--privacy' / '-p': invalid choice: invalid-privacy-value. (choose from public, private)"
+        "Error: Invalid value for '--privacy' / '-p': 'invalid-privacy-value' is not one of 'public', 'private'."
         in result.output
     )
 

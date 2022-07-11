@@ -43,10 +43,9 @@ def test_cli_add_source(
         add_source, ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson"]
     )
     assert validated_result.exit_code == 0
-
     assert (
         validated_result.output
-        == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
+        == """upload progress\n{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
 
 
@@ -150,10 +149,9 @@ def test_cli_upload_source_replace(
         ["test-user", "hello-world", "tests/fixtures/valid.ldgeojson", "--replace"],
     )
     assert validated_result.exit_code == 0
-
     assert (
         validated_result.output
-        == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
+        == """upload progress\n{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
 
 
@@ -188,13 +186,19 @@ def test_cli_upload_source_no_replace(
 
     assert (
         validated_result.output
-        == """{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
+        == """upload progress\n{"id": "mapbox://tileset-source/test-user/hello-world"}\n"""
     )
+
 
 @pytest.mark.usefixtures("token_environ")
 def validate_source_id(self):
-    self.assertRaises(click.BadParameter,value='mapbox://tileset-source/test-user/hello-world', param=None, ctx=None)
-    self.assertEqual('hello-world',value='hello-world', param=None, ctx=None)
+    self.assertRaises(
+        click.BadParameter,
+        value="mapbox://tileset-source/test-user/hello-world",
+        param=None,
+        ctx=None,
+    )
+    self.assertEqual("hello-world", value="hello-world", param=None, ctx=None)
 
 
 @pytest.mark.usefixtures("token_environ")
