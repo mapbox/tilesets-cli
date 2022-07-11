@@ -157,7 +157,7 @@ def _tile2lng(tile_x, zoom):
     -------
         longitude
     """
-    return ((tile_x / 2 ** zoom) * 360.0) - 180.0
+    return ((tile_x / 2**zoom) * 360.0) - 180.0
 
 
 def _tile2lat(tile_y, zoom):
@@ -174,7 +174,7 @@ def _tile2lat(tile_y, zoom):
     -------
         latitude
     """
-    n = np.pi - 2 * np.pi * tile_y / 2 ** zoom
+    n = np.pi - 2 * np.pi * tile_y / 2**zoom
     return (180.0 / np.pi) * np.arctan(0.5 * (np.exp(n) - np.exp(-n)))
 
 
@@ -198,7 +198,7 @@ def _calculate_tile_area(tile):
     bottom = np.deg2rad(_tile2lat(tile[:, 1] + 1, tile[:, 2]))
     return (
         (np.pi / np.deg2rad(180))
-        * EARTH_RADIUS ** 2
+        * EARTH_RADIUS**2
         * np.abs(np.sin(top) - np.sin(bottom))
         * np.abs(left - right)
     )

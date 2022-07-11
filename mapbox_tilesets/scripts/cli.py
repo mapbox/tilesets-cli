@@ -509,11 +509,15 @@ def validate_source(features):
 
     click.echo("✔ valid")
 
+
 def validate_source_id(ctx, param, value):
-    if re.match('^[a-zA-Z0-9-_]{1,32}$', value):
+    if re.match("^[a-zA-Z0-9-_]{1,32}$", value):
         return value
     else:
-        raise click.BadParameter('Tileset Source ID is invalid. Must be no more than 32 characters and only include "-", "_", and alphanumeric characters.')
+        raise click.BadParameter(
+            'Tileset Source ID is invalid. Must be no more than 32 characters and only include "-", "_", and alphanumeric characters.'
+        )
+
 
 @cli.command("upload-source")
 @click.argument("username", required=True, type=str)
