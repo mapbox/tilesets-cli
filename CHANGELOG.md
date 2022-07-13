@@ -2,7 +2,7 @@
 
 =======
 
-# 1.7.4 (2022-07-08)
+# 1.7.4 (2022-07-13)
 - validates source id for correct syntax when `upload-source` command to resolve `Connection reset by peer error`
 
 # 1.7.3 (2022-03-14)
