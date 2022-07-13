@@ -2,6 +2,9 @@
 
 =======
 
+# 1.7.4 (2022-07-13)
+- validates source id for correct syntax when `upload-source` command to resolve `Connection reset by peer error`
+
 # 1.7.3 (2022-03-14)
  - Loads `supermercado` on request because binaries for arm64 MacOS and Windows are not easily available.
  - Hide deprecated `add-source` command from command list.
