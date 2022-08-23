@@ -11,6 +11,7 @@ import mapbox_tilesets
 import geojson
 import json
 
+
 def load_module(modulename):
     """Dynamically imports a module and throws a readable exception if not found"""
     try:
@@ -72,6 +73,14 @@ def validate_tileset_id(tileset_id):
     return re.match(pattern, tileset_id, flags=re.IGNORECASE)
 
 
+def geojson_validate(index, feature):
+    geojsonFeature = geojson.loads(json.dumps(feature))
+    if not geojsonFeature.is_valid:
+        raise mapbox_tilesets.errors.TilesetsError(
+            f"Error in feature number {index}: " + "".join(geojsonFeature.errors())
+        )
+
+
 def validate_geojson(index, feature):
     schema = {
         "definitions": {},
@@ -118,11 +127,7 @@ def validate_geojson(index, feature):
         },
     }
     validate(instance=feature, schema=schema)
-    geojsonFeature = geojson.loads(json.dumps(feature))
-    if not geojsonFeature.is_valid:
-        raise mapbox_tilesets.errors.TilesetsError(f"Error in feature number {index}: " + ''.join(geojsonFeature.errors()))
-
-    return
+    geojson_validate(index, feature)
 
 
 def _convert_precision_to_zoom(precision):
