@@ -74,11 +74,11 @@ def test_validate_tileset_id_toolong():
 def test_validate_linear_ring():
     geometry = { 'type': 'Polygon', 'coordinates': [[[1, 2], [3, 4], [5, 6]]]}
     with pytest.raises(TilesetsError) as excinfo:
-        validate_linear_ring(geometry)
+        validate_linear_ring(2, geometry)
 
     assert (
         str(excinfo.value)
-        == "The first and last coordinates in a LinearRing must be equivalent"
+        == "Error in feature number 2: The first and last coordinates in a LinearRing must be equivalent"
     )
 
 

@@ -253,7 +253,7 @@ def test_cli_upload_source_not_closed_polygon(
 
     assert (
         str(validated_result.exception)
-        == "The first and last coordinates in a LinearRing must be equivalent"
+        == "Error in feature number 0: The first and last coordinates in a LinearRing must be equivalent"
     )
 
 @pytest.mark.usefixtures("token_environ")

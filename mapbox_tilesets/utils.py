@@ -71,15 +71,17 @@ def validate_tileset_id(tileset_id):
     return re.match(pattern, tileset_id, flags=re.IGNORECASE)
 
 
-def validate_linear_ring(geometry):
+def validate_linear_ring(count, geometry):
     if geometry['type'] == 'Polygon':
         coord = geometry['coordinates']
         is_ring = all([elem[0] == elem[-1] for elem in coord])
         if is_ring is False:
-            raise mapbox_tilesets.errors.TilesetsError('The first and last coordinates in a LinearRing must be equivalent')
+            raise mapbox_tilesets.errors.TilesetsError(
+                f"Error in feature number {count}: The first and last coordinates in a LinearRing must be equivalent"
+            )
 
 
-def validate_geojson(feature):
+def validate_geojson(count, feature):
     schema = {
         "definitions": {},
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -125,7 +127,7 @@ def validate_geojson(feature):
         },
     }
 
-    validate_linear_ring(feature['geometry'])
+    validate_linear_ring(count, feature['geometry'])
     return validate(instance=feature, schema=schema)
 
 
