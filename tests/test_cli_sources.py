@@ -223,6 +223,38 @@ def test_cli_upload_source(
         == """upload progress\n{"id": "mapbox://tileset-source/test-user/populated-places-source"}\n"""
     )
 
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.post")
+def test_cli_upload_source_not_closed_polygon(
+    mock_request_post,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    okay_response = {"id": "mapbox://tileset-source/test-user/populated-places-source"}
+    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
+
+    expected_json = b'{"type":"Feature","id":"01","geometry":{"type":"Polygon","coordinates":[[-150.957,-40.5948],[-155,-41],[-152,-42],[-152,-40]]},"properties":{"name":"Ducky Loo"}}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        upload_source,
+        ["test-user", "populated-places-source", "tests/fixtures/invalid-polygon.ldgeojson"],
+    )
+    assert validated_result.exit_code == 1
+
+    assert (
+        str(validated_result.exception)
+        == "The first and last coordinates in a LinearRing must be equivalent"
+    )
 
 @pytest.mark.usefixtures("token_environ")
 def validate_source_id(self):

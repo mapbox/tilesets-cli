@@ -1,0 +1,16 @@
+{
+  "type": "Feature",
+  "id":"01",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [-150.957,-40.5948],
+        [-155,-41],
+        [-152,-42],
+        [-152, -40]
+      ]
+    ]
+  },
+  "properties":{"name":"Ducky Loo"}
+}
