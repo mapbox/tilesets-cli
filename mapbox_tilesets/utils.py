@@ -72,8 +72,8 @@ def validate_tileset_id(tileset_id):
 
 
 def validate_linear_ring(count, geometry):
-    if geometry['type'] == 'Polygon':
-        coord = geometry['coordinates']
+    if geometry["type"] == "Polygon":
+        coord = geometry["coordinates"]
         is_ring = all([elem[0] == elem[-1] for elem in coord])
         if is_ring is False:
             raise mapbox_tilesets.errors.TilesetsError(
@@ -127,7 +127,7 @@ def validate_geojson(count, feature):
         },
     }
 
-    validate_linear_ring(count, feature['geometry'])
+    validate_linear_ring(count, feature["geometry"])
     return validate(instance=feature, schema=schema)
 
 

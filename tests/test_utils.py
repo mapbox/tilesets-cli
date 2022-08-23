@@ -72,7 +72,7 @@ def test_validate_tileset_id_toolong():
 
 
 def test_validate_linear_ring():
-    geometry = { 'type': 'Polygon', 'coordinates': [[[1, 2], [3, 4], [5, 6]]]}
+    geometry = {"type": "Polygon", "coordinates": [[[1, 2], [3, 4], [5, 6]]]}
     with pytest.raises(TilesetsError) as excinfo:
         validate_linear_ring(2, geometry)
 

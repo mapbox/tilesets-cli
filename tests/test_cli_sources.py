@@ -223,6 +223,7 @@ def test_cli_upload_source(
         == """upload progress\n{"id": "mapbox://tileset-source/test-user/populated-places-source"}\n"""
     )
 
+
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
 @mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
@@ -247,7 +248,11 @@ def test_cli_upload_source_not_closed_polygon(
     runner = CliRunner()
     validated_result = runner.invoke(
         upload_source,
-        ["test-user", "populated-places-source", "tests/fixtures/invalid-polygon.ldgeojson"],
+        [
+            "test-user",
+            "populated-places-source",
+            "tests/fixtures/invalid-polygon.ldgeojson",
+        ],
     )
     assert validated_result.exit_code == 1
 
@@ -255,6 +260,7 @@ def test_cli_upload_source_not_closed_polygon(
         str(validated_result.exception)
         == "Error in feature number 0: The first and last coordinates in a LinearRing must be equivalent"
     )
+
 
 @pytest.mark.usefixtures("token_environ")
 def validate_source_id(self):
