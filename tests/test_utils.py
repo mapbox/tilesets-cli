@@ -5,7 +5,6 @@ from mapbox_tilesets.utils import (
     _get_api,
     _get_session,
     _get_token,
-    validate_linear_ring,
     validate_tileset_id,
     _convert_precision_to_zoom,
     calculate_tiles_area,
@@ -69,17 +68,6 @@ def test_validate_tileset_id_toolong():
     tileset = "hellooooooooooooooooooooooooooooooo.hiiiiiiiuuuuuuuuuuuuuuuuuuuuuu"
 
     assert not validate_tileset_id(tileset)
-
-
-def test_validate_linear_ring():
-    geometry = {"type": "Polygon", "coordinates": [[[1, 2], [3, 4], [5, 6]]]}
-    with pytest.raises(TilesetsError) as excinfo:
-        validate_linear_ring(2, geometry)
-
-    assert (
-        str(excinfo.value)
-        == "Error in feature number 2: The first and last coordinates in a LinearRing must be equivalent"
-    )
 
 
 def test_convert_precision_to_zoom_10m():

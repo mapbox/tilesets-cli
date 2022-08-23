@@ -8,7 +8,8 @@ from jsonschema import validate
 from requests import Session
 
 import mapbox_tilesets
-
+import geojson
+import json
 
 def load_module(modulename):
     """Dynamically imports a module and throws a readable exception if not found"""
@@ -71,17 +72,7 @@ def validate_tileset_id(tileset_id):
     return re.match(pattern, tileset_id, flags=re.IGNORECASE)
 
 
-def validate_linear_ring(count, geometry):
-    if geometry["type"] == "Polygon":
-        coord = geometry["coordinates"]
-        is_ring = all([elem[0] == elem[-1] for elem in coord])
-        if is_ring is False:
-            raise mapbox_tilesets.errors.TilesetsError(
-                f"Error in feature number {count}: The first and last coordinates in a LinearRing must be equivalent"
-            )
-
-
-def validate_geojson(count, feature):
+def validate_geojson(index, feature):
     schema = {
         "definitions": {},
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -126,9 +117,12 @@ def validate_geojson(count, feature):
             },
         },
     }
+    validate(instance=feature, schema=schema)
+    geojsonFeature = geojson.loads(json.dumps(feature))
+    if not geojsonFeature.is_valid:
+        raise mapbox_tilesets.errors.TilesetsError(f"Error in feature number {index}: " + ''.join(geojsonFeature.errors()))
 
-    validate_linear_ring(count, feature["geometry"])
-    return validate(instance=feature, schema=schema)
+    return
 
 
 def _convert_precision_to_zoom(precision):

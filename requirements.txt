@@ -8,3 +8,4 @@ jsonschema==3.0.1
 jsonseq==1.0.0
 mercantile==1.1.6
 supermercado==0.2.0
+geojson===2.5.0
