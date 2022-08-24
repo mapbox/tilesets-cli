@@ -1,11 +1,11 @@
 import json
 
 import click
-from src.utils.http import get_session
+from cli.utils.http import get_session
 
 
 @click.command("get")
-@click.option("--id", required=True, type=str)
+@click.option("--id", required=True, type=str, help="Tileset ID")
 @click.option("--token", required=False, type=str)
 def get(id, token):
     client = get_session(token)

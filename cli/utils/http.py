@@ -2,7 +2,7 @@ import os
 
 from requests_toolbelt.sessions import BaseUrlSession
 
-import src
+import cli
 
 
 def get_session(token=None):
@@ -14,7 +14,7 @@ def get_session(token=None):
     )
 
     if token is None:
-        raise src.errors.TilesetsError(
+        raise cli.errors.TilesetsError(
             "No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag."
         )
 
@@ -22,6 +22,6 @@ def get_session(token=None):
     session = BaseUrlSession(base)
     session.params.update({"access_token": token})
     session.headers.update(
-        {"user-agent": "{}/{}".format(src.__name__, src.__version__)}
+        {"user-agent": "{}/{}".format(cli.__name__, cli.__version__)}
     )
     return session

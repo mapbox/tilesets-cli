@@ -1,12 +1,13 @@
 import json
 
 import click
-from src.utils.http import get_session
+from cli.utils.common import token_option
+from cli.utils.http import get_session
 
 
 @click.command("get")
 @click.option("--id", required=True, type=str)
-@click.option("--token", required=False, type=str)
+@token_option
 def get(id, token):
     account, id = id.split("/")
     client = get_session(token)
