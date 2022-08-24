@@ -504,8 +504,8 @@ def validate_source(features):
     """
     click.echo("Validating features", err=True)
 
-    for count, feature in enumerate(features):
-        utils.validate_geojson(count, feature)
+    for index, feature in enumerate(features):
+        utils.validate_geojson(index, feature)
 
     click.echo("✔ valid")
 
@@ -582,9 +582,9 @@ def _upload_source(
             )
 
     with tempfile.TemporaryFile() as file:
-        for count, feature in enumerate(features):
+        for index, feature in enumerate(features):
             if not no_validation:
-                utils.validate_geojson(count, feature)
+                utils.validate_geojson(index, feature)
 
             file.write(
                 (json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8")
@@ -730,8 +730,8 @@ def list_sources(username, token=None):
 
 
 def validate_stream(features):
-    for count, feature in enumerate(features):
-        utils.validate_geojson(count, feature)
+    for index, feature in enumerate(features):
+        utils.validate_geojson(index, feature)
         yield feature
 
 
