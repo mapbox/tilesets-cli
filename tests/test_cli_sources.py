@@ -228,7 +228,7 @@ def test_cli_upload_source(
 @mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
 @mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
-def test_cli_upload_source_not_closed_polygon(
+def test_cli_upload_source_invalid_polygon(
     mock_request_post,
     mock_multipart_encoder,
     MockResponse,

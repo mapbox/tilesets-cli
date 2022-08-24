@@ -81,6 +81,16 @@ def test_geojson_validate():
         == "Error in feature number 2: Each linear ring must contain at least 4 positions"
     )
 
+def test_geojson_validate_closed_ring():
+    geometry = {"type": "Polygon", "coordinates": [[[1, 2], [3, 4], [5, 6], [7, 8]]]}
+    with pytest.raises(TilesetsError) as excinfo:
+        geojson_validate(2, geometry)
+
+    assert (
+        str(excinfo.value)
+        == "Error in feature number 2: Each linear ring must end where it started"
+    )
+
 
 def test_convert_precision_to_zoom_10m():
     precision = "10m"
