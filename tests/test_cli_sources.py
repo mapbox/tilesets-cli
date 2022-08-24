@@ -234,9 +234,6 @@ def test_cli_upload_source_not_closed_polygon(
     MockResponse,
     MockMultipartEncoding,
 ):
-    okay_response = {"id": "mapbox://tileset-source/test-user/populated-places-source"}
-    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
-
     expected_json = b'{"type":"Feature","id":"01","geometry":{"type":"Polygon","coordinates":[[-150.957,-40.5948],[-155,-41],[-152,-42],[-152,-40]]},"properties":{"name":"Ducky Loo"}}\n'
 
     def side_effect(fields):
