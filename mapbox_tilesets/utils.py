@@ -8,6 +8,8 @@ from jsonschema import validate
 from requests import Session
 
 import mapbox_tilesets
+import geojson
+import json
 
 
 def load_module(modulename):
@@ -71,7 +73,15 @@ def validate_tileset_id(tileset_id):
     return re.match(pattern, tileset_id, flags=re.IGNORECASE)
 
 
-def validate_geojson(feature):
+def geojson_validate(index, feature):
+    geojsonFeature = geojson.loads(json.dumps(feature))
+    if not geojsonFeature.is_valid:
+        raise mapbox_tilesets.errors.TilesetsError(
+            f"Error in feature number {index}: " + "".join(geojsonFeature.errors())
+        )
+
+
+def validate_geojson(index, feature):
     schema = {
         "definitions": {},
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -116,8 +126,8 @@ def validate_geojson(feature):
             },
         },
     }
-
-    return validate(instance=feature, schema=schema)
+    validate(instance=feature, schema=schema)
+    geojson_validate(index, feature)
 
 
 def _convert_precision_to_zoom(precision):

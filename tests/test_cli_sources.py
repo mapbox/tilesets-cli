@@ -225,6 +225,41 @@ def test_cli_upload_source(
 
 
 @pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.post")
+def test_cli_upload_source_invalid_polygon(
+    mock_request_post,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    expected_json = b'{"type":"Feature","id":"01","geometry":{"type":"Polygon","coordinates":[[-150.957,-40.5948],[-155,-41],[-152,-42],[-152,-40]]},"properties":{"name":"Ducky Loo"}}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        upload_source,
+        [
+            "test-user",
+            "populated-places-source",
+            "tests/fixtures/invalid-polygon.ldgeojson",
+        ],
+    )
+    assert validated_result.exit_code == 1
+
+    assert (
+        str(validated_result.exception)
+        == "Error in feature number 0: Each linear ring must end where it started"
+    )
+
+
+@pytest.mark.usefixtures("token_environ")
 def validate_source_id(self):
     self.assertRaises(
         click.BadParameter,

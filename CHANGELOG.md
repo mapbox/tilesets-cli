@@ -2,6 +2,10 @@
 
 =======
 
+# 1.8.0 (2022-08-25)
+- validates source in `upload-source` command using geojson library.
+- Provides line number for an invalid feature that is detected with the geojson validator.
+
 # 1.7.4 (2022-07-13)
 - validates source id for correct syntax when `upload-source` command to resolve `Connection reset by peer error`
 

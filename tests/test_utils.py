@@ -5,6 +5,7 @@ from mapbox_tilesets.utils import (
     _get_api,
     _get_session,
     _get_token,
+    geojson_validate,
     validate_tileset_id,
     _convert_precision_to_zoom,
     calculate_tiles_area,
@@ -68,6 +69,49 @@ def test_validate_tileset_id_toolong():
     tileset = "hellooooooooooooooooooooooooooooooo.hiiiiiiiuuuuuuuuuuuuuuuuuuuuuu"
 
     assert not validate_tileset_id(tileset)
+
+
+def test_geojson_validate():
+    geometry = {"type": "Polygon", "coordinates": [[[1, 2], [3, 4], [5, 6]]]}
+    with pytest.raises(TilesetsError) as excinfo:
+        geojson_validate(2, geometry)
+
+    assert (
+        str(excinfo.value)
+        == "Error in feature number 2: Each linear ring must contain at least 4 positions"
+    )
+
+
+def test_geojson_validate_open_ring():
+    geometry = {"type": "Polygon", "coordinates": [[[1, 2], [3, 4], [5, 6], [7, 8]]]}
+    with pytest.raises(TilesetsError) as excinfo:
+        geojson_validate(2, geometry)
+
+    assert (
+        str(excinfo.value)
+        == "Error in feature number 2: Each linear ring must end where it started"
+    )
+
+
+def test_geojson_validate_closed_ring():
+    geometry = {"type": "Polygon", "coordinates": [[[1, 2], [3, 4], [5, 6], [1, 2]]]}
+    assert geojson_validate(2, geometry) is None
+
+
+def test_geojson_validate_closed_ring_correct_winding_order():
+    geometry = {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+    }
+    assert geojson_validate(2, geometry) is None
+
+
+def test_geojson_validate_closed_ring_incorrect_winding_order():
+    geometry = {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]],
+    }
+    assert geojson_validate(2, geometry) is None
 
 
 def test_convert_precision_to_zoom_10m():
