@@ -101,7 +101,7 @@ def test_geojson_validate_closed_ring():
 def test_geojson_validate_closed_ring_correct_winding_order():
     geometry = {
         "type": "Polygon",
-        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1, [0, 0]]],
+        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
     }
     assert geojson_validate(2, geometry) is None
 
