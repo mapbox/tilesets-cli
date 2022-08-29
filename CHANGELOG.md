@@ -2,7 +2,7 @@
 
 =======
 
-# 1.8.1 (2022-08-25)
+# 1.8.1 (2022-08-29)
 - Bug Fix: Fix setup script to have `geojson` package in install requirements
 
 # 1.8.0 (2022-08-25)
