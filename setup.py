@@ -36,6 +36,7 @@ setup(
         "jsonschema~=3.0",
         "jsonseq~=1.0",
         "mercantile~=1.1.6",
+        "geojson~=2.5.0",
     ],
     include_package_data=True,
     zip_safe=False,

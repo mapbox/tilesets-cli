@@ -2,6 +2,9 @@
 
 =======
 
+# 1.8.1 (2022-08-25)
+- Bug Fix: Fix setup script to have `geojson` package in install requirements
+
 # 1.8.0 (2022-08-25)
 - validates source in `upload-source` command using geojson library.
 - Provides line number for an invalid feature that is detected with the geojson validator.
