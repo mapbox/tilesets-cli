@@ -3,14 +3,17 @@
 =======
 
 # 1.8.1 (2022-08-29)
-- Bug Fix: Fix setup script to have `geojson` package in install requirements
+- Bug Fix: Fix setup script to have `geojson` package in setup.py install requirements
 
-# 1.8.0 (2022-08-25)
-- validates source in `upload-source` command using geojson library.
+# 1.8.0 (2022-08-25) - [YANKED]
+
+*Yanked due to missing `geojson` package in setup.py*
+
+- Validates source in `upload-source` command using [geojson package](https://github.com/jazzband/geojson).
 - Provides line number for an invalid feature that is detected with the geojson validator.
 
 # 1.7.4 (2022-07-13)
-- validates source id for correct syntax when `upload-source` command to resolve `Connection reset by peer error`
+- Validates source id for correct syntax when `upload-source` command to resolve `Connection reset by peer error`
 
 # 1.7.3 (2022-03-14)
  - Loads `supermercado` on request because binaries for arm64 MacOS and Windows are not easily available.
