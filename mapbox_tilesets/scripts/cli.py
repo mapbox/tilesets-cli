@@ -2,6 +2,7 @@
 import builtins
 import json
 import tempfile
+import math
 
 import click
 import cligj
@@ -33,7 +34,7 @@ def cli():
     type=click.Path(exists=True),
     help="path to a Recipe JSON document",
 )
-@click.option("--name", "-n", required=True, type=str, help="name of the tileset")
+@click.option("--name", "-n", required=False, type=str, help="name of the tileset")
 @click.option(
     "--description", "-d", required=False, type=str, help="description of the tileset"
 )
@@ -76,7 +77,7 @@ def create(
         mapbox_api, tileset, mapbox_token
     )
     body = {}
-    body["name"] = name or ""
+    body["name"] = name or tileset
     body["description"] = description or ""
     if privacy:
         body["private"] = True if privacy == "private" else False
@@ -98,6 +99,11 @@ def create(
     r = s.post(url, json=body)
 
     click.echo(json.dumps(r.json(), indent=indent))
+    if r.status_code == 200:
+        click.echo(
+            f"You can publish your tileset with the `tilesets publish {tileset}` command.",
+            err=True,
+        )
 
 
 @cli.command("publish")
@@ -530,11 +536,12 @@ def validate_source_id(ctx, param, value):
     is_flag=True,
     help="Replace the existing source with the new source file",
 )
+@click.option("--grid", is_flag=True, help="Add attributes for gridded data")
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
 def upload_source(
-    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+    ctx, username, id, features, no_validation, quiet, replace, grid, token=None, indent=None
 ):
     """Create a new tileset source, or add data to an existing tileset source.
     Optionally, replace an existing tileset source.
@@ -542,12 +549,12 @@ def upload_source(
     tilesets upload-source <username> <source_id> <path/to/source/data>
     """
     return _upload_source(
-        ctx, username, id, features, no_validation, quiet, replace, token, indent
+        ctx, username, id, features, no_validation, quiet, replace, grid, token, indent
     )
 
 
 def _upload_source(
-    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+    ctx, username, id, features, no_validation, quiet, replace, grid, token=None, indent=None
 ):
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
@@ -581,46 +588,108 @@ def _upload_source(
                 f"Token {mapbox_token} does not contain a username"
             )
 
+    grid_x_size = 0
+    grid_y_size = 0
+    grid_keys = set()
+
     with tempfile.TemporaryFile() as file:
         for index, feature in enumerate(features):
             if not no_validation:
                 utils.validate_geojson(index, feature)
 
+            if grid:
+                (x, y, wx, wy) = utils.centroid(feature);
+
+                if grid_x_size == 0:
+                    grid_x_size = wx
+                    grid_y_size = wy
+
+                for k in feature['properties']:
+                    grid_keys.add(k)
+
+                feature['properties']['grid_x'] = int(math.floor(x / grid_x_size))
+                feature['properties']['grid_y'] = int(math.floor(y / grid_y_size))
+
             file.write(
                 (json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8")
             )
 
+        if grid:
+            aggregations = {}
+            for k in grid_keys:
+                aggregations[k] = 'arbitrary'
+            # 7 because of the expectation that a 128x128 (2^7) grid is appropriate in each tile
+            maxzoom = math.ceil(math.log(360 / ((grid_x_size + grid_y_size) / 2)) / math.log(2)) - 7
+            recipe = {
+                'version': 1,
+                'layers': {
+                    'grid': {
+                        'minzoom': 0,
+                        'maxzoom': maxzoom,
+                        'source': 'mapbox://tileset-source/' + username + '/' + id,
+                        'features': {
+                            'simplification': 0,
+                            'attributes': {
+                                'allowed_output': builtins.list(grid_keys),
+                                'set': {
+                                    'grid_x': [ 'let', 'maxzoom', maxzoom, [ 'floor', [ '/', [ 'get', 'grid_x' ], [ '^', 2, [ '-', [ 'var', 'maxzoom' ], [ 'zoom' ] ] ] ] ] ],
+                                    'grid_y': [ 'let', 'maxzoom', maxzoom, [ 'floor', [ '/', [ 'get', 'grid_y' ], [ '^', 2, [ '-', [ 'var', 'maxzoom' ], [ 'zoom' ] ] ] ] ] ]
+                                }
+                            }
+                        },
+                        'tiles': {
+                            'union': [
+                                {
+                                    'group_by': [ 'grid_x', 'grid_y' ],
+                                    'aggregate': aggregations
+                                },
+                                {
+                                    'group_by': builtins.list(grid_keys)
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+            click.echo('Suggested recipe:')
+            click.echo(json.dumps(recipe, indent=indent))
+            click.echo('If your tiles get capped, try changing the "maxzoom" and the "set" expressions to use a zoom level of ' + str(maxzoom + 1) + ' instead of ' + str(maxzoom) + ', or remove some unneeded attributes.')
+            click.echo('You may want to change the "aggregate" to use "sum", "min", "max", or "mean" instead of taking the aggregated attribute value from some "arbitrary" one of the features being unioned.')
+
         file.seek(0)
         m = MultipartEncoder(fields={"file": ("file", file)})
+        upload_multipart(m, s, method, url, quiet, indent)
 
-        if quiet:
+
+def upload_multipart(m, s, method, url, quiet, indent):
+    if quiet:
+        resp = getattr(s, method)(
+            url,
+            data=m,
+            headers={
+                "Content-Disposition": "multipart/form-data",
+                "Content-type": m.content_type,
+            },
+        )
+    else:
+        prog = click.progressbar(
+            length=m.len, fill_char="=", width=0, label="upload progress"
+        )
+        with prog:
+
+            def callback(m):
+                prog.pos = m.bytes_read
+                prog.update(0)  # Step is 0 because we set pos above
+
+            monitor = MultipartEncoderMonitor(m, callback)
             resp = getattr(s, method)(
                 url,
-                data=m,
+                data=monitor,
                 headers={
                     "Content-Disposition": "multipart/form-data",
-                    "Content-type": m.content_type,
+                    "Content-type": monitor.content_type,
                 },
             )
-        else:
-            prog = click.progressbar(
-                length=m.len, fill_char="=", width=0, label="upload progress"
-            )
-            with prog:
-
-                def callback(m):
-                    prog.pos = m.bytes_read
-                    prog.update(0)  # Step is 0 because we set pos above
-
-                monitor = MultipartEncoderMonitor(m, callback)
-                resp = getattr(s, method)(
-                    url,
-                    data=monitor,
-                    headers={
-                        "Content-Disposition": "multipart/form-data",
-                        "Content-type": monitor.content_type,
-                    },
-                )
 
     if resp.status_code == 200:
         click.echo(json.dumps(resp.json(), indent=indent))

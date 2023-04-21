@@ -1,6 +1,7 @@
 import importlib
 import os
 import re
+import math
 
 import numpy as np
 
@@ -233,3 +234,36 @@ def calculate_tiles_area(features, precision):
     zoom = _convert_precision_to_zoom(precision)
     tiles = burn(features, zoom)
     return np.sum(_calculate_tile_area(tiles))
+
+
+def centroid(poly):
+    if poly['geometry']['type'] != 'Polygon':
+        raise mapbox_tilesets.errors.TilesetsError(
+            "Gridded date must be Polygons: " + json.dumps(poly)
+        )
+    if len(poly['geometry']['coordinates']) != 1:
+        raise mapbox_tilesets.errors.TilesetsError(
+            "Gridded date must be single-ring Polygons: " + json.dumps(poly)
+        )
+
+    x = 0
+    y = 0
+    count = 0;
+
+    x_min = math.inf
+    x_max = -math.inf
+    y_min = math.inf
+    y_max = -math.inf
+
+    for i in range(len(poly['geometry']['coordinates'][0]) - 1):
+        px = poly['geometry']['coordinates'][0][i][0]
+        py = poly['geometry']['coordinates'][0][i][1]
+        count = count + 1
+        x = x + px
+        y = y + py
+        x_max = max(x_max, px);
+        x_min = min(x_min, px);
+        y_max = max(y_max, py);
+        y_min = min(y_min, py);
+
+    return (x / count, y / count, x_max - x_min, y_max - y_min)
