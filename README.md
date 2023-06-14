@@ -81,6 +81,8 @@ export MAPBOX_ACCESS_TOKEN=my.token
   * [`jobs`](#jobs)
   * [`list`](#list)
   * [`tilejson`](#tilejson)
+* Activity
+  * [`list-activity`](#list-activity)
 
 ### upload-source
 
@@ -401,3 +403,19 @@ tilesets tilejson <tileset_id>
 Flags:
 
 * `--secure`: By default, resource URLs in the retrieved TileJSON (such as in the "tiles" array) will use the HTTP scheme. Include this query parameter in your request to receive HTTPS resource URLs instead.
+
+### list-activity
+
+List tileset activity for an account. Returns a pagination key `next` if there are more results than the return limit that can be passed into another command as the `start` argument.
+
+```shell
+tilesets list-activity <account>
+```
+
+Flags:
+
+* `--sortby [requests|modified]` [optional]: Sorting key (default: requests)
+* `--orderby [asc|desc]` [optional]: Ordering key (default: desc)
+* `--limit [1-500]` [optional]: The maximum number of results to return (default: 100)
+* `--indent` [optional]: Indent size for JSON output.
+* `--start` [optional]: Pagination key from the `next` value in a response that has more results than the limit.
