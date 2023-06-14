@@ -7,7 +7,7 @@ from click.testing import CliRunner
 
 from mapbox_tilesets.scripts.cli import list_activity
 
-DEFAULT_ENDPOINT = "https://api.mapbox.com/activity/v1/test/tilesets?sortby=requests&orderby=desc&limit=100"
+DEFAULT_ENDPOINT = "https://api.mapbox.com/activity/v1/test/tilesets?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&sortby=requests&orderby=desc&limit=100"
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -75,7 +75,7 @@ def test_cli_list_activity_arguments_valid(mock_request_get, MockResponse):
     )
     # Arguments are passed into the query string
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/activity/v1/test/tilesets?sortby=modified&orderby=asc&limit=5&start=foo"
+        "https://api.mapbox.com/activity/v1/test/tilesets?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&sortby=modified&orderby=asc&limit=5&start=foo"
     )
 
 
