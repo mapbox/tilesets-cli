@@ -851,7 +851,7 @@ def list_activity(
     s = utils._get_session()
 
     params = {
-        "access_token": token,
+        "access_token": mapbox_token,
         "sortby": sortby,
         "orderby": orderby,
         "limit": limit,

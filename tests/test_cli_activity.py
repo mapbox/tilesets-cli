@@ -59,7 +59,7 @@ def test_cli_list_activity_bad_token(mock_request_get, MockResponse):
 @mock.patch("requests.Session.get")
 def test_cli_list_activity_arguments_valid(mock_request_get, MockResponse):
     runner = CliRunner()
-    result = runner.invoke(
+    runner.invoke(
         list_activity,
         [
             "test",
