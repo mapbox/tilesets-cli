@@ -842,7 +842,9 @@ def list_activity(
     token=None,
     indent=None,
 ):
-    """List tileset activity for an account. Response is an ordered array of aggregate resource data.
+    """List tileset activity for an account. The response is an ordered array of data about the user's tilesets and their
+    total requests over the past 30 days. The sorting and ordering can be configured through cli arguments, defaulting to
+    descending request counts.
 
     tilesets list-activity <username>
     """

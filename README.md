@@ -406,7 +406,7 @@ Flags:
 
 ### list-activity
 
-List tileset activity for an account. Returns a pagination key `next` if there are more results than the return limit that can be passed into another command as the `start` argument.
+Lists total request counts for a user's tilesets in the past 30 days. Returns a pagination key `next` if there are more results than the return limit that can be passed into another command as the `start` argument.
 
 ```shell
 tilesets list-activity <account>
