@@ -2,6 +2,9 @@
 
 =======
 
+# 1.9.2 (2023-06-21)
+- Use Bionic dist instead of Xenial for Travis build
+
 # 1.9.1 (2023-06-21)
 - Pin urllib3 version, see: https://github.com/urllib3/urllib3/issues/2168
 
