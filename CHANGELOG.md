@@ -2,6 +2,9 @@
 
 =======
 
+# 1.9.0 (2023-06-14)
+- Added command `tilesets list-activity` that returns activity data for a user's tilesets
+
 # 1.8.1 (2022-08-29)
 - Bug Fix: Fix setup script to have `geojson` package in setup.py install requirements
 

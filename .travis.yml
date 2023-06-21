@@ -3,7 +3,7 @@ python:
   - '3.6'
   - '3.7'
 install:
-  - pip install -U setuptools importlib-metadata
+  - pip install -U setuptools "importlib-metadata==4.8.3"
   - pip install -r requirements.txt -e .[test]
 script:
   - python --version

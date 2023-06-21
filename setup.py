@@ -46,7 +46,7 @@ setup(
         ],
         "test": [
             "codecov",
-            "pytest==4.6.11",
+            "pytest==6.2.5",
             "pytest-cov",
             "pre-commit",
             "black==22.3.0",

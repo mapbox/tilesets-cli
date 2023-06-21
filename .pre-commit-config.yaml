@@ -1,19 +1,19 @@
 repos:
-    -
-        repo: 'https://github.com/ambv/black'
-        # 18.6b1
-        rev: 22.3.0
-        hooks:
-            - id: black
-              args: ['--safe']
-    -
-        repo: 'https://gitlab.com/pycqa/flake8'
-        rev: 3.9.0
-        hooks:
-            - id: flake8
-              args: [
-                  # E501 let black handle all line length decisions
-                  # W503 black conflicts with "line break before operator" rule
-                  # E203 black conflicts with "whitespace before ':'" rule
-                  # E722 bare excepts need to be addressed
-                  '--ignore=E501,W503,E203,E722']
+  -
+    repo: 'https://github.com/ambv/black'
+    # 18.6b1
+    rev: 22.3.0
+    hooks:
+      - id: black
+        args: ['--safe']
+  -
+    repo: 'https://github.com/PyCQA/flake8'
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        args: [
+          # E501 let black handle all line length decisions
+          # W503 black conflicts with "line break before operator" rule
+          # E203 black conflicts with "whitespace before ':'" rule
+          # E722 bare excepts need to be addressed
+          '--ignore=E501,W503,E203,E722']

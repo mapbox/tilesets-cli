@@ -16,7 +16,7 @@ def load_module(modulename):
     """Dynamically imports a module and throws a readable exception if not found"""
     try:
         module = importlib.import_module(modulename)
-    except (ImportError):
+    except ImportError:
         raise ValueError(
             f"Couldn't find {modulename}. Check installation steps in the readme for help: https://github.com/mapbox/tilesets-cli/blob/master/README.md"
         ) from None
