@@ -1,11 +1,12 @@
-boto3==1.9.99
+boto3==1.23.10
 Click==8.0.2
 cligj==0.7.2
 numpy==1.19.5
-requests==2.21.0
+requests==2.27.1
 requests-toolbelt==0.9.1
 jsonschema==3.0.1
 jsonseq==1.0.0
 mercantile==1.1.6
 supermercado==0.2.0
 geojson===2.5.0
+urllib3==1.26.16

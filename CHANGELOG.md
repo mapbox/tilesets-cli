@@ -2,6 +2,9 @@
 
 =======
 
+# 1.9.1 (2023-06-21)
+- Pin urllib3 version, see: https://github.com/urllib3/urllib3/issues/2168
+
 # 1.9.0 (2023-06-14)
 - Added command `tilesets list-activity` that returns activity data for a user's tilesets
 
