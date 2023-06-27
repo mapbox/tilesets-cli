@@ -3,7 +3,6 @@ import pytest
 from unittest import mock
 from click.testing import CliRunner
 from mapbox_tilesets.scripts.cli import tilejson
-from mapbox_tilesets.errors import TilesetsError, TilesetNameError
 from utils import clean_runner_output
 
 

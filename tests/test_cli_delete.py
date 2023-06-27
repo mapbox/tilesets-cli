@@ -5,7 +5,6 @@ from click.testing import CliRunner
 from unittest import mock
 
 from mapbox_tilesets.scripts.cli import delete
-from mapbox_tilesets.errors import TilesetsError
 
 
 class MockResponse:

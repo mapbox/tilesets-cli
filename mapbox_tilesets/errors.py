@@ -1,6 +1,5 @@
 """Error handling for the tilesets CLI"""
 from click import ClickException
-from jsonschema.exceptions import ValidationError
 
 
 class TilesetsError(ClickException):
