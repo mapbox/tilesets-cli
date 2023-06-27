@@ -3,7 +3,7 @@ import pytest
 from unittest import mock
 from click.testing import CliRunner
 from mapbox_tilesets.scripts.cli import tilejson
-from mapbox_tilesets.errors import TilesetsError, TilesetNameError
+from utils import clean_runner_output
 
 
 class MockResponse:
@@ -94,7 +94,7 @@ def test_cli_tilejson_error(mock_request_get, MockResponse):
         "https://api.mapbox.com/v4/test.id,test.another.json?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 1
-    assert isinstance(result.exception, TilesetsError)
+    assert isinstance(result.exception, SystemExit)
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -104,5 +104,5 @@ def test_cli_tilejson_invalid_tileset_id():
     # sends expected request
     result = runner.invoke(tilejson, ["invalid@@id"])
     assert result.exit_code == 1
-    assert isinstance(result.exception, TilesetNameError)
-    assert "invalid@@id" in str(result.exception)
+    assert isinstance(result.exception, SystemExit)
+    assert clean_runner_output(result.output) == "Invalid Tileset ID"

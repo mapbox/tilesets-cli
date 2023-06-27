@@ -1,6 +1,7 @@
 from click.testing import CliRunner
 
 from mapbox_tilesets.scripts.cli import estimate_area
+from utils import clean_runner_output
 
 
 # rainy day scenarios
@@ -11,7 +12,7 @@ def test_cli_estimate_area_features_from_invalid_stdin_geojson():
         estimate_area, ["--precision", "10m"], input="invalidGeoJson input"
     )
     assert invalidated_result.exit_code == 1
-    assert str(invalidated_result.exception) == message
+    assert clean_runner_output(invalidated_result.output) == message
 
 
 def test_cli_estimate_area_features_from_invalid_geojson_content():
@@ -21,7 +22,7 @@ def test_cli_estimate_area_features_from_invalid_geojson_content():
         estimate_area,
         ["tests/fixtures/invalid-geojson.ldgeojson", "--precision", "1m"],
     )
-    assert message in str(invalidated_result.exception)
+    assert message in str(invalidated_result.output)
     assert invalidated_result.exit_code == 1
 
 
@@ -32,7 +33,7 @@ def test_cli_estimate_area_features_from_nonexistent_geojson_file():
         estimate_area,
         ["tests/fixtures/nonexistent-geojson.ldgeojson", "--precision", "1m"],
     )
-    assert str(invalidated_result.exception) == message
+    assert clean_runner_output(invalidated_result.output) == message
     assert invalidated_result.exit_code == 1
 
 
@@ -64,7 +65,7 @@ def test_cli_estimate_area_1cm_precision_without_flag():
         ["tests/fixtures/valid.ldgeojson", "-p", "1cm"],
     )
     assert invalidated_result.exit_code == 1
-    assert str(invalidated_result.exception) == message
+    assert clean_runner_output(invalidated_result.output) == message
 
 
 def test_cli_estimate_area_invalid_1cm_precision_flag():
@@ -75,7 +76,7 @@ def test_cli_estimate_area_invalid_1cm_precision_flag():
         ["tests/fixtures/valid.ldgeojson", "-p", "1m", "--force-1cm"],
     )
     assert invalidated_result.exit_code == 1
-    assert str(invalidated_result.exception) == message
+    assert clean_runner_output(invalidated_result.output) == message
 
 
 # sunny day scenarios

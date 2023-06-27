@@ -5,6 +5,7 @@ from click.testing import CliRunner
 from unittest import mock
 
 from mapbox_tilesets.scripts.cli import view_recipe
+from utils import clean_runner_output
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -50,5 +51,4 @@ def test_cli_view_recipe_raises(mock_request_get, MockResponse):
         "https://api.mapbox.com/tilesets/v1/test.id/recipe?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 1
-
-    assert result.exception.message == '"not found"'
+    assert clean_runner_output(result.output) == '"not found"'

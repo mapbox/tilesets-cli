@@ -1,7 +1,8 @@
 """Error handling for the tilesets CLI"""
+from click import ClickException
 
 
-class TilesetsError(Exception):
+class TilesetsError(ClickException):
     """Base Tilesets error
     Deriving errors from this base isolates module development
     problems from Python usage problems.
