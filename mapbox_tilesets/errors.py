@@ -1,7 +1,9 @@
 """Error handling for the tilesets CLI"""
+from click import ClickException
+from jsonschema.exceptions import ValidationError
 
 
-class TilesetsError(Exception):
+class TilesetsError(ClickException):
     """Base Tilesets error
     Deriving errors from this base isolates module development
     problems from Python usage problems.

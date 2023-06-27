@@ -14,6 +14,7 @@ from mapbox_tilesets.scripts.cli import (
     validate_source,
     list_sources,
 )
+from utils import clean_runner_output
 
 
 @pytest.mark.usefixtures("token_environ")
@@ -73,7 +74,7 @@ def test_cli_add_source_wrong_username(
     assert validated_result.exit_code == 1
 
     assert (
-        str(validated_result.exception)
+        clean_runner_output(validated_result.output)
         == "Token username wrong-user does not match username test-user-wrong"
     )
 
@@ -91,7 +92,7 @@ def test_cli_add_source_no_token():
     assert unauthenticated_result.exit_code == 1
 
     assert (
-        str(unauthenticated_result.exception)
+        clean_runner_output(unauthenticated_result.output)
         == """No access token provided. Please set the MAPBOX_ACCESS_TOKEN environment variable or use the --token flag."""
     )
 
@@ -116,7 +117,7 @@ def test_cli_add_source_no_validation(mock_request_post, MockResponse):
     assert no_validation_result.exit_code == 1
 
     assert (
-        no_validation_result.exception.message
+        clean_runner_output(no_validation_result.output)
         == '{"message": "Invalid file format. Only GeoJSON features are allowed."}'
     )
 
@@ -254,7 +255,7 @@ def test_cli_upload_source_invalid_polygon(
     assert validated_result.exit_code == 1
 
     assert (
-        str(validated_result.exception)
+        clean_runner_output(validated_result.output)
         == "Error in feature number 0: Each linear ring must end where it started"
     )
 

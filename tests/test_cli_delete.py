@@ -82,4 +82,4 @@ def test_cli_delete_fail(mock_request_delete):
         "https://api.mapbox.com/tilesets/v1/test.id?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K"
     )
     assert result.exit_code == 1
-    assert isinstance(result.exception, TilesetsError)
+    assert isinstance(result.exception, SystemExit)

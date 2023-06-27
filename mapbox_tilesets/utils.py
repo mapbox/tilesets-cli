@@ -4,7 +4,8 @@ import re
 
 import numpy as np
 
-from jsonschema import validate
+from click import ClickException
+from jsonschema import validate, ValidationError
 from requests import Session
 
 import mapbox_tilesets
@@ -126,7 +127,10 @@ def validate_geojson(index, feature):
             },
         },
     }
-    validate(instance=feature, schema=schema)
+    try:
+        validate(instance=feature, schema=schema)
+    except ValidationError as e:
+        raise ClickException(e)
     geojson_validate(index, feature)
 
 
