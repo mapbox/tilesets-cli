@@ -2,6 +2,9 @@
 
 =======
 
+# 1.9.3 (2023-06-27)
+- Beautified error messages
+
 # 1.9.2 (2023-06-21)
 - Use Bionic dist instead of Xenial for Travis build
 
