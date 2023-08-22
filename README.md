@@ -6,7 +6,6 @@ CLI for interacting with and preparing data for the [Mapbox Tiling Service](http
 
 📚 If you have a question that isn't answered here, please refer to the complete [Mapbox Tiling Service documentation](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 
-
 # Contributing
 
 [CONTRIBUTING.md](/CONTRIBUTING.md) includes information about release processes & running tests. :raised_hands:
@@ -21,14 +20,18 @@ CLI for interacting with and preparing data for the [Mapbox Tiling Service](http
 ## Basic installation
 
 `pip install mapbox-tilesets` will install everything but [`estimate-area`](#estimate-area).
+
 ## Installing optional `estimate-area` command
+
 If you are using an x86 Mac or Linux machine, run:
 `pip install 'mapbox-tilesets[estimate-area]'`
 
 Otherwise, you will need to install some dependencies.
 
 ### arm64 MacOS
+
 If you're on an arm64 Mac (e.g., with an M1 chip), you'll need to install [GDAL](https://gdal.org/) first. On Mac, a simple way is to use [Homebrew](https://brew.sh/):
+
 ```sh
 $ brew install gdal
 ...
@@ -36,12 +39,11 @@ $ pip install 'mapbox-tilesets[estimate-area]'
 ```
 
 ### Windows
+
 Note, Windows is not officially supported at this time.
 
 Windows users need to install [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio).
 Then `pip install 'mapbox-tilesets[estimate-area]'`
-
-
 
 ## Mapbox Access Tokens
 
@@ -49,40 +51,41 @@ In order to use the tilesets endpoints, you need a Mapbox Access Token with `til
 
 You can either pass the Mapbox access token to each command with the `--token` flag or export it as an environment variable. Acceptable values are:
 
-* `MAPBOX_ACCESS_TOKEN`
-* `MapboxAccessToken`
+- `MAPBOX_ACCESS_TOKEN`
+- `MapboxAccessToken`
 
 Set the environment variable with `export`
+
 ```
 export MAPBOX_ACCESS_TOKEN=my.token
 ```
 
 # Commands
 
-* Tileset Sources
-  * [`upload-source`](#upload-source)
-  * *deprecated* [`add-source`](#deprecated-add-source)
-  * [`validate-source`](#validate-source)
-  * [`view-source`](#view-source)
-  * [`list-sources`](#list-sources)
-  * [`delete-source`](#delete-source)
-  * [`estimate-area`](#estimate-area)
-* Recipes
-  * [`view-recipe`](#view-recipe)
-  * [`validate-recipe`](#validate-recipe)
-  * [`update-recipe`](#update-recipe)
-* Tilesets
-  * [`create`](#create)
-  * [`publish`](#publish)
-  * [`update`](#update)
-  * [`delete`](#delete)
-  * [`status`](#status)
-  * [`job`](#job)
-  * [`jobs`](#jobs)
-  * [`list`](#list)
-  * [`tilejson`](#tilejson)
-* Activity
-  * [`list-activity`](#list-activity)
+- Tileset Sources
+  - [`upload-source`](#upload-source)
+  - _deprecated_ [`add-source`](#deprecated-add-source)
+  - [`validate-source`](#validate-source)
+  - [`view-source`](#view-source)
+  - [`list-sources`](#list-sources)
+  - [`delete-source`](#delete-source)
+  - [`estimate-area`](#estimate-area)
+- Recipes
+  - [`view-recipe`](#view-recipe)
+  - [`validate-recipe`](#validate-recipe)
+  - [`update-recipe`](#update-recipe)
+- Tilesets
+  - [`create`](#create)
+  - [`publish`](#publish)
+  - [`update`](#update)
+  - [`delete`](#delete)
+  - [`status`](#status)
+  - [`job`](#job)
+  - [`jobs`](#jobs)
+  - [`list`](#list)
+  - [`tilejson`](#tilejson)
+- Activity
+  - [`list-activity`](#list-activity)
 
 ### upload-source
 
@@ -94,11 +97,13 @@ Uploads GeoJSON files to a source for tiling. Accepts line-delimited GeoJSON or 
 
 Please note that if your source data is a FeatureCollection, `tilesets` must read it all into memory to split it up into separate features before uploading it to the Tilesets API. You are strongly encouraged to provide your data in line-delimited GeoJSON format instead, especially if it is large.
 
+Note: for large file uploads that are taking a very long time, try using the `--no-validation` flag.
+
 Flags:
 
-* `--no-validation` [optional]: do not validate source data locally before uploading
-* `--replace` [optional]: delete all existing source data and replace with data from the file
-* `--quiet` [optional]: do not display an upload progress bar
+- `--no-validation` [optional]: do not validate source data locally before uploading, can be helpful for large file uploads
+- `--replace` [optional]: delete all existing source data and replace with data from the file
+- `--quiet` [optional]: do not display an upload progress bar
 
 Usage
 
@@ -114,9 +119,9 @@ tilesets upload-source <username> <source_id> file-1.geojson file-4.geojson
 tilesets upload-source <username> <source_id> ./path/to/multiple/files/
 ```
 
-### *deprecated* add-source
+### _deprecated_ add-source
 
-*WARNING: add-source is maintained for legacy purposes. Please use the `upload-source` command instead.*
+_WARNING: add-source is maintained for legacy purposes. Please use the `upload-source` command instead._
 
 ```shell
 tilesets add-source <username> <source_id> <file>
@@ -128,8 +133,8 @@ Please note that if your source data is a FeatureCollection, `tilesets` must rea
 
 Flags:
 
-* `--no-validation` [optional]: do not validate source data locally before uploading
-* `--quiet` [optional]: do not display an upload progress bar
+- `--no-validation` [optional]: do not validate source data locally before uploading
+- `--quiet` [optional]: do not display an upload progress bar
 
 Usage
 
@@ -183,7 +188,7 @@ Permanently delete a tileset source and all of its files. This is not a recovera
 
 Flags:
 
-* `-f` or `--force`: Do not ask for confirmation before deleting
+- `-f` or `--force`: Do not ask for confirmation before deleting
 
 Usage
 
@@ -192,7 +197,7 @@ Usage
 tilesets delete-source user source_id
 ```
 
-### estimate-area 
+### estimate-area
 
 ```shell
 tilesets estimate-area <features> -p/--precision <precision>
@@ -202,9 +207,9 @@ Estimates tiled area (km<sup>2</sup>) of features with a specified precision. Ac
 
 Flags:
 
-* `-p` or `--precision` [required]: precision level
-* `--no-validation` [optional]: do not validate source data locally before area calculation
-* `--force-1cm` [optional]: the --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs or data with global extents. 1cm precision for tileset processing is only available upon request after contacting [Mapbox support](https://support.mapbox.com/hc/en-us/requests/new?ticket_form_id=360000291231)
+- `-p` or `--precision` [required]: precision level
+- `--no-validation` [optional]: do not validate source data locally before area calculation
+- `--force-1cm` [optional]: the --force-1cm flag must be present to enable 1cm precision area calculation and may take longer for large feature inputs or data with global extents. 1cm precision for tileset processing is only available upon request after contacting [Mapbox support](https://support.mapbox.com/hc/en-us/requests/new?ticket_form_id=360000291231)
 
 Usage
 
@@ -219,9 +224,9 @@ tilesets estimate-area -p <precision> < ./file.geojson
 # GeoJSON features in stdin redirection 2
 cat ./file.geojson | tilesets estimate-area -p <precision>
 
-# GeoJSON features in stdin stream 
+# GeoJSON features in stdin stream
 tilesets estimate-area --precision <precision>
-<features>  
+<features>
 
 # coordinate pairs (must be in quotes)
 tilesets estimate-area "[lng,lat]" "[lng,lat]" --precision <precision>
@@ -244,6 +249,7 @@ tilesets validate-recipe /path/to/recipe.json
 ```
 
 Example `recipe.json`:
+
 ```
 {
   "version": 1,
@@ -256,6 +262,7 @@ Example `recipe.json`:
   }
 }
 ```
+
 See more details about the recipe spec [here](https://docs.mapbox.com/help/troubleshooting/tileset-recipe-reference).
 See recipe examples [here](https://docs.mapbox.com/help/troubleshooting/tileset-recipe-examples).
 
@@ -287,16 +294,16 @@ Creates a brand new, empty tileset with a recipe passed in from your local files
 ```shell
 tilesets create <tileset_id> --recipe /path/to/recipe.json --name "My neat tileset"
 ```
-The `tileset_id` is in the form of `username.handle` - for example "mapbox.neat-tileset". The handle may only include "-" or "\_" special characters and must be 32 characters or fewer.
 
+The `tileset_id` is in the form of `username.handle` - for example "mapbox.neat-tileset". The handle may only include "-" or "\_" special characters and must be 32 characters or fewer.
 
 Flags:
 
-* `--recipe` or `-r` [required]: path to your Recipe JSON document
-* `--name` or `-n` [required]: human-readable name of your tileset. (If your tileset_id is user.my_amazing_tileset, you might want your `name` field to be "My Amazing Tileset".)
-* `--description` or `-d`: description of your tileset
-* `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. By default, new tilesets are private.
-* `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
+- `--recipe` or `-r` [required]: path to your Recipe JSON document
+- `--name` or `-n` [required]: human-readable name of your tileset. (If your tileset_id is user.my_amazing_tileset, you might want your `name` field to be "My Amazing Tileset".)
+- `--description` or `-d`: description of your tileset
+- `--privacy` or `-p`: Set the privacy of the tileset. Allowed values are `private` and `public`. By default, new tilesets are private.
+- `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
 
 ### publish
 
@@ -322,10 +329,10 @@ tilesets update <tileset_id>
 
 Flags:
 
-* `--name` or `-n` [optional]: update tileset name
-* `--description` or `-d` [optional]: update tileset description
-* `--privacy` or `-p` [optional]: set your tileset to `public` or `private`
-* `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
+- `--name` or `-n` [optional]: update tileset name
+- `--description` or `-d` [optional]: update tileset description
+- `--privacy` or `-p` [optional]: set your tileset to `public` or `private`
+- `--attribution` or `-a` [optional]: set tileset attribution. Must be a JSON string, specifically an array of attribution objects, each with `text` and `link` keys. Limited to three attribution objects, 80 characters maximum combined across all text values, and 1000 characters maximum combined across all link values.
 
 ### delete
 
@@ -337,7 +344,7 @@ tilesets delete <tileset_id>
 
 Flags:
 
-* `--force` or `-f` to bypass confirmation prompt.
+- `--force` or `-f` to bypass confirmation prompt.
 
 ### status
 
@@ -371,8 +378,8 @@ tilesets jobs <tileset_id> --stage=processing
 
 Flags:
 
-* `--stage` [optional]: filter by the stage of jobs
-* `--limit [1-500]` [optional]: the maximum number of results to return, from 1 to 500. The default is 100.
+- `--stage` [optional]: filter by the stage of jobs
+- `--limit [1-500]` [optional]: the maximum number of results to return, from 1 to 500. The default is 100.
 
 ### list
 
@@ -384,11 +391,11 @@ tilesets list <username>
 
 Flags:
 
-* `--type [vector|raster]` [optional]: filter results by tileset type
-* `--visibility [public|private]` [optional]: filter results by visibility
-* `--sortby [created|modified]` [optional]: sort results by their `created` or `modified` timestamps
-* `--limit [1-500]` [optional]: the maximum number of results to return, from 1 to 500. The default is 100.
-* `--verbose` [optional]: will list out the entire response object from the API
+- `--type [vector|raster]` [optional]: filter results by tileset type
+- `--visibility [public|private]` [optional]: filter results by visibility
+- `--sortby [created|modified]` [optional]: sort results by their `created` or `modified` timestamps
+- `--limit [1-500]` [optional]: the maximum number of results to return, from 1 to 500. The default is 100.
+- `--verbose` [optional]: will list out the entire response object from the API
 
 ### tilejson
 
@@ -402,7 +409,7 @@ tilesets tilejson <tileset_id>
 
 Flags:
 
-* `--secure`: By default, resource URLs in the retrieved TileJSON (such as in the "tiles" array) will use the HTTP scheme. Include this query parameter in your request to receive HTTPS resource URLs instead.
+- `--secure`: By default, resource URLs in the retrieved TileJSON (such as in the "tiles" array) will use the HTTP scheme. Include this query parameter in your request to receive HTTPS resource URLs instead.
 
 ### list-activity
 
@@ -414,8 +421,8 @@ tilesets list-activity <account>
 
 Flags:
 
-* `--sortby [requests|modified]` [optional]: Sorting key (default: requests)
-* `--orderby [asc|desc]` [optional]: Ordering key (default: desc)
-* `--limit [1-500]` [optional]: The maximum number of results to return (default: 100)
-* `--indent` [optional]: Indent size for JSON output.
-* `--start` [optional]: Pagination key from the `next` value in a response that has more results than the limit.
+- `--sortby [requests|modified]` [optional]: Sorting key (default: requests)
+- `--orderby [asc|desc]` [optional]: Ordering key (default: desc)
+- `--limit [1-500]` [optional]: The maximum number of results to return (default: 100)
+- `--indent` [optional]: Indent size for JSON output.
+- `--start` [optional]: Pagination key from the `next` value in a response that has more results than the limit.
