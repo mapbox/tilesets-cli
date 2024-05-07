@@ -67,7 +67,8 @@ def test_cli_list_bad_token(mock_request_get, MockResponse):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.Session.get")
-def test_cli_list_type_vector(mock_request_get, MockResponse):
+@pytest.mark.parametrize("type", ["vector", "raster", "rasterarray"])
+def test_cli_list_type(mock_request_get, MockResponse, type):
     runner = CliRunner()
 
     message = [
@@ -76,28 +77,9 @@ def test_cli_list_type_vector(mock_request_get, MockResponse):
     ]
 
     mock_request_get.return_value = MockResponse(message)
-    result = runner.invoke(list, ["test", "--type", "vector"])
+    result = runner.invoke(list, ["test", "--type", type])
     mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=100&type=vector"
-    )
-    assert result.exit_code == 0
-    assert result.output == """test.tileset-1\ntest.tileset-2\n"""
-
-
-@pytest.mark.usefixtures("token_environ")
-@mock.patch("requests.Session.get")
-def test_cli_list_type_raster(mock_request_get, MockResponse):
-    runner = CliRunner()
-
-    message = [
-        {"id": "test.tileset-1", "something": "beep"},
-        {"id": "test.tileset-2", "something": "boop"},
-    ]
-
-    mock_request_get.return_value = MockResponse(message)
-    result = runner.invoke(list, ["test", "--type", "raster"])
-    mock_request_get.assert_called_with(
-        "https://api.mapbox.com/tilesets/v1/test?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=100&type=raster"
+        f"https://api.mapbox.com/tilesets/v1/test?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K&limit=100&type={type}"
     )
     assert result.exit_code == 0
     assert result.output == """test.tileset-1\ntest.tileset-2\n"""
