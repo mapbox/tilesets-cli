@@ -2,6 +2,9 @@
 
 =======
 
+# 1.10.0 (2024-05-07)
+- Add support for the `rasterarray` type on the `list` command.
+
 # 1.9.3 (2023-06-27)
 - Beautified error messages
 

@@ -362,7 +362,7 @@ def job(tileset, job_id, token=None, indent=None):
 @click.option(
     "--type",
     required=False,
-    type=click.Choice(["vector", "raster"]),
+    type=click.Choice(["vector", "raster", "rasterarray"]),
     help="Filter results by tileset type",
 )
 @click.option(
