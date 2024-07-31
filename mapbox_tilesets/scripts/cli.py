@@ -1,17 +1,18 @@
 """Tilesets command line interface"""
+
+import base64
 import builtins
 import json
+import re
 import tempfile
-from urllib.parse import urlencode, urlparse, parse_qs
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import click
 import cligj
-import base64
-import re
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
-from mapbox_tilesets import utils, errors
+from mapbox_tilesets import errors, utils
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -129,7 +130,6 @@ def publish(tileset, token=None, indent=None):
         job_id = response_msg["jobId"]
         job_cmd = click.style(f"tilesets job {tileset} {job_id}", bold=True)
         message = f"\n✔ Tileset job received. Visit {studio_url} or run {job_cmd} to view the status of your tileset."
-        # print(message)
         click.echo(
             message,
             err=True,  # print to stderr so the JSON output can be parsed separately from the success message
@@ -523,8 +523,7 @@ def validate_source_id(ctx, param, value):
 @cli.command("upload-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, callback=validate_source_id, type=str)
-@cligj.features_in_arg
-@click.option("--no-validation", is_flag=True, help="Bypass source file validation")
+@click.argument("inputs", nargs=-1, required=True, type=click.File("r"))
 @click.option("--quiet", is_flag=True, help="Don't show progress bar")
 @click.option(
     "--replace",
@@ -534,22 +533,16 @@ def validate_source_id(ctx, param, value):
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def upload_source(
-    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
-):
+def upload_source(ctx, username, id, inputs, quiet, replace, token=None, indent=None):
     """Create a new tileset source, or add data to an existing tileset source.
     Optionally, replace an existing tileset source.
 
     tilesets upload-source <username> <source_id> <path/to/source/data>
     """
-    return _upload_source(
-        ctx, username, id, features, no_validation, quiet, replace, token, indent
-    )
+    return _upload_source(ctx, username, id, inputs, quiet, replace, token, indent)
 
 
-def _upload_source(
-    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
-):
+def _upload_source(ctx, username, id, inputs, quiet, replace, token=None, indent=None):
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
     s = utils._get_session()
@@ -582,18 +575,13 @@ def _upload_source(
                 f"Token {mapbox_token} does not contain a username"
             )
 
-    with tempfile.TemporaryFile() as file:
-        for index, feature in enumerate(features):
-            if not no_validation:
-                utils.validate_geojson(index, feature)
+    if len(inputs) > 10:
+        raise errors.TilesetsError("Maximum 10 files can be uploaded at once.")
 
-            file.write(
-                (json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8")
-            )
-
-        file.seek(0)
-        m = MultipartEncoder(fields={"file": ("file", file)})
-
+    for item in inputs:
+        m = MultipartEncoder(
+            fields={"file": ("file", open(item.name, "rb"), "multipart/form-data")}
+        )
         if quiet:
             resp = getattr(s, method)(
                 url,

@@ -2,6 +2,9 @@
 
 =======
 
+# 1.11.0 (2024-07-30)
+- Add support for raster data upload with the `upload-source` command.
+
 # 1.10.0 (2024-05-07)
 - Add support for the `rasterarray` type on the `list` command.
 
