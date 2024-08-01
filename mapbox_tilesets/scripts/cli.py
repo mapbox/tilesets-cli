@@ -643,16 +643,22 @@ def _upload_source(
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
 @click.pass_context
-def upload_source(ctx, username, id, inputs, quiet, replace, token=None, indent=None):
-    """Create a new tileset source, or add data to an existing tileset source.
+def upload_raster_source(
+    ctx, username, id, inputs, quiet, replace, token=None, indent=None
+):
+    """Create a new raster tileset source, or add data to an existing tileset source.
     Optionally, replace an existing tileset source.
 
     tilesets upload-source <username> <source_id> <path/to/source/data>
     """
-    return _upload_source(ctx, username, id, inputs, quiet, replace, token, indent)
+    return _upload_raster_source(
+        ctx, username, id, inputs, quiet, replace, token, indent
+    )
 
 
-def _upload_source(ctx, username, id, inputs, quiet, replace, token=None, indent=None):
+def _upload_raster_source(
+    ctx, username, id, inputs, quiet, replace, token=None, indent=None
+):
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
     s = utils._get_session()
