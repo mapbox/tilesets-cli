@@ -122,7 +122,7 @@ tilesets upload-source <username> <source_id> ./path/to/multiple/files/
 ### upload-raster-source
 
 ```shell
-tilesets upload-source-source <username> <source_id> <file>
+tilesets upload-raster-source <username> <source_id> <file>
 ```
 
 Uploads Raster files to a source for tiling. Accepts GeoTIFF, NetCDF and GRIB formats right now. Can be used to add data to a source or to replace all of the data in a source with the `--replace` flag.
@@ -133,6 +133,15 @@ Flags:
 
 - `--replace` [optional]: delete all existing source data and replace with data from the file
 - `--quiet` [optional]: do not display an upload progress bar
+
+Usage
+
+```shell
+# single file
+tilesets upload-raster-source <username> <source_id> ./file.tif
+
+# multiple files
+tilesets upload-raster-source <username> <source_id> file-1.tif file-4.tif
 
 
 ### _deprecated_ add-source
