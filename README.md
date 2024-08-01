@@ -64,6 +64,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 
 - Tileset Sources
   - [`upload-source`](#upload-source)
+  - [`upload-raster-source`](#upload-raster-source) (new)
   - _deprecated_ [`add-source`](#deprecated-add-source)
   - [`validate-source`](#validate-source)
   - [`view-source`](#view-source)
@@ -118,6 +119,21 @@ tilesets upload-source <username> <source_id> file-1.geojson file-4.geojson
 # Reading from a directory will not distinguish between GeoJSON files and non GeoJSON files. All source files will be run through our validator unless you pass the `--no-validation` flag.
 tilesets upload-source <username> <source_id> ./path/to/multiple/files/
 ```
+### upload-raster-source
+
+```shell
+tilesets upload-source-source <username> <source_id> <file>
+```
+
+Uploads Raster files to a source for tiling. Accepts GeoTIFF, NetCDF and GRIB formats right now. Can be used to add data to a source or to replace all of the data in a source with the `--replace` flag.
+
+Learn more about the supported formats and using Raster source [here](https://docs.mapbox.com/mapbox-tiling-service/guides/).
+
+Flags:
+
+- `--replace` [optional]: delete all existing source data and replace with data from the file
+- `--quiet` [optional]: do not display an upload progress bar
+
 
 ### _deprecated_ add-source
 

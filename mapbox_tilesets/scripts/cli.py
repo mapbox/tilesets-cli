@@ -638,7 +638,7 @@ def _upload_source(
 @click.option(
     "--replace",
     is_flag=True,
-    help="Upload raster source file",
+    help="Replace the existing source with raster source file ",
 )
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 @click.option("--indent", type=int, default=None, help="Indent for JSON output")
