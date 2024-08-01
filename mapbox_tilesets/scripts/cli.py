@@ -1,17 +1,18 @@
 """Tilesets command line interface"""
+
+import base64
 import builtins
 import json
+import re
 import tempfile
-from urllib.parse import urlencode, urlparse, parse_qs
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import click
 import cligj
-import base64
-import re
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
-from mapbox_tilesets import utils, errors
+from mapbox_tilesets import errors, utils
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -594,6 +595,109 @@ def _upload_source(
         file.seek(0)
         m = MultipartEncoder(fields={"file": ("file", file)})
 
+        if quiet:
+            resp = getattr(s, method)(
+                url,
+                data=m,
+                headers={
+                    "Content-Disposition": "multipart/form-data",
+                    "Content-type": m.content_type,
+                },
+            )
+        else:
+            prog = click.progressbar(
+                length=m.len, fill_char="=", width=0, label="upload progress"
+            )
+            with prog:
+
+                def callback(m):
+                    prog.pos = m.bytes_read
+                    prog.update(0)  # Step is 0 because we set pos above
+
+                monitor = MultipartEncoderMonitor(m, callback)
+                resp = getattr(s, method)(
+                    url,
+                    data=monitor,
+                    headers={
+                        "Content-Disposition": "multipart/form-data",
+                        "Content-type": monitor.content_type,
+                    },
+                )
+
+    if resp.status_code == 200:
+        click.echo(json.dumps(resp.json(), indent=indent))
+    else:
+        raise errors.TilesetsError(resp.text)
+
+
+@cli.command("upload-raster-source")
+@click.argument("username", required=True, type=str)
+@click.argument("id", required=True, callback=validate_source_id, type=str)
+@click.argument("inputs", nargs=-1, required=True, type=click.File("r"))
+@click.option("--quiet", is_flag=True, help="Don't show progress bar")
+@click.option(
+    "--replace",
+    is_flag=True,
+    help="Replace the existing source with raster source file ",
+)
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+@click.pass_context
+def upload_raster_source(
+    ctx, username, id, inputs, quiet, replace, token=None, indent=None
+):
+    """Create a new raster tileset source, or add data to an existing tileset source.
+    Optionally, replace an existing tileset source.
+
+    tilesets upload-source <username> <source_id> <path/to/source/data>
+    """
+    return _upload_raster_source(
+        ctx, username, id, inputs, quiet, replace, token, indent
+    )
+
+
+def _upload_raster_source(
+    ctx, username, id, inputs, quiet, replace, token=None, indent=None
+):
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
+    url = (
+        f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
+    )
+
+    method = "post"
+    if replace:
+        method = "put"
+
+    # This does the decoding by hand instead of using pyjwt because
+    # pyjwt rejects tokens that don't pad the base64 with = signs.
+    token_parts = mapbox_token.split(".")
+    if len(token_parts) < 2:
+        raise errors.TilesetsError(
+            f"Token {mapbox_token} does not contain a payload component"
+        )
+    else:
+        while len(token_parts[1]) % 4 != 0:
+            token_parts[1] = token_parts[1] + "="
+        body = json.loads(base64.b64decode(token_parts[1]))
+        if "u" in body:
+            if username != body["u"]:
+                raise errors.TilesetsError(
+                    f"Token username {body['u']} does not match username {username}"
+                )
+        else:
+            raise errors.TilesetsError(
+                f"Token {mapbox_token} does not contain a username"
+            )
+
+    if len(inputs) > 10:
+        raise errors.TilesetsError("Maximum 10 files can be uploaded at once.")
+
+    for item in inputs:
+        m = MultipartEncoder(
+            fields={"file": ("file", open(item.name, "rb"), "multipart/form-data")}
+        )
         if quiet:
             resp = getattr(s, method)(
                 url,

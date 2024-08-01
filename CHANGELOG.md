@@ -2,6 +2,9 @@
 
 =======
 
+# 1.11.0 (2024-08-01)
+- Added command `tilesets upload-raster-source` to upload raster files as sources
+
 # 1.10.0 (2024-05-07)
 - Add support for the `rasterarray` type on the `list` command.
 
