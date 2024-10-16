@@ -5,6 +5,7 @@ import builtins
 import json
 import re
 import tempfile
+from glob import glob
 from urllib.parse import parse_qs, urlencode, urlparse
 
 import click
@@ -838,6 +839,77 @@ def validate_stream(features):
     for index, feature in enumerate(features):
         utils.validate_geojson(index, feature)
         yield feature
+
+
+@cli.command("estimate-cu")
+@click.option(
+    "--recipe", 
+    "-r",
+    required=True,
+    type=click.Path(exists=True),
+    help="Path to a raster recipe"
+)
+@click.option(
+    "--sources",
+    "-s",
+    required=False,
+    type=click.Path(exists=True)
+)
+def estimate_cu(recipe, sources=None):
+    """
+    Estimates the CUs that will be consumed when processing your recipe into a tileset. 
+    Requires extra installation steps: see https://github.com/mapbox/tilesets-cli/blob/master/README.md
+    """
+
+    rio = utils.load_module("rasterio")
+    cu = utils.load_module("estimator")
+
+    with open(recipe, mode="r") as f:
+        recipe_data = json.load(f)
+        if "recipe" in recipe_data:
+            recipe_data = recipe_data["recipe"]
+
+        if recipe_data["type"] not in ["raster", "rasterarray"]:
+            raise ValueError("only raster recipes can be estimated")
+        
+        estimator = cu.CUEstimator(recipe=recipe)
+
+        if sources is None:
+            recipe_sources = recipe_data.get("sources")
+            if recipe_sources is None:
+                raise ValueError("a raster recipe must contain sources")
+            
+            sources = [s["uri"] for s in recipe_sources]
+        else:
+            sources = glob(sources)
+
+        if not sources or len(sources) <= 0:
+            raise ValueError("at least 1 source file is required")
+
+        with rio.open(sources[0], mode="r") as ds:
+            overall_bounds = ds.bounds
+
+        if len(sources) > 1:
+            for source in sources:
+                with rio.open(source, mode="r") as ds:
+                    if ds.bounds.left < overall_bounds.left:
+                        overall_bounds.left = ds.bounds.left
+                    if ds.bounds.right > overall_bounds.right:
+                        overall_bounds.right = ds.bounds.right
+                    if ds.bounds.top > overall_bounds.top:
+                        overall_bounds.top = ds.bounds.top
+                    if ds.bounds.bottom < overall_bounds.bottom:
+                        overall_bounds.bottom = ds.bounds.bottom
+
+        result = estimator.features(
+            bounds=overall_bounds,
+            band_count=1
+        )
+
+        click.echo(json.dumps({
+            "cu": result,
+        }))
+
 
 
 @cli.command("estimate-area")
