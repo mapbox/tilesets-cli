@@ -46,7 +46,6 @@ setup(
         ],
         "estimate-cu": [
             "rasterio~=1.4.1",
-            "cu_model==0.0.1-dev6",
         ],
         "test": [
             "codecov",

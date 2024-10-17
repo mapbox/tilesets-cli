@@ -843,54 +843,51 @@ def validate_stream(features):
 
 @cli.command("estimate-cu")
 @click.option(
-    "--recipe", 
-    "-r",
+    "--tileset", 
+    "-i",
     required=True,
-    type=click.Path(exists=True),
-    help="Path to a raster recipe"
+    type=str,
+    help="Tileset ID to estimate"
 )
 @click.option(
     "--sources",
     "-s",
     required=False,
-    type=click.Path(exists=True)
+    type=str,
+    help="Local sources represented in your tileset's recipe"
 )
-def estimate_cu(recipe, sources=None):
+@click.option(
+    "--num-bands",
+    "-b",
+    required=False,
+    type=int,
+    default=15,
+    help="The number of bands your recipe is selecting"
+)
+@click.option("--raw", required=False, type=bool, default=False, is_flag=True, help="Raw CU value")
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
     """
     Estimates the CUs that will be consumed when processing your recipe into a tileset. 
     Requires extra installation steps: see https://github.com/mapbox/tilesets-cli/blob/master/README.md
     """
 
     rio = utils.load_module("rasterio")
-    cu = utils.load_module("estimator")
 
-    with open(recipe, mode="r") as f:
-        recipe_data = json.load(f)
-        if "recipe" in recipe_data:
-            recipe_data = recipe_data["recipe"]
+    if not sources or len(sources) <= 0:
+        click.echo(f"[warning] estimating '{tileset}' with a default global bounds")
+        sources = ""
 
-        if recipe_data["type"] not in ["raster", "rasterarray"]:
-            raise ValueError("only raster recipes can be estimated")
-        
-        estimator = cu.CUEstimator(recipe=recipe)
+    overall_bounds = None
+    src_list = glob(sources)
 
-        if sources is None:
-            recipe_sources = recipe_data.get("sources")
-            if recipe_sources is None:
-                raise ValueError("a raster recipe must contain sources")
-            
-            sources = [s["uri"] for s in recipe_sources]
-        else:
-            sources = glob(sources)
-
-        if not sources or len(sources) <= 0:
-            raise ValueError("at least 1 source file is required")
-
-        with rio.open(sources[0], mode="r") as ds:
+    if len(src_list) > 0:
+        with rio.open(src_list[0], mode="r") as ds:
             overall_bounds = ds.bounds
 
-        if len(sources) > 1:
-            for source in sources:
+    if len(src_list) > 1:
+        for source in src_list:
+            try:
                 with rio.open(source, mode="r") as ds:
                     if ds.bounds.left < overall_bounds.left:
                         overall_bounds.left = ds.bounds.left
@@ -900,16 +897,36 @@ def estimate_cu(recipe, sources=None):
                         overall_bounds.top = ds.bounds.top
                     if ds.bounds.bottom < overall_bounds.bottom:
                         overall_bounds.bottom = ds.bounds.bottom
+            except Exception:
+                click.echo(f"[warning] skipping invalid source '{source}'")
 
-        result = estimator.features(
-            bounds=overall_bounds,
-            band_count=1
-        )
+    s = utils._get_session()
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    url = "{0}/tilesets/v1/{1}/estimate".format(
+        mapbox_api, tileset
+    )
 
-        click.echo(json.dumps({
-            "cu": result,
-        }))
+    query_params = {
+        "band_count": num_bands,
+        "access_token": mapbox_token,
+    }
 
+    if overall_bounds is not None:
+        query_params["bounds"] = json.dumps([*overall_bounds])
+
+    response = s.get(url, params=query_params)
+
+    if not response.ok:
+        raise errors.TilesetsError(response.text)
+    
+    parsed = json.loads(response.text)
+    if 'cu' not in parsed:
+        raise errors.TilesetsError(response.text)
+    
+    click.echo(
+        response.text if raw else f"\nEstimated CUs for '{tileset}': {parsed['cu']}. To publish your tileset, run 'tilesets publish'."
+    )
 
 
 @cli.command("estimate-area")
