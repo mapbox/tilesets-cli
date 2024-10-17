@@ -71,6 +71,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   - [`list-sources`](#list-sources)
   - [`delete-source`](#delete-source)
   - [`estimate-area`](#estimate-area)
+  - [`estimate-cu`](#estimate-cu)
 - Recipes
   - [`view-recipe`](#view-recipe)
   - [`validate-recipe`](#validate-recipe)
@@ -220,6 +221,29 @@ Usage
 ```shell
 # to delete mapbox://tileset-source/user/source_id
 tilesets delete-source user source_id
+```
+
+### estimate-cu
+
+```shell
+tilesets estimate-cu <tileset> -s/--sources <sources> -b/--num-bands <number> --raw
+```
+
+Estimates the CU value of a tileset before publishing it. This is useful to understand the estimated cost a given tileset before you start processing the data. Note: This is currently only available to tileset recipes with type `raster` and `rasterarray`.
+
+Flags:
+- `-s` or `--sources` [optional]: Local path to the sources that your recipe points at. This is highly recommeneded.
+- `-b` or `--num-bands` [optional]: The number of bands you expect your recipe to select across all layers. This is recommended.
+- `--raw` [optional]: This will toggle the pretty print output.
+
+Usage
+
+```shell
+# Estimate the CUs for 'account.tileset' with sources located in 'path/to/sources/' and a band count of 20.
+tilesets estimate-cu account.tileset -s 'path/to/sources/*.grib2' -b 20
+
+# Estimate the CUs for 'account.tileset' for a single source and a band count of 10 (pretty print the results)
+tilesets estimate-cu account.tileset -s 'path/to/sources/helloworld.grib2' -b 10 --raw
 ```
 
 ### estimate-area
