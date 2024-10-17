@@ -34,7 +34,7 @@ def test_cli_estimate_cu_tileset_no_sources(mock_request_get, MockResponse):
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
 @mock.patch("glob.glob")
-def test_cli_estimate_cu_tilese_with_sources_raw(
+def test_cli_estimate_cu_tileset_with_sources_raw(
     mock_glob, mock_request_get, MockResponse
 ):
     runner = CliRunner()
@@ -60,7 +60,9 @@ def test_cli_estimate_cu_tilese_with_sources_raw(
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
 @mock.patch("glob.glob")
-def test_cli_estimate_cu_tilese_with_sources(mock_glob, mock_request_get, MockResponse):
+def test_cli_estimate_cu_tileset_with_sources(
+    mock_glob, mock_request_get, MockResponse
+):
     runner = CliRunner()
 
     tileset_id = "my.tileset"
