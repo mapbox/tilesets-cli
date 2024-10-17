@@ -859,23 +859,21 @@ def validate_stream(features):
     default=15,
     help="The number of bands your recipe is selecting",
 )
-@click.option(
-    "--minzoom",
-    required=False,
-    type=int,
-    help="The minzoom value override"
-)
-@click.option(
-    "--maxzoom",
-    required=False,
-    type=int,
-    help="The maxzoom value override"
-)
+@click.option("--minzoom", required=False, type=int, help="The minzoom value override")
+@click.option("--maxzoom", required=False, type=int, help="The maxzoom value override")
 @click.option(
     "--raw", required=False, type=bool, default=False, is_flag=True, help="Raw CU value"
 )
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def estimate_cu(tileset, num_bands=15, minzoom=None, maxzoom=None, sources=None, raw=False, token=None):
+def estimate_cu(
+    tileset,
+    num_bands=15,
+    minzoom=None,
+    maxzoom=None,
+    sources=None,
+    raw=False,
+    token=None,
+):
     """
     Estimates the CUs that will be consumed when processing your recipe into a tileset.
     Requires extra installation steps: see https://github.com/mapbox/tilesets-cli/blob/master/README.md
