@@ -1,5 +1,6 @@
 """Tilesets command line interface"""
 
+import os
 import base64
 import builtins
 import json
@@ -859,10 +860,22 @@ def validate_stream(features):
     help="The number of bands your recipe is selecting",
 )
 @click.option(
+    "--minzoom",
+    required=False,
+    type=int,
+    help="The minzoom value override"
+)
+@click.option(
+    "--maxzoom",
+    required=False,
+    type=int,
+    help="The maxzoom value override"
+)
+@click.option(
     "--raw", required=False, type=bool, default=False, is_flag=True, help="Raw CU value"
 )
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
+def estimate_cu(tileset, num_bands=15, minzoom=None, maxzoom=None, sources=None, raw=False, token=None):
     """
     Estimates the CUs that will be consumed when processing your recipe into a tileset.
     Requires extra installation steps: see https://github.com/mapbox/tilesets-cli/blob/master/README.md
@@ -874,12 +887,15 @@ def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
         click.echo(f"[warning] estimating '{tileset}' with a default global bounds")
         sources = ""
 
+    total_size = 0
     overall_bounds = None
     src_list = glob(sources)
 
     if len(src_list) > 0:
         with rio.open(src_list[0], mode="r") as ds:
             overall_bounds = ds.bounds
+
+        total_size += os.path.getsize(src_list[0])
 
     if len(src_list) > 1:
         for source in src_list:
@@ -893,6 +909,8 @@ def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
                         overall_bounds.top = ds.bounds.top
                     if ds.bounds.bottom < overall_bounds.bottom:
                         overall_bounds.bottom = ds.bounds.bottom
+
+                total_size += os.path.getsize(source)
             except Exception:
                 click.echo(f"[warning] skipping invalid source '{source}'")
 
@@ -902,12 +920,19 @@ def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
     url = "{0}/tilesets/v1/{1}/estimate".format(mapbox_api, tileset)
 
     query_params = {
+        "filesize": total_size,
         "band_count": num_bands,
         "access_token": mapbox_token,
     }
 
     if overall_bounds is not None:
         query_params["bounds"] = json.dumps([*overall_bounds])
+
+    if minzoom is not None:
+        query_params["minzoom"] = minzoom
+
+    if maxzoom is not None:
+        query_params["maxzoom"] = maxzoom
 
     response = s.get(url, params=query_params)
 
