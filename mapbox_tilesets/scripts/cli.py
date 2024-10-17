@@ -842,19 +842,13 @@ def validate_stream(features):
 
 
 @cli.command("estimate-cu")
-@click.option(
-    "--tileset", 
-    "-i",
-    required=True,
-    type=str,
-    help="Tileset ID to estimate"
-)
+@click.option("--tileset", "-i", required=True, type=str, help="Tileset ID to estimate")
 @click.option(
     "--sources",
     "-s",
     required=False,
     type=str,
-    help="Local sources represented in your tileset's recipe"
+    help="Local sources represented in your tileset's recipe",
 )
 @click.option(
     "--num-bands",
@@ -862,13 +856,15 @@ def validate_stream(features):
     required=False,
     type=int,
     default=15,
-    help="The number of bands your recipe is selecting"
+    help="The number of bands your recipe is selecting",
 )
-@click.option("--raw", required=False, type=bool, default=False, is_flag=True, help="Raw CU value")
+@click.option(
+    "--raw", required=False, type=bool, default=False, is_flag=True, help="Raw CU value"
+)
 @click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
 def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
     """
-    Estimates the CUs that will be consumed when processing your recipe into a tileset. 
+    Estimates the CUs that will be consumed when processing your recipe into a tileset.
     Requires extra installation steps: see https://github.com/mapbox/tilesets-cli/blob/master/README.md
     """
 
@@ -903,9 +899,7 @@ def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
     s = utils._get_session()
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
-    url = "{0}/tilesets/v1/{1}/estimate".format(
-        mapbox_api, tileset
-    )
+    url = "{0}/tilesets/v1/{1}/estimate".format(mapbox_api, tileset)
 
     query_params = {
         "band_count": num_bands,
@@ -919,13 +913,15 @@ def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
 
     if not response.ok:
         raise errors.TilesetsError(response.text)
-    
+
     parsed = json.loads(response.text)
-    if 'cu' not in parsed:
+    if "cu" not in parsed:
         raise errors.TilesetsError(response.text)
-    
+
     click.echo(
-        response.text if raw else f"\nEstimated CUs for '{tileset}': {parsed['cu']}. To publish your tileset, run 'tilesets publish'."
+        response.text
+        if raw
+        else f"\nEstimated CUs for '{tileset}': {click.style(parsed['cu'], bold=True, fg=155)}. To publish your tileset, run 'tilesets publish'."
     )
 
 
