@@ -842,12 +842,12 @@ def validate_stream(features):
 
 
 @cli.command("estimate-cu")
-@click.option("--tileset", "-i", required=True, type=str, help="Tileset ID to estimate")
+@click.argument("tileset", required=True, type=str)
 @click.option(
     "--sources",
     "-s",
     required=False,
-    type=str,
+    type=click.Path(exists=False),
     help="Local sources represented in your tileset's recipe",
 )
 @click.option(
@@ -870,7 +870,7 @@ def estimate_cu(tileset, num_bands=15, sources=None, raw=False, token=None):
 
     rio = utils.load_module("rasterio")
 
-    if not sources or len(sources) <= 0:
+    if sources is None:
         click.echo(f"[warning] estimating '{tileset}' with a default global bounds")
         sources = ""
 

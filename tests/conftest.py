@@ -10,12 +10,17 @@ def token_environ(monkeypatch):
     monkeypatch.setenv("MAPBOX_ACCESS_TOKEN", "pk.eyJ1IjoidGVzdC11c2VyIn0K")
     monkeypatch.setenv("MapboxAccessToken", "test-token")
 
+@pytest.fixture(scope="function")
+def api_environ(monkeypatch):
+    monkeypatch.setenv("MAPBOX_API", "https://api.mapbox.com")
+
 
 class _MockResponse:
     def __init__(self, mock_json, status_code=200):
         self.text = json.dumps(mock_json)
         self._json = mock_json
         self.status_code = status_code
+        self.ok = status_code < 400
 
     def MockResponse(self):
         return self
