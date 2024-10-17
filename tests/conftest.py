@@ -10,6 +10,7 @@ def token_environ(monkeypatch):
     monkeypatch.setenv("MAPBOX_ACCESS_TOKEN", "pk.eyJ1IjoidGVzdC11c2VyIn0K")
     monkeypatch.setenv("MapboxAccessToken", "test-token")
 
+
 @pytest.fixture(scope="function")
 def api_environ(monkeypatch):
     monkeypatch.setenv("MAPBOX_API", "https://api.mapbox.com")
