@@ -20,7 +20,7 @@ def test_cli_estimate_cu_tileset_no_sources(mock_request_get, MockResponse):
     result = runner.invoke(estimate_cu, [tileset_id])
     mock_request_get.assert_called_with(
         f"https://api.mapbox.com/tilesets/v1/{tileset_id}/estimate",
-        params={"band_count": 15, "access_token": "pk.eyJ1IjoidGVzdC11c2VyIn0K"},
+        params={"filesize": 0, "band_count": 15, "access_token": "pk.eyJ1IjoidGVzdC11c2VyIn0K"},
     )
 
     assert result.exit_code == 1
@@ -49,7 +49,7 @@ def test_cli_estimate_cu_tileset_with_sources_raw(
     )
     mock_request_get.assert_called_with(
         f"https://api.mapbox.com/tilesets/v1/{tileset_id}/estimate",
-        params={"band_count": 15, "access_token": "pk.eyJ1IjoidGVzdC11c2VyIn0K"},
+        params={"filesize": 0, "band_count": 15, "access_token": "pk.eyJ1IjoidGVzdC11c2VyIn0K"},
     )
 
     assert result.exit_code == 0
@@ -73,7 +73,7 @@ def test_cli_estimate_cu_tileset_with_sources(
     result = runner.invoke(estimate_cu, [tileset_id, "-s", "/my/sources/*.grib2"])
     mock_request_get.assert_called_with(
         f"https://api.mapbox.com/tilesets/v1/{tileset_id}/estimate",
-        params={"band_count": 15, "access_token": "pk.eyJ1IjoidGVzdC11c2VyIn0K"},
+        params={"filesize": 0, "band_count": 15, "access_token": "pk.eyJ1IjoidGVzdC11c2VyIn0K"},
     )
 
     assert result.exit_code == 0
