@@ -45,6 +45,30 @@ Note, Windows is not officially supported at this time.
 Windows users need to install [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio).
 Then `pip install 'mapbox-tilesets[estimate-area]'`
 
+## Installing optional `estimate-cu` command
+
+If you are using an x86 Mac or Linux machine, run:
+`pip install 'mapbox-tilesets[estimate-cu]'`
+
+Otherwise, you will need to install some dependencies.
+
+### arm64 MacOS
+
+If you're on an arm64 Mac (e.g., with an M1 chip), you'll need to install [GDAL](https://gdal.org/) first. On Mac, a simple way is to use [Homebrew](https://brew.sh/):
+
+```sh
+$ brew install gdal
+...
+$ pip install 'mapbox-tilesets[estimate-cu]'
+```
+
+### Windows
+
+Note, Windows is not officially supported at this time.
+
+Windows users need to install [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio).
+Then `pip install 'mapbox-tilesets[estimate-cu]'`
+
 ## Mapbox Access Tokens
 
 In order to use the tilesets endpoints, you need a Mapbox Access Token with `tilesets:write`, `tilesets:read`, and `tilesets:list` scopes. This is a secret token, so do not share it publicly!
