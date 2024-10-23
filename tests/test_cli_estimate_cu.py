@@ -94,6 +94,7 @@ def test_cli_estimate_cu_tileset_with_sources(
         == f"\nEstimated CUs for '{tileset_id}': {msg['cu']}. To publish your tileset, run 'tilesets publish'.\n"
     )
 
+
 @pytest.mark.usefixtures("token_environ")
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
@@ -108,7 +109,10 @@ def test_cli_estimate_cu_tileset_with_zoom_overrides(
 
     mock_request_get.return_value = MockResponse(msg)
     mock_glob.return_value = ["myfile.grib2"]
-    result = runner.invoke(estimate_cu, [tileset_id, "-s", "/my/sources/*.grib2", "--minzoom", 1, "--maxzoom", 6])
+    result = runner.invoke(
+        estimate_cu,
+        [tileset_id, "-s", "/my/sources/*.grib2", "--minzoom", 1, "--maxzoom", 6],
+    )
     mock_request_get.assert_called_with(
         f"https://api.mapbox.com/tilesets/v1/{tileset_id}/estimate",
         params={
