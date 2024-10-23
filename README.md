@@ -260,6 +260,8 @@ See https://docs.mapbox.com/help/glossary/compute-unit/ for more information.
 Flags:
 - `-s` or `--sources` [optional]: Local path to the sources that your recipe points at. This is highly recommeneded.
 - `-b` or `--num-bands` [optional]: The number of bands you expect your recipe to select across all layers. This is recommended.
+- `--minzoom` [optional]: Use this flag if your recipe does not contain a minzoom value.
+- `--maxzoom` [optional]: Use this flag if your recipe does not contain a maxzoom value.
 - `--raw` [optional]: This will toggle the pretty print output.
 
 Usage
