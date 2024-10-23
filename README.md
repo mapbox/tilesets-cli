@@ -253,7 +253,9 @@ tilesets delete-source user source_id
 tilesets estimate-cu <tileset> -s/--sources <sources> -b/--num-bands <number> --raw
 ```
 
-Estimates the CU value of a tileset before publishing it. This is useful to understand the estimated cost a given tileset before you start processing the data. Note: This is currently only available to tileset recipes with type `raster` and `rasterarray`.
+Estimates the CU value of a tileset before publishing it. This is useful to understand the estimated cost a given tileset before you start processing the data. Note: This is currently only available to tileset recipes with type `raster` or `rasterarray`.
+
+See https://docs.mapbox.com/help/glossary/compute-unit/ for more information.
 
 Flags:
 - `-s` or `--sources` [optional]: Local path to the sources that your recipe points at. This is highly recommeneded.
