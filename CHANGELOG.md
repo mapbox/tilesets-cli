@@ -2,6 +2,9 @@
 
 =======
 
+# 1.12.0 (2024-10-23)
+- Added command `tilesets estimate-cu` that returns an estimated compute unit value for a user's tileset.
+
 # 1.11.1 (2024-08-01)
 - Added command `tilesets upload-raster-source` to upload raster files as sources
 
