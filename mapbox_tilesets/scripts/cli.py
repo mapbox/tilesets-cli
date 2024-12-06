@@ -847,6 +847,7 @@ def validate_stream(features):
 @click.option(
     "--sources",
     "-s",
+    default="",
     required=False,
     type=click.Path(exists=False),
     help="Local sources represented in your tileset's recipe",
@@ -870,7 +871,7 @@ def estimate_cu(
     num_bands=15,
     minzoom=None,
     maxzoom=None,
-    sources=None,
+    sources="",
     raw=False,
     token=None,
 ):
@@ -880,10 +881,9 @@ def estimate_cu(
     """
 
     rio = utils.load_module("rasterio")
-
-    if sources is None:
-        click.echo(f"[warning] estimating '{tileset}' with a default global bounds")
-        sources = ""
+    
+    if sources is not None and len(sources) > 0:
+        print("[Warning] Using local source bounds will override the MTS calculated bounds.")
 
     total_size = 0
     overall_bounds = None
