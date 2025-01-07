@@ -2,6 +2,9 @@
 
 =======
 
+# 1.13.0 (2025-01-07)
+- Temporarily remove the `estimate-cu` command for further refinement.
+
 # 1.12.0 (2024-10-23)
 - Added command `tilesets estimate-cu` that returns an estimated compute unit value for a user's tileset.
 

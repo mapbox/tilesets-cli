@@ -44,9 +44,6 @@ setup(
         "estimate-area": [
             "supermercado~=0.2.0",
         ],
-        "estimate-cu": [
-            "rasterio~=1.4.1",
-        ],
         "test": [
             "codecov",
             "pytest==6.2.5",

@@ -45,30 +45,6 @@ Note, Windows is not officially supported at this time.
 Windows users need to install [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio).
 Then `pip install 'mapbox-tilesets[estimate-area]'`
 
-## Installing optional `estimate-cu` command
-
-If you are using an x86 Mac or Linux machine, run:
-`pip install 'mapbox-tilesets[estimate-cu]'`
-
-Otherwise, you will need to install some dependencies.
-
-### arm64 MacOS
-
-If you're on an arm64 Mac (e.g., with an M1 chip), you'll need to install [GDAL](https://gdal.org/) first. On Mac, a simple way is to use [Homebrew](https://brew.sh/):
-
-```sh
-$ brew install gdal
-...
-$ pip install 'mapbox-tilesets[estimate-cu]'
-```
-
-### Windows
-
-Note, Windows is not officially supported at this time.
-
-Windows users need to install [GDAL](http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) and [rasterio](http://www.lfd.uci.edu/~gohlke/pythonlibs/#rasterio).
-Then `pip install 'mapbox-tilesets[estimate-cu]'`
-
 ## Mapbox Access Tokens
 
 In order to use the tilesets endpoints, you need a Mapbox Access Token with `tilesets:write`, `tilesets:read`, and `tilesets:list` scopes. This is a secret token, so do not share it publicly!
@@ -95,7 +71,6 @@ export MAPBOX_ACCESS_TOKEN=my.token
   - [`list-sources`](#list-sources)
   - [`delete-source`](#delete-source)
   - [`estimate-area`](#estimate-area)
-  - [`estimate-cu`](#estimate-cu)
 - Recipes
   - [`view-recipe`](#view-recipe)
   - [`validate-recipe`](#validate-recipe)
@@ -245,33 +220,6 @@ Usage
 ```shell
 # to delete mapbox://tileset-source/user/source_id
 tilesets delete-source user source_id
-```
-
-### estimate-cu
-
-```shell
-tilesets estimate-cu <tileset> -s/--sources <sources> -b/--num-bands <number> --raw
-```
-
-Estimates the CU value of a tileset before publishing it. This is useful to understand the estimated cost a given tileset before you start processing the data. Note: This is currently only available to tileset recipes with type `raster` or `rasterarray`.
-
-See https://docs.mapbox.com/help/glossary/compute-unit/ for more information.
-
-Flags:
-- `-s` or `--sources` [optional]: Local path to the sources that your recipe points at. This is highly recommeneded.
-- `-b` or `--num-bands` [optional]: The number of bands you expect your recipe to select across all layers. This is recommended.
-- `--minzoom` [optional]: Use this flag if your recipe does not contain a minzoom value.
-- `--maxzoom` [optional]: Use this flag if your recipe does not contain a maxzoom value.
-- `--raw` [optional]: This will toggle the pretty print output.
-
-Usage
-
-```shell
-# Estimate the CUs for 'account.tileset' with sources located in 'path/to/sources/' and a band count of 20.
-tilesets estimate-cu account.tileset -s 'path/to/sources/*.grib2' -b 20
-
-# Estimate the CUs for 'account.tileset' for a single source and a band count of 10 (pretty print the results)
-tilesets estimate-cu account.tileset -s 'path/to/sources/helloworld.grib2' -b 10 --raw
 ```
 
 ### estimate-area
