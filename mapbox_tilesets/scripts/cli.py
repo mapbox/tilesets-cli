@@ -841,8 +841,7 @@ def validate_stream(features):
         utils.validate_geojson(index, feature)
         yield feature
 
-
-@cli.command("estimate-cu")
+# @cli.command("estimate-cu")
 @click.argument("tileset", required=True, type=str)
 @click.option(
     "--sources",

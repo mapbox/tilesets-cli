@@ -7,6 +7,7 @@ from click.testing import CliRunner
 from mapbox_tilesets.scripts.cli import estimate_cu
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures("token_environ")
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
@@ -34,6 +35,7 @@ def test_cli_estimate_cu_tileset_no_sources(mock_request_get, MockResponse):
     )
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures("token_environ")
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
@@ -64,6 +66,7 @@ def test_cli_estimate_cu_tileset_with_sources_raw(
     assert json.loads(result.output) == msg
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures("token_environ")
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
@@ -95,6 +98,7 @@ def test_cli_estimate_cu_tileset_with_sources(
     )
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures("token_environ")
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
@@ -131,6 +135,7 @@ def test_cli_estimate_cu_tileset_with_zoom_overrides(
     )
 
 
+@pytest.mark.skip
 @pytest.mark.usefixtures("token_environ")
 @pytest.mark.usefixtures("api_environ")
 @mock.patch("requests.Session.get")
