@@ -1,6 +1,7 @@
 import os
 from codecs import open as codecs_open
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 from mapbox_tilesets import __version__
 
@@ -28,15 +29,15 @@ setup(
     packages=find_packages(exclude=["ez_setup", "examples", "tests"]),
     install_requires=[
         "boto3",
-        "click~=8.0.2",
+        "click~=8.1.7",
         "cligj",
         "numpy",
         "requests",
         "requests-toolbelt",
-        "jsonschema~=3.0",
+        "jsonschema~=4.23.0",
         "jsonseq~=1.0",
-        "mercantile~=1.1.6",
-        "geojson~=2.5.0",
+        "mercantile~=1.2.1",
+        "geojson~=3.0.0",
     ],
     include_package_data=True,
     zip_safe=False,
@@ -49,7 +50,7 @@ setup(
             "pytest==6.2.5",
             "pytest-cov",
             "pre-commit",
-            "black==22.3.0",
+            "black==24.2.0",
             "pep8",
             "supermercado~=0.2.0",
             "toml==0.10.2",

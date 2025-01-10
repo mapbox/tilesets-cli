@@ -58,5 +58,8 @@ target/
 # OS X
 .DS_Store
 
-# temp 
+# temp
 tmp/
+
+# Env vars if using pipenv shell, etc
+.env
