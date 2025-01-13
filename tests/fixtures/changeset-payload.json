@@ -1,0 +1,7 @@
+{
+  "layers": {
+    "trees": {
+      "changeset": "mapbox://tileset-changeset/test.id/test-changeset-id"
+    }
+  }
+}

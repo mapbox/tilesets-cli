@@ -2,6 +2,9 @@
 
 =======
 
+# 1.14.0 (2025-01-12)
+- Added command `tilesets publish-changesets` that publishes changesets for a tileset.
+
 # 1.13.0 (2025-01-07)
 - Temporarily remove the `estimate-cu` command for further refinement.
 

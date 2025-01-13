@@ -451,3 +451,12 @@ Flags:
 - `--limit [1-500]` [optional]: The maximum number of results to return (default: 100)
 - `--indent` [optional]: Indent size for JSON output.
 - `--start` [optional]: Pagination key from the `next` value in a response that has more results than the limit.
+
+
+### publish-changesets
+
+Publishes changesets for a tileset. This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
+```shell
+tilesets publish-changesets <tileset_id> --changeset /path/to/changeset.json
+```
