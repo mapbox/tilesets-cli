@@ -1003,4 +1003,8 @@ def publish_changesets(tileset_id, changeset_payload, token=None, indent=None):
         changeset_payload_json = json.load(changeset_payload_content)
 
         r = s.post(url, json=changeset_payload_json)
-        click.echo(json.dumps(r.json(), indent=indent))
+        if r.status_code == 200:
+            response_msg = r.json()
+            click.echo(json.dumps(response_msg, indent=indent))
+        else:
+            raise errors.TilesetsError(r.text)
