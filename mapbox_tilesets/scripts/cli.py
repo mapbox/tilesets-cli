@@ -981,3 +981,26 @@ def list_activity(
         click.echo(json.dumps(result, indent=indent))
     else:
         raise errors.TilesetsError(r.text)
+
+
+@cli.command("publish-changesets")
+@click.argument("tileset_id", required=True, type=str)
+@click.argument("changeset_payload", required=True, type=click.Path(exists=True))
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def publish_changesets(tileset_id, changeset_payload, token=None, indent=None):
+    """Publish changesets for a tileset.
+
+    tilesets publish-changesets <tileset_id> <path_to_changeset_payload>
+    """
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
+    url = "{0}/tilesets/v1/{1}/publish-changesets?access_token={2}".format(
+        mapbox_api, tileset_id, mapbox_token
+    )
+    with open(changeset_payload) as changeset_payload_content:
+        changeset_payload_json = json.load(changeset_payload_content)
+
+        r = s.post(url, json=changeset_payload_json)
+        click.echo(json.dumps(r.json(),indent=indent))
