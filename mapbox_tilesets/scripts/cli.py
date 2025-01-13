@@ -1003,4 +1003,4 @@ def publish_changesets(tileset_id, changeset_payload, token=None, indent=None):
         changeset_payload_json = json.load(changeset_payload_content)
 
         r = s.post(url, json=changeset_payload_json)
-        click.echo(json.dumps(r.json(),indent=indent))
+        click.echo(json.dumps(r.json(), indent=indent))
