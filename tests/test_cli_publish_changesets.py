@@ -6,6 +6,7 @@ from unittest import mock
 
 from mapbox_tilesets.scripts.cli import publish_changesets
 
+
 class MockResponse:
     def __init__(self, mock_json, status_code):
         self.text = json.dumps(mock_json)
@@ -28,7 +29,9 @@ def test_cli_publish_changesets(mock_request_post):
     mock_request_post.return_value = MockResponse(
         {"message": "mock message", "jobId": "1234fakejob"}, 200
     )
-    result = runner.invoke(publish_changesets, ["test.id", "tests/fixtures/changeset-payload.json"])
+    result = runner.invoke(
+        publish_changesets, ["test.id", "tests/fixtures/changeset-payload.json"]
+    )
     mock_request_post.assert_called_with(
         "https://api.mapbox.com/tilesets/v1/test.id/publish-changesets?access_token=pk.eyJ1IjoidGVzdC11c2VyIn0K",
         json={
@@ -41,7 +44,4 @@ def test_cli_publish_changesets(mock_request_post):
     )
     assert result.exit_code == 0
     print(result.output)
-    assert (
-        '{"message": "mock message", "jobId": "1234fakejob"}'
-        in result.output
-    )
+    assert '{"message": "mock message", "jobId": "1234fakejob"}' in result.output
