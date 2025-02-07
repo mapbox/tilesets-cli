@@ -318,7 +318,7 @@ def test_cli_delete_source_aborted(mock_request_delete, MockResponse):
 
 @pytest.mark.usefixtures("token_environ")
 @mock.patch("requests.Session.get")
-def test_cli_view_source_2(mock_request_get, MockResponse):
+def test_cli_list_sources(mock_request_get, MockResponse):
     message = [
         {"id": "mapbox://tileset-source/test-user/hello-world"},
         {"id": "mapbox://tileset-source/test-user/hola-mundo"},
