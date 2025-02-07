@@ -68,6 +68,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   - _deprecated_ [`add-source`](#deprecated-add-source)
   - [`validate-source`](#validate-source)
   - [`view-source`](#view-source)
+  - [`view-changeset`](#view-changeset)
   - [`list-sources`](#list-sources)
   - [`delete-source`](#delete-source)
   - [`estimate-area`](#estimate-area)
@@ -194,6 +195,14 @@ tilesets view-source <username> <source_id>
 ```
 
 Get information for a tileset source, such as number of files, the size in bytes, and the ID in mapbox:// protocol format.
+
+### view-changeset
+
+```
+tilesets view-changeset <username> <changeset_id>
+```
+
+Get information for a changeset, such as number of files, the size in bytes, and the ID in mapbox:// protocol format.
 
 ### list-sources
 

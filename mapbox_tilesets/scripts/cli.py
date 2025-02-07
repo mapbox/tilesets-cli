@@ -1008,3 +1008,26 @@ def publish_changesets(tileset_id, changeset_payload, token=None, indent=None):
             click.echo(json.dumps(response_msg, indent=indent))
         else:
             raise errors.TilesetsError(r.text)
+
+
+@cli.command("view-changeset")
+@click.argument("username", required=True, type=str)
+@click.argument("id", required=True, type=str)
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+def view_changeset(username, id, token=None, indent=None):
+    """View a Changeset's information
+
+    tilesets view-changeset <username> <changeset_id>
+    """
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
+    url = "{0}/tilesets/v1/changesets/{1}/{2}?access_token={3}".format(
+        mapbox_api, username, id, mapbox_token
+    )
+    r = s.get(url)
+    if r.status_code == 200:
+        click.echo(json.dumps(r.json(), indent=indent))
+    else:
+        raise errors.TilesetsError(r.text)
