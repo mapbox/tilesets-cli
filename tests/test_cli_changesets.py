@@ -4,7 +4,7 @@ import pytest
 from click.testing import CliRunner
 from unittest import mock
 
-from mapbox_tilesets.scripts.cli import publish_changesets
+from mapbox_tilesets.scripts.cli import publish_changesets, view_changeset
 from utils import clean_runner_output
 
 
@@ -80,3 +80,15 @@ def test_cli_publish_changesets_error(mock_request_post):
         clean_runner_output(result.output)
         == '{"message": "Access Denied: Contact Mapbox Account Manager to enable MTS Incremental Update"}'
     )
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.Session.get")
+def test_cli_view_changeset(mock_request_get, MockResponse):
+    message = {"id": "mapbox://tileset-changeset/test-user/hello-world-changeset"}
+    mock_request_get.return_value = MockResponse(message, status_code=200)
+    runner = CliRunner()
+    result = runner.invoke(view_changeset, ["test-user", "hello-world-changeset"])
+
+    assert result.exit_code == 0
+    assert json.loads(result.output) == message
