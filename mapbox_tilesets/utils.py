@@ -82,7 +82,32 @@ def geojson_validate(index, feature):
         )
 
 
-def validate_geojson(index, feature):
+def validate_geojson(index, feature, allow_delete=False):
+
+    if allow_delete:
+        delete_schema = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "http://example.com/root.json",
+            "type": "object",
+            "title": "GeoJSON Delete Schema",
+            "required": ["delete"],
+            "properties": {
+                "delete": {
+                    "$id": "#/properties/delete",
+                    "const": True,
+                    "title": "The Delete Schema",
+                    "examples": [True],
+                },
+            },
+        }
+
+        try:
+            validate(instance=feature, schema=delete_schema)
+            return
+        except:
+            pass
+
     schema = {
         "definitions": {},
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -127,6 +152,7 @@ def validate_geojson(index, feature):
             },
         },
     }
+
     try:
         validate(instance=feature, schema=schema)
     except ValidationError as e:
