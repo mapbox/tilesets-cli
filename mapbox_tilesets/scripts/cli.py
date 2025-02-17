@@ -1031,3 +1031,38 @@ def view_changeset(username, id, token=None, indent=None):
         click.echo(json.dumps(r.json(), indent=indent))
     else:
         raise errors.TilesetsError(r.text)
+
+
+@cli.command("delete-changeset")
+@click.argument("username", required=True, type=str)
+@click.argument("id", required=True, type=str)
+@click.option("--force", "-f", is_flag=True, help="Circumvents confirmation prompt")
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+def delete_changeset(username, id, force, token=None):
+    """Permanently delete a changeset and all of its files
+
+    tilesets delete-changeset <username> <changeset_id>
+    """
+    if not force:
+        val = click.prompt(
+            'To confirm changeset deletion please enter the full changeset id "{0}/{1}"'.format(
+                username, id
+            ),
+            type=str,
+        )
+        if val != f"{username}/{id}":
+            raise click.ClickException(
+                f"{val} does not match {username}/{id}. Aborted!"
+            )
+
+    mapbox_api = utils._get_api()
+    mapbox_token = utils._get_token(token)
+    s = utils._get_session()
+    url = "{0}/tilesets/v1/changesets/{1}/{2}?access_token={3}".format(
+        mapbox_api, username, id, mapbox_token
+    )
+    r = s.delete(url)
+    if r.status_code == 204:
+        click.echo("Changeset deleted.")
+    else:
+        raise errors.TilesetsError(r.text)
