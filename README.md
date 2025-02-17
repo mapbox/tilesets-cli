@@ -65,6 +65,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 - Tileset Sources
   - [`upload-source`](#upload-source)
   - [`upload-raster-source`](#upload-raster-source) (new)
+  - [`upload-changeset`](#upload-changeset)
   - _deprecated_ [`add-source`](#deprecated-add-source)
   - [`validate-source`](#validate-source)
   - [`view-source`](#view-source)
@@ -145,6 +146,23 @@ tilesets upload-raster-source <username> <source_id> ./file.tif
 # multiple files
 tilesets upload-raster-source <username> <source_id> file-1.tif file-4.tif
 ```
+### upload-chanegset
+
+```shell
+tilesets upload-changeset <username> <source_id> <file>
+```
+
+Uploads GeoJSON files to a changeset for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading. Can be used to add data to a source or to replace all of the data in a source with the `--replace` flag.
+
+Please note that if your source data is a FeatureCollection, `tilesets` must read it all into memory to split it up into separate features before uploading it to the Tilesets API. You are strongly encouraged to provide your data in line-delimited GeoJSON format instead, especially if it is large.
+
+Note: for large file uploads that are taking a very long time, try using the `--no-validation` flag.
+
+Flags:
+
+- `--no-validation` [optional]: do not validate source data locally before uploading, can be helpful for large file uploads
+- `--replace` [optional]: delete all existing source data and replace with data from the file
+- `--quiet` [optional]: do not display an upload progress bar
 
 ### _deprecated_ add-source
 
