@@ -4,7 +4,11 @@ import pytest
 from click.testing import CliRunner
 from unittest import mock
 
-from mapbox_tilesets.scripts.cli import publish_changesets, view_changeset
+from mapbox_tilesets.scripts.cli import (
+    publish_changesets,
+    view_changeset,
+    delete_changeset,
+)
 from utils import clean_runner_output
 
 
@@ -92,3 +96,41 @@ def test_cli_view_changeset(mock_request_get, MockResponse):
 
     assert result.exit_code == 0
     assert json.loads(result.output) == message
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.Session.delete")
+def test_cli_delete_changeset(mock_request_delete, MockResponse):
+    mock_request_delete.return_value = MockResponse("", status_code=204)
+    runner = CliRunner()
+    result = runner.invoke(
+        delete_changeset,
+        ["test-user", "hello-world-changeset"],
+        input="test-user/hello-world-changeset",
+    )
+
+    assert result.exit_code == 0
+    assert (
+        result.output
+        == 'To confirm changeset deletion please enter the full changeset id "test-user/hello-world-changeset": test-user/hello-world-changeset\nChangeset deleted.\n'
+    )
+    force_result = runner.invoke(
+        delete_changeset, ["test-user", "hello-world", "--force"]
+    )
+    assert force_result.exit_code == 0
+    assert force_result.output == "Changeset deleted.\n"
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("requests.Session.delete")
+def test_cli_delete_changeset_aborted(mock_request_delete, MockResponse):
+    mock_request_delete.return_value = MockResponse("", status_code=201)
+    runner = CliRunner()
+    result = runner.invoke(
+        delete_changeset, ["test-user", "hello-world-changeset"], input="wrong/id"
+    )
+    assert result.exit_code == 1
+    assert (
+        result.output
+        == 'To confirm changeset deletion please enter the full changeset id "test-user/hello-world-changeset": wrong/id\nError: wrong/id does not match test-user/hello-world-changeset. Aborted!\n'
+    )

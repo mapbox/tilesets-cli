@@ -69,6 +69,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
   - [`validate-source`](#validate-source)
   - [`view-source`](#view-source)
   - [`view-changeset`](#view-changeset)
+  - [`delete-changeset`](#delete-changeset)
   - [`list-sources`](#list-sources)
   - [`delete-source`](#delete-source)
   - [`estimate-area`](#estimate-area)
@@ -203,6 +204,25 @@ tilesets view-changeset <username> <changeset_id>
 ```
 
 Get information for a changeset, such as number of files, the size in bytes, and the ID in mapbox:// protocol format.
+
+### delete-changeset
+
+```
+tilesets delete-changeset <username> <changeset_id>
+```
+
+Permanently delete a changeset and all of its files. This is not a recoverable action!
+
+Flags:
+
+- `-f` or `--force`: Do not ask for confirmation before deleting
+
+Usage
+
+```shell
+# to delete mapbox://tileset-changeset/user/source_id
+tilesets delete-changeset user source_id
+```
 
 ### list-sources
 
