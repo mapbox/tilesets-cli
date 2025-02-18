@@ -8,6 +8,7 @@ from mapbox_tilesets.scripts.cli import (
     publish_changesets,
     view_changeset,
     delete_changeset,
+    upload_changeset,
 )
 from utils import clean_runner_output
 
@@ -133,4 +134,155 @@ def test_cli_delete_changeset_aborted(mock_request_delete, MockResponse):
     assert (
         result.output
         == 'To confirm changeset deletion please enter the full changeset id "test-user/hello-world-changeset": wrong/id\nError: wrong/id does not match test-user/hello-world-changeset. Aborted!\n'
+    )
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.post")
+def test_cli_upload_changeset(
+    mock_request_post,
+    mock_multipart_encoder_monitor,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    okay_response = {
+        "id": "mapbox://tileset-changeset/test-user/populated-places-source"
+    }
+    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
+
+    expected_json = b'{"id":1,"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n{"id":2,"type":"Feature","geometry":{"type":"Point","coordinates":[-76.971938,38.921387]},"properties":{"name":"ZELALEM INJERA"}}\n{"id":3,"delete":true}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        upload_changeset,
+        [
+            "test-user",
+            "populated-places-source",
+            "tests/fixtures/valid-changeset.ldgeojson",
+        ],
+    )
+    assert validated_result.exit_code == 0
+    assert (
+        validated_result.output
+        == """upload progress\n{"id": "mapbox://tileset-changeset/test-user/populated-places-source"}\n"""
+    )
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.put")
+def test_cli_upload_changeset_replace(
+    mock_request_post,
+    mock_multipart_encoder_monitor,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    okay_response = {"id": "mapbox://tileset-changeset/test-user/hello-world"}
+    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
+
+    expected_json = b'{"id":1,"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n{"id":2,"type":"Feature","geometry":{"type":"Point","coordinates":[-76.971938,38.921387]},"properties":{"name":"ZELALEM INJERA"}}\n{"id":3,"delete":true}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        upload_changeset,
+        [
+            "test-user",
+            "hello-world",
+            "tests/fixtures/valid-changeset.ldgeojson",
+            "--replace",
+        ],
+    )
+    assert validated_result.exit_code == 0
+
+    assert (
+        validated_result.output
+        == """upload progress\n{"id": "mapbox://tileset-changeset/test-user/hello-world"}\n"""
+    )
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.post")
+def test_cli_upload_source_invalid_changeset(
+    mock_request_post,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    expected_json = b'{"id":1,"delete":true,"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n{"id":2,"delete":false}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        upload_changeset,
+        [
+            "test-user",
+            "populated-places-source",
+            "tests/fixtures/invalid-changeset.ldgeojson",
+        ],
+    )
+
+    assert validated_result.exit_code == 1
+
+
+@pytest.mark.usefixtures("token_environ")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("requests.Session.post")
+def test_cli_upload_changeset_no_validation(
+    mock_request_post,
+    mock_multipart_encoder_monitor,
+    mock_multipart_encoder,
+    MockResponse,
+    MockMultipartEncoding,
+):
+    okay_response = {"id": "mapbox://tileset-changeset/test-user/hello-world"}
+    mock_request_post.return_value = MockResponse(okay_response, status_code=200)
+
+    expected_json = b'{"id":1,"delete":true,"type":"Feature","geometry":{"type":"Point","coordinates":[125.6,10.1]},"properties":{"name":"Dinagat Islands"}}\n{"id":2,"delete":false}\n'
+
+    def side_effect(fields):
+        assert fields["file"][1].read() == expected_json
+        return MockMultipartEncoding()
+
+    mock_multipart_encoder.side_effect = side_effect
+
+    runner = CliRunner()
+    validated_result = runner.invoke(
+        upload_changeset,
+        [
+            "test-user",
+            "hello-world",
+            "tests/fixtures/invalid-changeset-geojson.ldgeojson",
+            "--no-validation",
+        ],
+    )
+    assert validated_result.exit_code == 0
+
+    assert (
+        validated_result.output
+        == """upload progress\n{"id": "mapbox://tileset-changeset/test-user/hello-world"}\n"""
     )

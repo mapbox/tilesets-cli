@@ -543,20 +543,29 @@ def upload_source(
 
     tilesets upload-source <username> <source_id> <path/to/source/data>
     """
-    return _upload_source(
-        ctx, username, id, features, no_validation, quiet, replace, token, indent
+    return _upload_file(
+        ctx, username, id, features, no_validation, quiet, replace, False, token, indent
     )
 
 
-def _upload_source(
-    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+def _upload_file(
+    ctx,
+    username,
+    id,
+    features,
+    no_validation,
+    quiet,
+    replace,
+    changeset,
+    token=None,
+    indent=None,
 ):
+    api_endpoint = "changesets" if changeset else "sources"
+
     mapbox_api = utils._get_api()
     mapbox_token = utils._get_token(token)
     s = utils._get_session()
-    url = (
-        f"{mapbox_api}/tilesets/v1/sources/{username}/{id}?access_token={mapbox_token}"
-    )
+    url = f"{mapbox_api}/tilesets/v1/{api_endpoint}/{username}/{id}?access_token={mapbox_token}"
 
     method = "post"
     if replace:
@@ -586,7 +595,7 @@ def _upload_source(
     with tempfile.TemporaryFile() as file:
         for index, feature in enumerate(features):
             if not no_validation:
-                utils.validate_geojson(index, feature)
+                utils.validate_geojson(index, feature, changeset)
 
             file.write(
                 (json.dumps(feature, separators=(",", ":")) + "\n").encode("utf-8")
@@ -749,8 +758,8 @@ def add_source(
 
     tilesets add-source <username> <source_id> <path/to/source/data>
     """
-    return _upload_source(
-        ctx, username, id, features, no_validation, quiet, False, token, indent
+    return _upload_file(
+        ctx, username, id, features, no_validation, quiet, False, False, token, indent
     )
 
 
@@ -1066,3 +1075,30 @@ def delete_changeset(username, id, force, token=None):
         click.echo("Changeset deleted.")
     else:
         raise errors.TilesetsError(r.text)
+
+
+@cli.command("upload-changeset")
+@click.argument("username", required=True, type=str)
+@click.argument("id", required=True, callback=validate_source_id, type=str)
+@cligj.features_in_arg
+@click.option("--no-validation", is_flag=True, help="Bypass changeset file validation")
+@click.option("--quiet", is_flag=True, help="Don't show progress bar")
+@click.option(
+    "--replace",
+    is_flag=True,
+    help="Replace the existing changeset with the new changeset file",
+)
+@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
+@click.option("--indent", type=int, default=None, help="Indent for JSON output")
+@click.pass_context
+def upload_changeset(
+    ctx, username, id, features, no_validation, quiet, replace, token=None, indent=None
+):
+    """Create a new changeset, or add data to an existing changeset.
+    Optionally, replace an existing changeset.
+
+    tilesets upload-changeset <username> <source_id> <path/to/changeset/data>
+    """
+    return _upload_file(
+        ctx, username, id, features, no_validation, quiet, replace, True, token, indent
+    )
