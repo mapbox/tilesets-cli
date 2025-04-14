@@ -11,18 +11,9 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
+    
 
     steps:
-      - name: configure aws credentials
-        uses: mapbox/configure-aws-credentials-internal@v5
-        with:
-          target-account-id: ${{ vars.AWS_ACCOUNT_ID_DEFAULT }}
-
-      - name: setup GH reader token
-        uses: mapbox/setup-github-tokens@v2
-        with:
-          scope-type: 'reader'
-
       - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
