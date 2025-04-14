@@ -1,0 +1,54 @@
+name: Unit tests 
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+      - name: configure aws credentials
+        uses: mapbox/configure-aws-credentials-internal@v5
+        with:
+          target-account-id: ${{ vars.AWS_ACCOUNT_ID_DEFAULT }}
+
+      - name: setup GH reader token
+        uses: mapbox/setup-github-tokens@v2
+        with:
+          scope-type: 'reader'
+
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools
+          pip install "importlib-metadata==4.8.3"
+          pip install -r requirements.txt -e .[test]
+
+      - name: Show Python and pytest versions
+        run: |
+          python --version
+          pytest --version
+
+      - name: Run pre-commit checks
+        run: pre-commit run --all-files
+
+      - name: Run tests with coverage
+        run: pytest --cov --cov-config=.coveragerc
+
+      - name: Upload coverage to GitHub (optional, internal)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: .coverage
