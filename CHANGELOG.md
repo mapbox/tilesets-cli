@@ -1,9 +1,6 @@
 # Unreleased
 
 =======
-# 1.14.0-rc4 (2025-04-16)
-- Migrate to GHA
-
 # 1.13.0 (2025-01-07)
 - Temporarily remove the `estimate-cu` command for further refinement.
 
