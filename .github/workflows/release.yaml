@@ -20,7 +20,7 @@ jobs:
 
           - name: Compare tags 
             run: |
-              PKG_VERSION= `grep '__version__' mapbox_tilesets/__init__.py | sed -E "s/^.*['\"](.*)['\"].*$/\1/"`
+              PKG_VERSION=`grep '__version__' mapbox_tilesets/__init__.py | sed -E "s/^.*['\"](.*)['\"].*$/\1/"`
               echo "Checking that package version [v$PKG_VERSION] matches release tag [${{ github.ref_name }}]"
               [ "${{ github.ref_type }}" = "tag" ] && [ "${{ github.ref_name }}" = "v$PKG_VERSION" ]
 
