@@ -1,4 +1,4 @@
-name: CI
+name: Unit test
 
 on:
   push:
@@ -45,38 +45,11 @@ jobs:
       - name: Run tests with coverage
         run: pytest --cov --cov-config=.coveragerc
 
+      - name: List all files in current directory
+        run: ls -la
+
       - name: Upload coverage to GitHub (optional, internal)
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: .coverage
-
-  deploy:
-    runs-on: ubuntu-22.04
-    needs: test
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.8
-
-      - name: Upgrade pip and setuptools
-        run: |
-          python -m pip install --upgrade pip setuptools
-
-      - name: Install dependencies
-        run: pip install twine wheel
-        
-      - name: Setup deployment
-        run: python setup.py sdist bdist_wheel
-      
-      - name: Validate deployment
-        run: twine check dist/*
-
-      - name: Run deployment
-        run: 
-          twine upload dist/* -r pypi -u __token__ -p ${{ secrets.PYPI_PASSWORD }}

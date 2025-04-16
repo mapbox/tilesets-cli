@@ -1,0 +1,42 @@
+name: release
+
+on: 
+  push:
+    tags:
+    - '*'
+
+jobs:
+    deploy:
+        runs-on: ubuntu-22.04
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        
+        steps:
+          - uses: actions/checkout@v4
+          
+          - name: Set up Python 3.8
+            uses: actions/setup-python@v5
+            with:
+              python-version: 3.8
+
+          - name: Compare tags 
+            run: |
+              VERSION = `grep '__version__' mapbox_tilesets/__init__.py | sed -E "s/^.*['\"](.*)['\"].*$/\1/"`
+              echo "Checking that package version [v$VERSION] matches release tag [${{ github.ref_name }}]"
+              [ "${{ github.ref_type }}" = "tag" ] && [ "${{ github.ref_name }}" = "v$VERSION" ]
+
+          - name: Upgrade pip and setuptools
+            run: |
+              python -m pip install --upgrade pip setuptools
+    
+          - name: Install dependencies
+            run: pip install twine wheel
+            
+          - name: Setup deployment
+            run: python setup.py sdist bdist_wheel
+          
+          - name: Validate deployment
+            run: twine check dist/*
+    
+          - name: Run deployment
+            run: 
+              twine upload dist/* -r pypi -u __token__ -p ${{ secrets.PYPI_PASSWORD }}
