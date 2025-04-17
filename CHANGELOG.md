@@ -2,9 +2,6 @@
 
 =======
 
-# 1.14.0-rc6 (2025-01-07)
-- Temporarily remove the `estimate-cu` command for further refinement.
-
 # 1.13.0 (2025-01-07)
 - Temporarily remove the `estimate-cu` command for further refinement.
 
