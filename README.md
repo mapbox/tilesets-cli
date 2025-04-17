@@ -1,6 +1,6 @@
 # tilesets-cli
 
-[![Build Status](https://travis-ci.com/mapbox/tilesets-cli.svg?token=wqR3RcWUEprcQ1ttsgiP&branch=master)](https://travis-ci.com/mapbox/tilesets-cli) [![codecov](https://codecov.io/gh/mapbox/tilesets-cli/branch/master/graph/badge.svg?token=YBTKyc2o3j)](https://codecov.io/gh/mapbox/tilesets-cli)
+[![Build Status](https://github.com/mapbox/tilesets-cli/actions/workflows/release.yaml/badge.svg)](https://github.com/mapbox/tilesets-cli/actions/workflows/release.yaml) [![codecov](https://codecov.io/gh/mapbox/tilesets-cli/branch/master/graph/badge.svg?token=YBTKyc2o3j)](https://codecov.io/gh/mapbox/tilesets-cli)
 
 CLI for interacting with and preparing data for the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 

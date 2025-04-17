@@ -1,0 +1,47 @@
+name: release
+
+on: 
+  push:
+    tags:
+    - '*'
+
+jobs:
+    release-test:
+      runs-on: ubuntu-22.04
+      steps:
+        - uses: actions/checkout@v4
+
+        - uses: ./.github/actions/build-package
+
+        - name: Set up a fresh environment and run tests
+          run: |
+            python -m venv venv
+            source venv/bin/activate
+            pip install dist/*.tar.gz
+            pip install dist/*.whl
+            pip install -e .[test]
+            pytest
+
+    release:
+        runs-on: ubuntu-22.04
+        needs: release-test
+        
+        steps:
+          - uses: actions/checkout@v4
+          
+          - name: Set up Python 3.8
+            uses: actions/setup-python@v5
+            with:
+              python-version: 3.8
+
+          - name: Compare tags 
+            run: |
+              PKG_VERSION=`grep '__version__' mapbox_tilesets/__init__.py | sed -E "s/^.*['\"](.*)['\"].*$/\1/"`
+              echo "Checking that package version [v$PKG_VERSION] matches release tag [${{ github.ref_name }}]"
+              [ "${{ github.ref_type }}" = "tag" ] && [ "${{ github.ref_name }}" = "v$PKG_VERSION" ]
+
+          - uses: ./.github/actions/build-package
+    
+          - name: Run deployment
+            run: 
+              twine upload dist/* -r pypi -u __token__ -p ${{ secrets.PYPI_PASSWORD }}
