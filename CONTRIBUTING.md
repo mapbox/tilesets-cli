@@ -54,7 +54,7 @@ After which you can add these changes and commit again. Note that failing pre-co
 
 ## Release process
 
-Releases to PyPi are handled via TravisCI and GitHub tags. Once changes have been merged to master:
+Releases to PyPi are handled via Github Actions and GitHub tags. Once changes have been merged to master:
 
 1. Update the version in mapbox_tilesets/__init__.py
 2. Update the changelog
@@ -62,8 +62,8 @@ Releases to PyPi are handled via TravisCI and GitHub tags. Once changes have bee
 4. Get a review and merge your changes to master.
 5. Get the latest changes locally from master `git checkout master && git pull origin master`
 6. Tag on GitHub with `git tag` and push tags. For example `git tag -a v0.2.0 -m 'v0.2.0' && git push --tags`
-7. Watch for tag build on travis at https://travis-ci.com/github/mapbox/tilesets-cli/builds
-8. Once travis completes successfully, look for the release at https://pypi.org/project/mapbox-tilesets/#history
+7. Watch for tag build on Github Actions at https://github.com/mapbox/tilesets-cli/actions
+8. Once Github Actions completes successfully, look for the release at https://pypi.org/project/mapbox-tilesets/#history
 
 ## Tests
 
