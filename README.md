@@ -81,6 +81,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 - Tilesets
   - [`create`](#create)
   - [`publish`](#publish)
+  - [`publish-changeset`](#publish-changesets)
   - [`update`](#update)
   - [`delete`](#delete)
   - [`status`](#status)
@@ -502,7 +503,7 @@ Flags:
 
 ### publish-changesets
 
-Publishes changesets for a tileset. This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+Publishes changesets for an incrementally updatable tileset. This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 
 ```shell
 tilesets publish-changesets <tileset_id> --changeset /path/to/changeset.json
