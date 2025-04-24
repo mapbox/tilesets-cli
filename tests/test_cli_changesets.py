@@ -60,10 +60,8 @@ def test_cli_publish_changesets_error(mock_request_post):
 
     # sends expected request
     mock_request_post.return_value = MockResponse(
-        {
-            "message": "Access Denied: Contact Mapbox Account Manager to enable MTS Incremental Update"
-        },
-        401,
+        {"message": "Mock failure message for publishing changeset"},
+        400,
     )
     result = runner.invoke(
         publish_changesets, ["test.id", "tests/fixtures/changeset-payload.json"]
@@ -83,7 +81,7 @@ def test_cli_publish_changesets_error(mock_request_post):
     print(result.output)
     assert (
         clean_runner_output(result.output)
-        == '{"message": "Access Denied: Contact Mapbox Account Manager to enable MTS Incremental Update"}'
+        == '{"message": "Mock failure message for publishing changeset"}'
     )
 
 
