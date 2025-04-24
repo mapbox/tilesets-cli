@@ -147,7 +147,7 @@ tilesets upload-raster-source <username> <source_id> ./file.tif
 # multiple files
 tilesets upload-raster-source <username> <source_id> file-1.tif file-4.tif
 ```
-### upload-chanegset
+### upload-changeset
 
 ```shell
 tilesets upload-changeset <username> <source_id> <file>
