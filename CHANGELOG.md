@@ -2,6 +2,12 @@
 
 =======
 
+# 1.14.0 (2025-04-23)
+- Added command `tilesets upload-changeset` that uploads a changeset file.
+- Added command `tilesets publish-changesets` that publishes changesets for a incrementally updatable tileset.
+- Added command `tilesets view-changeset` that view an uploaded changeset.
+- Added command `tilesets delete-changeset` that deletes an uploaded changeset.
+
 # 1.13.0 (2025-01-07)
 - Temporarily remove the `estimate-cu` command for further refinement.
 

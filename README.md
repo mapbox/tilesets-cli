@@ -65,9 +65,12 @@ export MAPBOX_ACCESS_TOKEN=my.token
 - Tileset Sources
   - [`upload-source`](#upload-source)
   - [`upload-raster-source`](#upload-raster-source) (new)
+  - [`upload-changeset`](#upload-changeset)
   - _deprecated_ [`add-source`](#deprecated-add-source)
   - [`validate-source`](#validate-source)
   - [`view-source`](#view-source)
+  - [`view-changeset`](#view-changeset)
+  - [`delete-changeset`](#delete-changeset)
   - [`list-sources`](#list-sources)
   - [`delete-source`](#delete-source)
   - [`estimate-area`](#estimate-area)
@@ -78,6 +81,7 @@ export MAPBOX_ACCESS_TOKEN=my.token
 - Tilesets
   - [`create`](#create)
   - [`publish`](#publish)
+  - [`publish-changeset`](#publish-changesets)
   - [`update`](#update)
   - [`delete`](#delete)
   - [`status`](#status)
@@ -143,6 +147,23 @@ tilesets upload-raster-source <username> <source_id> ./file.tif
 # multiple files
 tilesets upload-raster-source <username> <source_id> file-1.tif file-4.tif
 ```
+### upload-changeset
+
+```shell
+tilesets upload-changeset <username> <source_id> <file>
+```
+
+Uploads GeoJSON files to a changeset for tiling. Accepts line-delimited GeoJSON or GeoJSON feature collections as files or via `stdin`. The CLI automatically converts data to line-delimited GeoJSON prior to uploading. Can be used to add data to a source or to replace all of the data in a source with the `--replace` flag.
+
+Please note that if your source data is a FeatureCollection, `tilesets` must read it all into memory to split it up into separate features before uploading it to the Tilesets API. You are strongly encouraged to provide your data in line-delimited GeoJSON format instead, especially if it is large.
+
+Note: for large file uploads that are taking a very long time, try using the `--no-validation` flag.
+
+Flags:
+
+- `--no-validation` [optional]: do not validate source data locally before uploading, can be helpful for large file uploads
+- `--replace` [optional]: delete all existing source data and replace with data from the file
+- `--quiet` [optional]: do not display an upload progress bar
 
 ### _deprecated_ add-source
 
@@ -194,6 +215,33 @@ tilesets view-source <username> <source_id>
 ```
 
 Get information for a tileset source, such as number of files, the size in bytes, and the ID in mapbox:// protocol format.
+
+### view-changeset
+
+```
+tilesets view-changeset <username> <changeset_id>
+```
+
+Get information for a changeset, such as number of files, the size in bytes, and the ID in mapbox:// protocol format.
+
+### delete-changeset
+
+```
+tilesets delete-changeset <username> <changeset_id>
+```
+
+Permanently delete a changeset and all of its files. This is not a recoverable action!
+
+Flags:
+
+- `-f` or `--force`: Do not ask for confirmation before deleting
+
+Usage
+
+```shell
+# to delete mapbox://tileset-changeset/user/source_id
+tilesets delete-changeset user source_id
+```
 
 ### list-sources
 
@@ -451,3 +499,12 @@ Flags:
 - `--limit [1-500]` [optional]: The maximum number of results to return (default: 100)
 - `--indent` [optional]: Indent size for JSON output.
 - `--start` [optional]: Pagination key from the `next` value in a response that has more results than the limit.
+
+
+### publish-changesets
+
+Publishes changesets for an incrementally updatable tileset. This command only supports tilesets created with the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
+
+```shell
+tilesets publish-changesets <tileset_id> --changeset /path/to/changeset.json
+```

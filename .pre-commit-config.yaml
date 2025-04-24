@@ -15,5 +15,6 @@ repos:
           # E501 let black handle all line length decisions
           # W503 black conflicts with "line break before operator" rule
           # E203 black conflicts with "whitespace before ':'" rule
+          # E231 black conflicts with "whitespace after ':'" rule
           # E722 bare excepts need to be addressed
-          '--ignore=E501,W503,E203,E722']
+          '--ignore=E501,W503,E203,E722,E231']
