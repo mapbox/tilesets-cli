@@ -1,6 +1,7 @@
 import os
 from codecs import open as codecs_open
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 from mapbox_tilesets import __version__
 
@@ -33,7 +34,7 @@ setup(
         "numpy",
         "requests",
         "requests-toolbelt",
-        "jsonschema~=3.0",
+        "jsonschema~=4.0",
         "jsonseq~=1.0",
         "mercantile~=1.1.6",
         "geojson~=2.5.0",
