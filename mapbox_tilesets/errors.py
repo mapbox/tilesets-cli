@@ -17,6 +17,7 @@ class TilesetsError(ClickException):
         message: str
             Error description
         """
+        super().__init__(message)
         self.message = message
 
 
@@ -25,7 +26,7 @@ class TilesetNameError(TilesetsError):
 
     def __init__(self, tileset_id):
         self.tileset_id = tileset_id
-        self.message = "Invalid Tileset ID"
+        super().__init__("Invalid Tileset ID")
 
     def __str__(self):
         return "{tileset_id} -> {message}".format(
