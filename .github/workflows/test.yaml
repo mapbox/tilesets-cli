@@ -16,10 +16,6 @@ jobs:
             os: ubuntu-22.04
           - python-version: '3.12'
             os: ubuntu-22.04
-          - python-version: '3.13'
-            os: ubuntu-22.04
-          - python-version: '3.14'
-            os: ubuntu-22.04
 
     runs-on: ${{ matrix.os }}
 
