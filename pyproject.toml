@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mapbox-tilesets"
+version = "1.14.0"
+description = "CLI for interacting with and preparing data for the Mapbox Tilesets API"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE.md" }
+authors = [{ name = "Mapbox", email = "raster@mapbox.com" }]
+keywords = ["mapbox", "tilesets", "cli", "geojson", "vector tiles"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent",
+]
+
+dependencies = [
+  "click>=8.1",
+  "cligj>=0.7",
+  "requests>=2.32",
+  "requests-toolbelt>=1.0",
+  "jsonschema>=4.18,<5",
+  "mercantile>=1.1",
+  "geojson>=3.0",
+  "numpy>=1.23,<2",
+]
+
+[project.optional-dependencies]
+estimate-area = ["supermercado>=0.2.0"]
+
+[project.scripts]
+tilesets = "mapbox_tilesets.scripts.cli:cli"
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers --disable-warnings"
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.5",
+  "pyright>=1.1.385",
+  "pytest>=8",
+  "pytest-cov>=4",
+  "build>=1.2",
+  "pre-commit>=3.5",
+]
