@@ -41,9 +41,9 @@ testpaths = ["tests"]
 
 [dependency-groups]
 dev = [
-  "ruff>=0.5",
   "pytest>=8",
   "pytest-cov>=4",
   "build>=1.2",
   "pre-commit>=3.5",
+  "black==22.3.0",
 ]
