@@ -4,30 +4,30 @@ Hi there! Welcome to the tilesets-cli contributing document. Issues, comments, a
 
 ## Installation
 
-First, clone the repo and `cd` into the folder:
+Install uv (https://docs.astral.sh/uv/) and then clone the repo and `cd` into the folder:
 
 ```bash
 # clone
 git clone git@github.com:mapbox/tilesets-cli.git
 cd tilesets-cli
 
-# virtual env (optional)
-mkvirtualenv tilesets-cli
+# install deps (creates .venv)
+uv sync --group dev
 
-# install deps
-pip install -e '.[test]'
+# include optional estimate-area dependencies
+uv sync --group dev --extra estimate-area
 
 # confirm installation was successful
-tilesets --help
-tilesets --version
+uv run tilesets --help
+uv run tilesets --version
 ```
 
 ## Pre-commit hooks
 
-We use [pre-commit hooks](https://pre-commit.com/) to auto-format and validate code before committing. `pre-commit` is included with the `[test]` extras, but you must run:
+We use [pre-commit hooks](https://pre-commit.com/) to auto-format and validate code before committing. `pre-commit` is included with the `dev` dependency group, but you must run:
 
 ```bash
-$ pre-commit install
+$ uv run pre-commit install
 ```
 within the repo to have the actions specified in `.pre-commit-config.yaml` registered.
 
@@ -47,14 +47,14 @@ Releases to PyPi are handled via Github Actions and GitHub tags. Once changes ha
 
 ## Tests
 
-All tests are runnable with pytest. pytest is not installed by default and can be installed with the pip test extras
+All tests are runnable with pytest. pytest is installed via the `dev` dependency group:
 
 ```shell
-pip install -e '.[test]'
+uv sync --group dev
 ```
 
 Running tests
 
 ```
-pytest
+uv run pytest
 ```
