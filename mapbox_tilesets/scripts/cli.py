@@ -48,6 +48,7 @@ def cli():
     """
 
 
+# Tilesets
 cli.add_command(status)
 cli.add_command(tilejson)
 cli.add_command(list)
@@ -55,8 +56,12 @@ cli.add_command(create)
 cli.add_command(publish)
 cli.add_command(update)
 cli.add_command(delete)
+
+# Jobs
 cli.add_command(jobs)
 cli.add_command(job)
+
+# Sources
 cli.add_command(validate_source)
 cli.add_command(upload_source)
 cli.add_command(upload_raster_source)
@@ -65,11 +70,17 @@ cli.add_command(view_source)
 cli.add_command(delete_source)
 cli.add_command(list_sources)
 cli.add_command(estimate_area)
+
+# Recipes
 cli.add_command(validate_recipe)
 cli.add_command(view_recipe)
 cli.add_command(update_recipe)
+
+# Changesets
 cli.add_command(publish_changesets)
 cli.add_command(view_changeset)
 cli.add_command(delete_changeset)
 cli.add_command(upload_changeset)
+
+# Activity
 cli.add_command(list_activity)
