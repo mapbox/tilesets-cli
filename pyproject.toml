@@ -39,6 +39,9 @@ tilesets = "mapbox_tilesets.scripts.cli:cli"
 addopts = "-q --strict-markers --disable-warnings"
 testpaths = ["tests"]
 
+[tool.setuptools]
+packages = ["mapbox_tilesets"]
+
 [dependency-groups]
 dev = [
   "pytest>=8",
