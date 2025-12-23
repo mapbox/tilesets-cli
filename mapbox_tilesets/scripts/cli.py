@@ -13,6 +13,7 @@ from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 import mapbox_tilesets
 from mapbox_tilesets import errors, utils
+from mapbox_tilesets.scripts.cli_common import validate_source_id, validate_stream
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -512,15 +513,6 @@ def validate_source(features):
     click.echo("✔ valid")
 
 
-def validate_source_id(ctx, param, value):
-    if re.match("^[a-zA-Z0-9-_]{1,32}$", value):
-        return value
-    else:
-        raise click.BadParameter(
-            'Tileset Source ID is invalid. Must be no more than 32 characters and only include "-", "_", and alphanumeric characters.'
-        )
-
-
 @cli.command("upload-source")
 @click.argument("username", required=True, type=str)
 @click.argument("id", required=True, callback=validate_source_id, type=str)
@@ -841,12 +833,6 @@ def list_sources(username, token=None):
             click.echo(source["id"])
     else:
         raise errors.TilesetsError(r.text)
-
-
-def validate_stream(features):
-    for index, feature in enumerate(features):
-        utils.validate_geojson(index, feature)
-        yield feature
 
 
 @cli.command("estimate-area")
