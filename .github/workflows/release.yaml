@@ -1,51 +1,54 @@
 name: release
 
-on: 
+on:
   push:
     tags:
-    - '*'
+      - "*"
 
 jobs:
-    release-test:
-      runs-on: ubuntu-22.04
-      steps:
-        - uses: actions/checkout@v4
+  release-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
 
-        - uses: ./.github/actions/build-package
-          with:
-            python-version: '3.11'
+      - name: Build package
+        run: uv build
 
-        - name: Set up a fresh environment and run tests
-          run: |
-            python -m venv venv
-            source venv/bin/activate
-            pip install dist/*.tar.gz
-            pip install dist/*.whl
-            pip install -e '.[test,estimate-area]'
-            pytest
+      - name: Set up a fresh environment and run tests
+        run: |
+          uv venv
+          uv pip install dist/*.tar.gz
+          uv pip install dist/*.whl
+          uv pip install pytest
+          uv run pytest
 
-    release:
-        runs-on: ubuntu-22.04
-        needs: release-test
-        
-        steps:
-          - uses: actions/checkout@v4
-          
-          - name: Set up Python 3.11
-            uses: actions/setup-python@v5
-            with:
-              python-version: '3.11'
+  release:
+    runs-on: ubuntu-22.04
+    needs: release-test
+    steps:
+      - uses: actions/checkout@v4
 
-          - name: Compare tags 
-            run: |
-              PKG_VERSION=$(python -c "import pathlib, tomllib; data = tomllib.loads(pathlib.Path('pyproject.toml').read_text()); print(data['project']['version'])")
-              echo "Checking that package version [v$PKG_VERSION] matches release tag [${{ github.ref_name }}]"
-              [ "${{ github.ref_type }}" = "tag" ] && [ "${{ github.ref_name }}" = "v$PKG_VERSION" ]
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.10"
 
-          - uses: ./.github/actions/build-package
-            with:
-              python-version: '3.11'
-    
-          - name: Run deployment
-            run: 
-              twine upload dist/* -r pypi -u __token__ -p ${{ secrets.PYPI_PASSWORD }}
+      - name: Compare tags 
+        run: |
+          PKG_VERSION=$(python -c "import pathlib, tomllib; data = tomllib.loads(pathlib.Path('pyproject.toml').read_text()); print(data['project']['version'])")
+          echo "Checking that package version [v$PKG_VERSION] matches release tag [${{ github.ref_name }}]"
+          [ "${{ github.ref_type }}" = "tag" ] && [ "${{ github.ref_name }}" = "v$PKG_VERSION" ]
+
+      - name: Build package
+        run: uv build
+
+      - name: Install Twine
+        run: |
+          uv venv
+          uv pip install twine
+
+      - name: Validate deployment
+        run: uv run twine check dist/*
+
+      - name: Run deployment
+        run: uv run twine upload dist/* -r pypi -u __token__ -p ${{ secrets.PYPI_PASSWORD }}
