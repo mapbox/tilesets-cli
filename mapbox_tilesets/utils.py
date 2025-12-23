@@ -83,7 +83,6 @@ def geojson_validate(index, feature):
 
 
 def validate_geojson(index, feature, allow_delete=False):
-
     if allow_delete:
         delete_schema = {
             "definitions": {},
