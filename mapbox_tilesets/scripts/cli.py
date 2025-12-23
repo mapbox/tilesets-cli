@@ -21,7 +21,15 @@ from mapbox_tilesets.scripts.cli_sources import (
     validate_source,
     view_source,
 )
-from mapbox_tilesets.scripts.cli_tilesets import list, status, tilejson
+from mapbox_tilesets.scripts.cli_tilesets import (
+    create,
+    delete,
+    list,
+    publish,
+    status,
+    tilejson,
+    update,
+)
 
 
 @click.version_option(version=mapbox_tilesets.__version__, message="%(version)s")
@@ -38,6 +46,10 @@ def cli():
 cli.add_command(status)
 cli.add_command(tilejson)
 cli.add_command(list)
+cli.add_command(create)
+cli.add_command(publish)
+cli.add_command(update)
+cli.add_command(delete)
 cli.add_command(jobs)
 cli.add_command(job)
 cli.add_command(validate_source)
@@ -48,214 +60,6 @@ cli.add_command(view_source)
 cli.add_command(delete_source)
 cli.add_command(list_sources)
 cli.add_command(estimate_area)
-
-
-@cli.command("create")
-@click.argument("tileset", required=True, type=str)
-@click.option(
-    "--recipe",
-    "-r",
-    required=True,
-    type=click.Path(exists=True),
-    help="path to a Recipe JSON document",
-)
-@click.option("--name", "-n", required=True, type=str, help="name of the tileset")
-@click.option(
-    "--description", "-d", required=False, type=str, help="description of the tileset"
-)
-@click.option(
-    "--privacy",
-    "-p",
-    required=False,
-    type=click.Choice(["public", "private"]),
-    help="set the tileset privacy options",
-)
-@click.option(
-    "--attribution",
-    required=False,
-    type=str,
-    help="attribution for the tileset in the form of a JSON string - Array<Object<text,link>>",
-)
-@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-@click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def create(
-    tileset,
-    recipe,
-    name=None,
-    description=None,
-    privacy=None,
-    attribution=None,
-    token=None,
-    indent=None,
-):
-    """Create a new tileset with a recipe.
-
-    $ tilesets create <tileset_id>
-
-    <tileset_id> is in the form of username.handle - for example "mapbox.neat-tileset".
-    The handle may only include "-" or "_" special characters and must be 32 characters or fewer.
-    """
-    mapbox_api = utils._get_api()
-    mapbox_token = utils._get_token(token)
-    s = utils._get_session()
-    url = "{0}/tilesets/v1/{1}?access_token={2}".format(
-        mapbox_api, tileset, mapbox_token
-    )
-    body = {}
-    body["name"] = name or ""
-    body["description"] = description or ""
-    if privacy:
-        body["private"] = True if privacy == "private" else False
-
-    if not utils.validate_tileset_id(tileset):
-        raise errors.TilesetNameError(tileset)
-
-    if recipe:
-        with open(recipe) as json_recipe:
-            body["recipe"] = json.load(json_recipe)
-
-    if attribution:
-        try:
-            body["attribution"] = json.loads(attribution)
-        except:
-            click.echo("Unable to parse attribution JSON")
-            click.exit(1)
-
-    r = s.post(url, json=body)
-
-    click.echo(json.dumps(r.json(), indent=indent))
-
-
-@cli.command("publish")
-@click.argument("tileset", required=True, type=str)
-@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-@click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def publish(tileset, token=None, indent=None):
-    """Publish your tileset.
-
-    Only supports tilesets created with the Mapbox Tiling Service.
-
-    tilesets publish <tileset_id>
-    """
-    mapbox_api = utils._get_api()
-    mapbox_token = utils._get_token(token)
-    s = utils._get_session()
-    url = "{0}/tilesets/v1/{1}/publish?access_token={2}".format(
-        mapbox_api, tileset, mapbox_token
-    )
-    r = s.post(url)
-    if r.status_code == 200:
-        response_msg = r.json()
-        click.echo(json.dumps(response_msg, indent=indent))
-
-        studio_url = click.style(
-            f"https://studio.mapbox.com/tilesets/{tileset}", bold=True
-        )
-        job_id = response_msg["jobId"]
-        job_cmd = click.style(f"tilesets job {tileset} {job_id}", bold=True)
-        message = f"\n✔ Tileset job received. Visit {studio_url} or run {job_cmd} to view the status of your tileset."
-        # print(message)
-        click.echo(
-            message,
-            err=True,  # print to stderr so the JSON output can be parsed separately from the success message
-        )
-    else:
-        raise errors.TilesetsError(r.text)
-
-
-@cli.command("update")
-@click.argument("tileset", required=True, type=str)
-@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-@click.option("--indent", type=int, default=None, help="Indent for JSON output")
-@click.option("--name", "-n", required=False, type=str, help="name of the tileset")
-@click.option(
-    "--description", "-d", required=False, type=str, help="description of the tileset"
-)
-@click.option(
-    "--privacy",
-    "-p",
-    required=False,
-    type=click.Choice(["public", "private"]),
-    help="set the tileset privacy options",
-)
-@click.option(
-    "--attribution",
-    required=False,
-    type=str,
-    help="attribution for the tileset in the form of a JSON string - Array<Object<text,link>>",
-)
-def update(
-    tileset,
-    token=None,
-    indent=None,
-    name=None,
-    description=None,
-    privacy=None,
-    attribution=None,
-):
-    """Update a tileset's information.
-
-    tilesets update <tileset_id>
-    """
-    mapbox_api = utils._get_api()
-    mapbox_token = utils._get_token(token)
-    s = utils._get_session()
-    url = "{0}/tilesets/v1/{1}?access_token={2}".format(
-        mapbox_api, tileset, mapbox_token
-    )
-    body = {}
-    if name:
-        body["name"] = name
-    if description:
-        body["description"] = description
-    if privacy:
-        body["private"] = True if privacy == "private" else False
-    if attribution:
-        try:
-            body["attribution"] = json.loads(attribution)
-        except:
-            click.echo("Unable to parse attribution JSON")
-            click.exit(1)
-
-    r = s.patch(url, json=body)
-
-    if r.status_code != 204:
-        raise errors.TilesetsError(r.text)
-
-
-@cli.command("delete")
-@click.argument("tileset", required=True, type=str)
-@click.option("--force", "-f", is_flag=True, help="Circumvents confirmation prompt")
-@click.option("--token", "-t", required=False, type=str, help="Mapbox access token")
-@click.option("--indent", type=int, default=None, help="Indent for JSON output")
-def delete(tileset, token=None, indent=None, force=None):
-    """Delete your tileset.
-
-    tilesets delete <tileset_id>
-    """
-
-    mapbox_api = utils._get_api()
-    mapbox_token = utils._get_token(token)
-    s = utils._get_session()
-
-    if not force:
-        val = click.prompt(
-            'To confirm tileset deletion please enter the full tileset id "{0}"'.format(
-                tileset
-            ),
-            type=str,
-        )
-        if val != tileset:
-            raise click.ClickException(f"{val} does not match {tileset}. Aborted!")
-
-    url = "{0}/tilesets/v1/{1}?access_token={2}".format(
-        mapbox_api, tileset, mapbox_token
-    )
-    r = s.delete(url)
-    if r.status_code == 200 or r.status_code == 204:
-        click.echo("Tileset deleted.")
-    else:
-        raise errors.TilesetsError(r.text)
 
 
 @cli.command("validate-recipe")
