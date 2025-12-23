@@ -40,7 +40,7 @@ addopts = "-q --strict-markers --disable-warnings"
 testpaths = ["tests"]
 
 [tool.setuptools]
-packages = ["mapbox_tilesets"]
+packages = ["mapbox_tilesets", "mapbox_tilesets.scripts"]
 
 [dependency-groups]
 dev = [
