@@ -14,23 +14,18 @@ CLI for interacting with and preparing data for the [Mapbox Tiling Service](http
 
 ## Requirements
 
-- Python >= 3.6 (can be installed via virtualenv)
-- Recommended: [virtualenv](https://virtualenv.pypa.io/) / [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/)
+- Python >= 3.10
 
-## Basic installation
-
-`pip install mapbox-tilesets` will install everything but [`estimate-area`](#estimate-area).
+`pip install mapbox-tilesets` will install everything but the [`estimate-area`](#estimate-area) command.
 
 ## Installing optional `estimate-area` command
 
 If you are using an x86 Mac or Linux machine, run:
-`pip install 'mapbox-tilesets[estimate-area]'`
-
-Otherwise, you will need to install some dependencies.
+`pip install 'mapbox-tilesets[estimate-area]'`. Otherwise, you will need to install some dependencies.
 
 ### arm64 MacOS
 
-If you're on an arm64 Mac (e.g., with an M1 chip), you'll need to install [GDAL](https://gdal.org/) first. On Mac, a simple way is to use [Homebrew](https://brew.sh/):
+If you're on an Arm64 Mac, you'll need to install [GDAL](https://gdal.org/) first. On Mac, a simple way is to use [Homebrew](https://brew.sh/):
 
 ```sh
 $ brew install gdal
