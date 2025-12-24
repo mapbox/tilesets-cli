@@ -9,7 +9,7 @@ description = "CLI for interacting with and preparing data for the Mapbox Tilese
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE.md" }
-authors = [{ name = "Mapbox", email = "raster@mapbox.com" }]
+authors = [{ name = "Mapbox", email = "maps-api-team@mapbox.com" }]
 keywords = ["mapbox", "tilesets", "cli", "geojson", "vector tiles"]
 classifiers = [
   "Programming Language :: Python :: 3",
