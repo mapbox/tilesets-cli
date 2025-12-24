@@ -2,6 +2,10 @@
 
 =======
 
+# 2.0.0 (2025-12-23)
+- Migrates metadata to pyproject.toml
+- Drops support for Python versions < 3.10
+
 # 1.14.0 (2025-04-23)
 - Added command `tilesets upload-changeset` that uploads a changeset file.
 - Added command `tilesets publish-changesets` that publishes changesets for a incrementally updatable tileset.

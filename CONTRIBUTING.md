@@ -56,7 +56,7 @@ After which you can add these changes and commit again. Note that failing pre-co
 
 Releases to PyPi are handled via Github Actions and GitHub tags. Once changes have been merged to master:
 
-1. Update the version in mapbox_tilesets/__init__.py
+1. Update the version in `pyproject.toml`
 2. Update the changelog
 3. Commit changes to **your branch**. For example `git commit -am '0.2.0' && git push origin HEAD`
 4. Get a review and merge your changes to master.
