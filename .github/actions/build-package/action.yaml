@@ -4,7 +4,7 @@ inputs:
   python-version:
     description: 'Python version to use'
     required: false
-    default: '3.8'
+    default: '3.11'
 
 runs:
   using: "composite"
@@ -20,11 +20,11 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: pip install twine wheel
+      run: pip install build twine wheel
       
     - name: Setup deployment
       shell: bash
-      run: python setup.py sdist bdist_wheel
+      run: python -m build --sdist --wheel
     
     - name: Validate deployment
       shell: bash
