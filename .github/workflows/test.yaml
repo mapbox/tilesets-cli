@@ -1,10 +1,10 @@
 name: Unit test
 
-on: [push, pull_request]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
   test:
