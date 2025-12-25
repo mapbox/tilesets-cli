@@ -21,7 +21,7 @@ jobs:
             source venv/bin/activate
             pip install dist/*.tar.gz
             pip install dist/*.whl
-            pip install -e .[test]
+            pip install -e .[test,estimate-area]
             pytest
 
     release:
