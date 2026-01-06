@@ -38,7 +38,7 @@ jobs:
 
           - name: Compare tags 
             run: |
-              PKG_VERSION=`grep '__version__' mapbox_tilesets/__init__.py | sed -E "s/^.*['\"](.*)['\"].*$/\1/"`
+              PKG_VERSION=$(python -c "import pathlib, tomllib; data = tomllib.loads(pathlib.Path('pyproject.toml').read_text()); print(data['project']['version'])")
               echo "Checking that package version [v$PKG_VERSION] matches release tag [${{ github.ref_name }}]"
               [ "${{ github.ref_type }}" = "tag" ] && [ "${{ github.ref_name }}" = "v$PKG_VERSION" ]
 
