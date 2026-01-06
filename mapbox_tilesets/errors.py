@@ -1,4 +1,5 @@
 """Error handling for the tilesets CLI"""
+
 from click import ClickException
 
 

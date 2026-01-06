@@ -2,6 +2,9 @@
 
 =======
 
+# 2.1.0 (2025-12-24)
+- Replace black with ruff
+
 # 2.0.0 (2025-12-23)
 - Migrates metadata to pyproject.toml
 - Drops support for Python versions < 3.10
