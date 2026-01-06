@@ -5,6 +5,9 @@ on:
     tags:
       - "*"
 
+permissions:
+  contents: read
+
 jobs:
   release-test:
     runs-on: ubuntu-22.04
