@@ -1,12 +1,12 @@
 name: Unit test
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: ["**"]
   pull_request:
-
-permissions:
-  contents: read
 
 jobs:
   test:

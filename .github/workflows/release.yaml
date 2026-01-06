@@ -1,12 +1,12 @@
 name: release
 
+permissions:
+  contents: read
+
 on:
   push:
     tags:
       - "*"
-
-permissions:
-  contents: read
 
 jobs:
   release-test:
