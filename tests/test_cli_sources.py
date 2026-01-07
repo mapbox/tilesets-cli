@@ -18,8 +18,8 @@ from utils import clean_runner_output
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
 def test_cli_add_source(
     mock_request_post,
@@ -51,8 +51,8 @@ def test_cli_add_source(
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
 def test_cli_add_source_wrong_username(
     mock_request_post,
@@ -123,8 +123,8 @@ def test_cli_add_source_no_validation(mock_request_post, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.put")
 def test_cli_upload_source_replace(
     mock_request_put,
@@ -157,8 +157,8 @@ def test_cli_upload_source_replace(
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.put")
 def test_cli_upload_source_no_replace(
     mock_request_post,
@@ -192,8 +192,8 @@ def test_cli_upload_source_no_replace(
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
 def test_cli_upload_source(
     mock_request_post,
@@ -226,8 +226,8 @@ def test_cli_upload_source(
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
 def test_cli_upload_source_invalid_polygon(
     mock_request_post,

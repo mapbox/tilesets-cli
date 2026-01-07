@@ -136,8 +136,8 @@ def test_cli_delete_changeset_aborted(mock_request_delete, MockResponse):
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
 def test_cli_upload_changeset(
     mock_request_post,
@@ -176,8 +176,8 @@ def test_cli_upload_changeset(
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.put")
 def test_cli_upload_changeset_replace(
     mock_request_post,
@@ -216,8 +216,8 @@ def test_cli_upload_changeset_replace(
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
 def test_cli_upload_source_invalid_changeset(
     mock_request_post,
@@ -247,8 +247,8 @@ def test_cli_upload_source_invalid_changeset(
 
 
 @pytest.mark.usefixtures("token_environ")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoder")
-@mock.patch("mapbox_tilesets.scripts.cli.MultipartEncoderMonitor")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoder")
+@mock.patch("mapbox_tilesets.scripts.cli_common.MultipartEncoderMonitor")
 @mock.patch("requests.Session.post")
 def test_cli_upload_changeset_no_validation(
     mock_request_post,
