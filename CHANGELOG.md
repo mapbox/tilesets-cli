@@ -1,9 +1,8 @@
-# Unreleased
-
-=======
+# 2.2.1 (2026-01-07)
+- Remove codecov references
 
 # 2.2.0 (2026-01-06)
-- Use UV
+- Use UV in GHA workflows
 
 # 2.1.0 (2025-12-24)
 - Replace black with ruff

@@ -37,14 +37,7 @@ jobs:
         run: uv run pre-commit run --all-files
 
       - name: Run tests with coverage
-        run: uv run pytest --cov --cov-config=.coveragerc --cov-report=xml
+        run: uv run pytest --cov --cov-config=.coveragerc --cov-report=term-missing --cov-report=xml
 
       - name: List all files in current directory
         run: ls -la
-
-      - name: Upload coverage to GitHub (optional, internal)
-        if: matrix.python-version == '3.10'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.xml
