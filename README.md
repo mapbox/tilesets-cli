@@ -1,6 +1,6 @@
 # tilesets-cli
 
-[![Build Status](https://github.com/mapbox/tilesets-cli/actions/workflows/release.yaml/badge.svg)](https://github.com/mapbox/tilesets-cli/actions/workflows/release.yaml)
+[![PyPI](https://img.shields.io/pypi/v/mapbox-tilesets.svg)](https://pypi.org/project/mapbox-tilesets/)
 
 CLI for interacting with and preparing data for the [Mapbox Tiling Service](https://docs.mapbox.com/mapbox-tiling-service/overview/).
 
