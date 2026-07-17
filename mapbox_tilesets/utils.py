@@ -12,6 +12,8 @@ import mapbox_tilesets
 import geojson
 import json
 
+from mapbox_tilesets.agent_detect import detect_agent
+
 
 def load_module(modulename):
     """Dynamically imports a module and throws a readable exception if not found"""
@@ -51,7 +53,11 @@ def _get_session(
 ):
     """Get a configured session"""
     s = Session()
-    s.headers.update({"user-agent": "{}/{}".format(application, version)})
+    user_agent = "{}/{}".format(application, version)
+    agent = detect_agent()
+    if agent:
+        user_agent = "{} agent/{}".format(user_agent, agent)
+    s.headers.update({"user-agent": user_agent})
     return s
 
 
