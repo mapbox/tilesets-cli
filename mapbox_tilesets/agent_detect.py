@@ -1,10 +1,17 @@
 """Detect the AI coding agent (if any) driving this CLI invocation."""
 
 import os
+import re
+
+# A safe charset for an agent id placed into an HTTP header: env vars are not
+# validated by whoever sets them, so a value like "foo\nbar: injected" must be
+# rejected here rather than surfacing as an unhandled requests.InvalidHeader.
+_SAFE_FALLBACK_ID = re.compile(r"^[\w.\-]{1,64}$")
 
 # (agent_id, [(env_var, expected_value_or_None), ...]) — table order is precedence order;
 # the first entry with any matching condition wins. expected_value None => presence check
-# (key exists in os.environ, value not inspected); otherwise an exact-equality check.
+# (key exists in os.environ with a non-empty, non-whitespace value); otherwise an
+# exact-equality check.
 _ALLOWLIST = [
     ("antigravity", [("ANTIGRAVITY_AGENT", None)]),
     ("augment-cli", [("AUGMENT_AGENT", None)]),
@@ -55,14 +62,14 @@ def detect_agent():
     for agent_id, conditions in _ALLOWLIST:
         for var, expected in conditions:
             if expected is None:
-                if var in os.environ:
+                if os.environ.get(var, "").strip():
                     return agent_id
             elif os.environ.get(var) == expected:
                 return agent_id
 
     for var in _FALLBACK_VARS:
         value = os.environ.get(var, "").strip()
-        if value:
+        if value and _SAFE_FALLBACK_ID.match(value):
             return value
 
     return None
