@@ -1,6 +1,7 @@
 import os
 import pytest
 import json
+from unittest import mock
 from mapbox_tilesets.utils import (
     _get_api,
     _get_session,
@@ -22,9 +23,18 @@ def test_get_api():
 
 
 def test_get_session():
-    s = _get_session("my_application", "1.0.0")
+    # Cleared so an ambient agent indicator (e.g. this test running inside
+    # Claude Code, where CLAUDECODE is set) can't leak into the assertion.
+    with mock.patch.dict(os.environ, {}, clear=True):
+        s = _get_session("my_application", "1.0.0")
     assert "user-agent" in s.headers
     assert s.headers["user-agent"] == "my_application/1.0.0"
+
+
+def test_get_session_appends_detected_agent():
+    with mock.patch.dict(os.environ, {"CLAUDECODE": "1"}, clear=True):
+        s = _get_session("my_application", "1.0.0")
+    assert s.headers["user-agent"] == "my_application/1.0.0 agent/claude-code"
 
 
 def test_get_token_parameter():
