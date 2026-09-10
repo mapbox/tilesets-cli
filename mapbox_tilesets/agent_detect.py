@@ -2,47 +2,50 @@
 
 import os
 
-# (agent_id, [(env_var, expected_value_or_None), ...]) — table order is precedence order;
-# the first entry with any matching condition wins. expected_value None => presence check
-# (key exists in os.environ at all - even set to "" or whitespace still counts, we only
-# care whether it exists, not what it's set to); otherwise an exact-equality check.
+# (agent_id, [env_var, ...]) — table order is precedence order; the first entry with any
+# of its env vars present wins. Presence is the only thing ever tested - a var's value is
+# never read or compared against anything, for any entry. Even a var explicitly set to ""
+# or whitespace counts as present.
+#
+# Ported from mapbox-sdk-js's `lib/helpers/agent-detect.js` (this repo's sibling
+# implementation of the same allowlist - keep the two in sync). Canonical origin:
+# HuggingFace's public `agent-harnesses.ts` registry.
+#
+# "vtcode" and "warp" used to require a specific value (VTCODE == "1", TERM_PROGRAM ==
+# "WarpTerminal") rather than mere presence. Since values are never checked, "warp" was
+# dropped entirely: TERM_PROGRAM is set by most terminal emulators (iTerm2, Apple
+# Terminal, VS Code, Hyper, ...), not just Warp, so an existence check on it would
+# misidentify most terminal sessions as "warp". VTCODE has no such collision risk and
+# stays as a plain presence check.
 #
 # The final entry, "custom-agent", is a catch-all for AI_AGENT/AGENT: these exist so an
 # agent not on this list can still flag its presence, but we only ever check for them,
 # never read their value - an arbitrary, unvalidated string must never be forwarded into
 # telemetry as an "agent id".
 _ALLOWLIST = [
-    ("antigravity", [("ANTIGRAVITY_AGENT", None)]),
-    ("augment-cli", [("AUGMENT_AGENT", None)]),
-    ("cline", [("CLINE_ACTIVE", None)]),
-    ("cowork", [("CLAUDE_CODE_IS_COWORK", None)]),
-    ("claude-code", [("CLAUDECODE", None), ("CLAUDE_CODE", None)]),
-    ("codex", [("CODEX_SANDBOX", None), ("CODEX_CI", None), ("CODEX_THREAD_ID", None)]),
-    ("crush", [("CRUSH", None)]),
-    ("gemini-cli", [("GEMINI_CLI", None)]),
-    (
-        "github-copilot",
-        [
-            ("COPILOT_MODEL", None),
-            ("COPILOT_ALLOW_ALL", None),
-            ("COPILOT_GITHUB_TOKEN", None),
-        ],
-    ),
-    ("goose", [("GOOSE_TERMINAL", None)]),
-    ("hermes-agent", [("HERMES_SESSION_ID", None)]),
-    ("kilo-code", [("KILOCODE_FEATURE", None)]),
-    ("kiro", [("AGENT_CONTEXT_OUT", None)]),
-    ("openclaw", [("OPENCLAW_SHELL", None)]),
-    ("opencode", [("OPENCODE_CLIENT", None)]),
-    ("pi", [("PI_CODING_AGENT", None)]),
-    ("replit", [("REPL_ID", None)]),
-    ("trae", [("TRAE_AI_SHELL_ID", None)]),
-    ("vtcode", [("VTCODE", "1")]),
-    ("warp", [("TERM_PROGRAM", "WarpTerminal")]),
-    ("zed", [("ZED_TERM", None)]),
-    ("cursor-cli", [("CURSOR_AGENT", None)]),
-    ("cursor", [("CURSOR_TRACE_ID", None)]),
-    ("custom-agent", [("AI_AGENT", None), ("AGENT", None)]),
+    ("antigravity", ["ANTIGRAVITY_AGENT"]),
+    ("augment-cli", ["AUGMENT_AGENT"]),
+    ("cline", ["CLINE_ACTIVE"]),
+    ("cowork", ["CLAUDE_CODE_IS_COWORK"]),
+    ("claude-code", ["CLAUDECODE", "CLAUDE_CODE"]),
+    ("codex", ["CODEX_SANDBOX", "CODEX_CI", "CODEX_THREAD_ID"]),
+    ("crush", ["CRUSH"]),
+    ("gemini-cli", ["GEMINI_CLI"]),
+    ("github-copilot", ["COPILOT_MODEL", "COPILOT_ALLOW_ALL", "COPILOT_GITHUB_TOKEN"]),
+    ("goose", ["GOOSE_TERMINAL"]),
+    ("hermes-agent", ["HERMES_SESSION_ID"]),
+    ("kilo-code", ["KILOCODE_FEATURE"]),
+    ("kiro", ["AGENT_CONTEXT_OUT"]),
+    ("openclaw", ["OPENCLAW_SHELL"]),
+    ("opencode", ["OPENCODE_CLIENT"]),
+    ("pi", ["PI_CODING_AGENT"]),
+    ("replit", ["REPL_ID"]),
+    ("trae", ["TRAE_AI_SHELL_ID"]),
+    ("vtcode", ["VTCODE"]),
+    ("zed", ["ZED_TERM"]),
+    ("cursor-cli", ["CURSOR_AGENT"]),
+    ("cursor", ["CURSOR_TRACE_ID"]),
+    ("custom-agent", ["AI_AGENT", "AGENT"]),
 ]
 
 
@@ -56,12 +59,9 @@ def detect_agent():
     str or None
         The detected agent id, or None when no agent indicator is present.
     """
-    for agent_id, conditions in _ALLOWLIST:
-        for var, expected in conditions:
-            if expected is None:
-                if var in os.environ:
-                    return agent_id
-            elif os.environ.get(var) == expected:
+    for agent_id, env_vars in _ALLOWLIST:
+        for var in env_vars:
+            if var in os.environ:
                 return agent_id
 
     return None

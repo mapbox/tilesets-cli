@@ -35,15 +35,17 @@ def test_codex_matches_on_any_of_its_vars():
     assert _detect_with_env({"CODEX_CI": "1"}) == "codex"
 
 
-def test_warp_requires_exact_value_match():
-    assert _detect_with_env({"TERM_PROGRAM": "WarpTerminal"}) == "warp"
+def test_warp_was_dropped_term_program_is_not_a_safe_existence_only_signal():
+    # TERM_PROGRAM is set by most terminal emulators, not just Warp, so it's
+    # not on the allowlist at all now that presence is the only check.
+    assert _detect_with_env({"TERM_PROGRAM": "WarpTerminal"}) is None
     assert _detect_with_env({"TERM_PROGRAM": "iTerm.app"}) is None
 
 
-def test_vtcode_requires_exact_value_match():
+def test_vtcode_matches_on_presence_alone_regardless_of_value():
     assert _detect_with_env({"VTCODE": "1"}) == "vtcode"
-    assert _detect_with_env({"VTCODE": "0"}) is None
-    assert _detect_with_env({"VTCODE": "true"}) is None
+    assert _detect_with_env({"VTCODE": "0"}) == "vtcode"
+    assert _detect_with_env({"VTCODE": "true"}) == "vtcode"
 
 
 def test_table_order_precedence_among_harness_vars():
