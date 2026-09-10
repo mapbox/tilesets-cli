@@ -1,17 +1,16 @@
 """Detect the AI coding agent (if any) driving this CLI invocation."""
 
 import os
-import re
-
-# A safe charset for an agent id placed into an HTTP header: env vars are not
-# validated by whoever sets them, so a value like "foo\nbar: injected" must be
-# rejected here rather than surfacing as an unhandled requests.InvalidHeader.
-_SAFE_FALLBACK_ID = re.compile(r"^[\w.\-]{1,64}$")
 
 # (agent_id, [(env_var, expected_value_or_None), ...]) — table order is precedence order;
 # the first entry with any matching condition wins. expected_value None => presence check
 # (key exists in os.environ with a non-empty, non-whitespace value); otherwise an
 # exact-equality check.
+#
+# The final entry, "custom-agent", is a catch-all for AI_AGENT/AGENT: these exist so an
+# agent not on this list can still flag its presence, but we only ever check for them,
+# never read their value - an arbitrary, unvalidated string must never be forwarded into
+# telemetry as an "agent id".
 _ALLOWLIST = [
     ("antigravity", [("ANTIGRAVITY_AGENT", None)]),
     ("augment-cli", [("AUGMENT_AGENT", None)]),
@@ -43,10 +42,8 @@ _ALLOWLIST = [
     ("zed", [("ZED_TERM", None)]),
     ("cursor-cli", [("CURSOR_AGENT", None)]),
     ("cursor", [("CURSOR_TRACE_ID", None)]),
+    ("custom-agent", [("AI_AGENT", None), ("AGENT", None)]),
 ]
-
-# Checked only if nothing in _ALLOWLIST matched. First one with a non-empty value wins.
-_FALLBACK_VARS = ("AI_AGENT", "AGENT")
 
 
 def detect_agent():
@@ -66,10 +63,5 @@ def detect_agent():
                     return agent_id
             elif os.environ.get(var) == expected:
                 return agent_id
-
-    for var in _FALLBACK_VARS:
-        value = os.environ.get(var, "").strip()
-        if value and _SAFE_FALLBACK_ID.match(value):
-            return value
 
     return None

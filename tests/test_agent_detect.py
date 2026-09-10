@@ -56,22 +56,24 @@ def test_table_order_precedence_among_harness_vars():
 
 
 def test_fallback_ai_agent_used_when_no_harness_match():
-    assert _detect_with_env({"AI_AGENT": "custom-agent"}) == "custom-agent"
+    assert _detect_with_env({"AI_AGENT": "my-cool-tool"}) == "custom-agent"
 
 
 def test_fallback_agent_used_when_no_harness_or_ai_agent_match():
-    assert _detect_with_env({"AGENT": "custom-agent"}) == "custom-agent"
+    assert _detect_with_env({"AGENT": "my-cool-tool"}) == "custom-agent"
 
 
 def test_fallback_ai_agent_takes_precedence_over_agent():
-    assert _detect_with_env({"AI_AGENT": "first", "AGENT": "second"}) == "first"
+    # Same result either way - table order still decides precedence, but the
+    # value of AI_AGENT/AGENT is never read, only their presence.
+    assert _detect_with_env({"AI_AGENT": "first", "AGENT": "second"}) == "custom-agent"
 
 
 def test_fallback_empty_or_whitespace_value_returns_none():
     assert _detect_with_env({"AI_AGENT": ""}) is None
     assert _detect_with_env({"AI_AGENT": "   "}) is None
     assert _detect_with_env({"AI_AGENT": "", "AGENT": "still-empty-check"}) == (
-        "still-empty-check"
+        "custom-agent"
     )
 
 
@@ -88,17 +90,7 @@ def test_presence_check_requires_non_empty_value():
     assert _detect_with_env({"CLAUDECODE": "   "}) is None
 
 
-def test_fallback_rejects_header_unsafe_characters():
-    # A fallback value must never reach the User-Agent header unsanitized -
-    # a newline would otherwise crash every request with InvalidHeader.
-    assert _detect_with_env({"AI_AGENT": "foo\nbar: injected"}) is None
-    assert _detect_with_env({"AI_AGENT": "has spaces"}) is None
-
-
-def test_fallback_rejects_unsafe_value_but_falls_through_to_next_var():
-    assert _detect_with_env({"AI_AGENT": "foo\nbar", "AGENT": "safe-id"}) == "safe-id"
-
-
-def test_fallback_rejects_overlong_value():
-    assert _detect_with_env({"AI_AGENT": "a" * 65}) is None
-    assert _detect_with_env({"AI_AGENT": "a" * 64}) == "a" * 64
+def test_fallback_value_is_never_forwarded_even_if_header_unsafe():
+    # The fallback value must never reach the User-Agent header at all - it is
+    # never read, only checked for presence.
+    assert _detect_with_env({"AI_AGENT": "foo\nbar: injected"}) == "custom-agent"
