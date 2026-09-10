@@ -69,25 +69,20 @@ def test_fallback_ai_agent_takes_precedence_over_agent():
     assert _detect_with_env({"AI_AGENT": "first", "AGENT": "second"}) == "custom-agent"
 
 
-def test_fallback_empty_or_whitespace_value_returns_none():
-    assert _detect_with_env({"AI_AGENT": ""}) is None
-    assert _detect_with_env({"AI_AGENT": "   "}) is None
-    assert _detect_with_env({"AI_AGENT": "", "AGENT": "still-empty-check"}) == (
-        "custom-agent"
-    )
-
-
 def test_github_copilot_matches_on_any_of_its_vars():
     assert _detect_with_env({"COPILOT_MODEL": "gpt"}) == "github-copilot"
     assert _detect_with_env({"COPILOT_ALLOW_ALL": "1"}) == "github-copilot"
     assert _detect_with_env({"COPILOT_GITHUB_TOKEN": "abc"}) == "github-copilot"
 
 
-def test_presence_check_requires_non_empty_value():
-    # A harness var set to "" or whitespace is treated the same as unset,
-    # matching the fallback's empty-value handling.
-    assert _detect_with_env({"CLAUDECODE": ""}) is None
-    assert _detect_with_env({"CLAUDECODE": "   "}) is None
+def test_presence_check_only_requires_existence_blank_value_still_counts():
+    # Existence is all that matters - a var set to "" or whitespace still
+    # counts as present, for both a harness var and the AI_AGENT/AGENT
+    # catch-all.
+    assert _detect_with_env({"CLAUDECODE": ""}) == "claude-code"
+    assert _detect_with_env({"CLAUDECODE": "   "}) == "claude-code"
+    assert _detect_with_env({"AI_AGENT": ""}) == "custom-agent"
+    assert _detect_with_env({"AI_AGENT": "   "}) == "custom-agent"
 
 
 def test_fallback_value_is_never_forwarded_even_if_header_unsafe():

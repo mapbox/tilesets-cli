@@ -4,8 +4,8 @@ import os
 
 # (agent_id, [(env_var, expected_value_or_None), ...]) — table order is precedence order;
 # the first entry with any matching condition wins. expected_value None => presence check
-# (key exists in os.environ with a non-empty, non-whitespace value); otherwise an
-# exact-equality check.
+# (key exists in os.environ at all - even set to "" or whitespace still counts, we only
+# care whether it exists, not what it's set to); otherwise an exact-equality check.
 #
 # The final entry, "custom-agent", is a catch-all for AI_AGENT/AGENT: these exist so an
 # agent not on this list can still flag its presence, but we only ever check for them,
@@ -59,7 +59,7 @@ def detect_agent():
     for agent_id, conditions in _ALLOWLIST:
         for var, expected in conditions:
             if expected is None:
-                if os.environ.get(var, "").strip():
+                if var in os.environ:
                     return agent_id
             elif os.environ.get(var) == expected:
                 return agent_id
